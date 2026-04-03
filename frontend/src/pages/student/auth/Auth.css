@@ -236,8 +236,6 @@
 }
 
 .auth-input::placeholder {
-
-.auth-input::placeholder {
   color: var(--color-text-muted);
 }
 
