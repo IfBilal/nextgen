@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Brain, ArrowRight, PlayCircle, BookOpen } from 'lucide-react'
+import { Brain, PlayCircle, BookOpen } from 'lucide-react'
 import type { StudentDashboardData } from '../../../data/dashboard'
 
 interface Props { data: StudentDashboardData }
