@@ -2,7 +2,7 @@
   padding: var(--space-6) var(--space-4);
   max-width: 1200px;
   margin: 0 auto;
-  height: calc(100vh - 80px);
+  min-height: calc(100vh - 80px);
   display: flex; flex-direction: column;
 }
 
@@ -170,7 +170,29 @@
 }
 
 @media (max-width: 768px) {
-  .ai-tutor-page { padding: var(--space-2); height: calc(100vh - 64px); }
+  .ai-tutor-page {
+    padding: var(--space-2);
+    min-height: calc(100vh - 56px);
+  }
+
+  .chat-history {
+    padding: var(--space-3);
+    gap: var(--space-4);
+  }
+
+  .chat-input-area {
+    padding: var(--space-3);
+  }
+
+  .chat-input-area input {
+    font-size: 0.95rem;
+  }
+
+  .send-btn {
+    width: 42px;
+    height: 42px;
+  }
+
   .chat-bubble-container { max-width: 95%; }
   .chat-bubble { font-size: 0.95rem; }
 }

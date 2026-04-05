@@ -156,3 +156,36 @@
   .analytics-layout { grid-template-columns: 1fr; }
   .table-responsive { overflow-x: auto; }
 }
+
+@media (max-width: 768px) {
+  .analytics-page {
+    padding: var(--space-4) var(--space-2);
+  }
+
+  .tabs {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .tab-btn {
+    flex: 0 0 auto;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+  }
+
+  .stats-overview {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .stat-card {
+    padding: var(--space-4);
+  }
+
+  .history-table th,
+  .history-table td {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+  }
+}

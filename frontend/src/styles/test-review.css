@@ -162,3 +162,35 @@
   .review-layout { flex-direction: column; }
   .review-left, .review-right { flex: 1 1 100%; width: 100%; }
 }
+
+@media (max-width: 640px) {
+  .test-review-page {
+    padding: var(--space-4) var(--space-2);
+  }
+
+  .page-header h1 {
+    font-size: var(--text-2xl);
+  }
+
+  .score-card {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .score-ring {
+    width: 130px;
+    height: 130px;
+  }
+
+  .score-value {
+    font-size: 2.5rem;
+  }
+
+  .comparison-row {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .comparison-label {
+    width: auto;
+  }
+}

@@ -75,3 +75,52 @@
 @media (max-width: 900px) {
   .partners-layout { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 640px) {
+  .partners-page {
+    padding: var(--space-4) var(--space-2);
+  }
+
+  .partners-layout {
+    gap: var(--space-5);
+    margin-top: var(--space-4);
+  }
+
+  .modern-partner-card {
+    align-items: flex-start;
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .partner-avatar-large {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+
+  .partner-name-row {
+    flex-wrap: wrap;
+  }
+
+  .partner-name-row h4 {
+    font-size: 1rem;
+  }
+
+  .partner-meta,
+  .partner-weakness {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .btn-icon-circular {
+    width: 40px;
+    height: 40px;
+  }
+
+  .phone-display {
+    font-size: 0.9rem;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+}

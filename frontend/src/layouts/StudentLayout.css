@@ -345,6 +345,7 @@
   flex: 1;
   padding: 28px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Mobile overlay */
@@ -390,5 +391,32 @@
 
   .sl-content {
     padding: 20px 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .sl-topbar {
+    height: 56px;
+    padding: 0 10px;
+  }
+
+  .sl-topbar__right {
+    gap: 4px;
+  }
+
+  .sl-topbar__icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .sl-topbar__avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 11px;
+    margin-left: 2px;
+  }
+
+  .sl-content {
+    padding: 12px;
   }
 }

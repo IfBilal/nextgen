@@ -94,10 +94,39 @@
 
 @media (max-width: 768px) {
   .leaderboard-page { padding: var(--space-4); }
+  .top-podium {
+    gap: var(--space-2);
+    height: 210px;
+  }
+
+  .podium-name {
+    font-size: var(--text-sm);
+    text-align: center;
+  }
+
   .podium-block { width: 90px; }
+  .col-rank { width: 72px; }
   .col-streak { display: none; }
   .list-header .col-streak { display: none; }
   .list-row { padding: var(--space-3) var(--space-4); }
   .col-user { font-size: 0.95rem; }
   .col-score { width: 80px; font-size: 0.95rem; }
+}
+
+@media (max-width: 520px) {
+  .podium-block { width: 70px; font-size: 1.5rem; }
+  .avatar.gold { width: 60px; height: 60px; }
+  .avatar.silver { width: 50px; height: 50px; }
+  .avatar.bronze { width: 44px; height: 44px; }
+
+  .list-header,
+  .list-row {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+  }
+
+  .col-score {
+    width: 64px;
+    text-align: right;
+  }
 }
