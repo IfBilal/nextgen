@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Calendar, Clock, BookOpen, Target } from 'lucide-react'
+import { useStudentAuth } from '../../context/StudentAuthContext'
 import { examOptions, subjectOptions, saveOnboardingData } from '../../data/onboarding'
 import type { OnboardingData } from '../../data/onboarding'
 import './Onboarding.css'
 
 export default function OnboardingPage() {
   const navigate = useNavigate()
+  const { completeOnboarding } = useStudentAuth()
   
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState<OnboardingData>({
@@ -29,6 +31,7 @@ export default function OnboardingPage() {
 
   const handleSubmit = () => {
     saveOnboardingData(formData)
+    completeOnboarding()
     navigate('/student/roadmap')
   }
 
