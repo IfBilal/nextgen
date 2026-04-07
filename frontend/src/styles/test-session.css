@@ -4,6 +4,7 @@
   min-height: calc(100vh - 64px);
   margin: calc(var(--space-6) * -1); /* counter padding from layout */
   background: white;
+  overflow-x: hidden;
 }
 
 .test-header {
@@ -379,5 +380,25 @@
     width: 100%;
     justify-content: center;
     font-size: var(--text-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .test-session-page {
+    margin: -8px;
+  }
+
+  .test-content-scrollable,
+  .test-body,
+  .tutor-content {
+    padding: var(--space-3);
+  }
+
+  .timer {
+    font-size: var(--text-base);
+  }
+
+  .exam-mode-badge {
+    font-size: 10px;
   }
 }

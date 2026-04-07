@@ -155,3 +155,28 @@
   color: rgba(255,255,255,0.8);
   text-decoration: none;
 }
+
+@media (max-width: 640px) {
+  .admin-auth-container {
+    padding: var(--space-4);
+  }
+
+  .admin-auth-card {
+    padding: var(--space-8) var(--space-6);
+    max-width: 100%;
+  }
+
+  .admin-auth-title {
+    font-size: var(--text-xl);
+  }
+}
+
+@media (max-width: 420px) {
+  .admin-auth-card {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .admin-auth-logo {
+    width: 92px;
+  }
+}

@@ -4,6 +4,37 @@
   margin: 0 auto;
 }
 
+.analytics-page-header {
+  margin-bottom: 1.5rem;
+}
+
+.analytics-tabs {
+  margin-bottom: 1.25rem;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.analytics-overview-grid {
+  margin-bottom: 1.5rem;
+}
+
+.analytics-matrix-layout {
+  grid-template-columns: 1fr;
+}
+
+.analytics-matrix-banner {
+  margin-bottom: 0.75rem;
+}
+
+.analytics-matrix-note {
+  color: #4A6A8A;
+  margin-bottom: 1rem;
+}
+
+.analytics-history-title {
+  color: #0D2D5E;
+}
+
 .tabs {
   display: flex;
   background: white;
@@ -11,6 +42,8 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border);
+  overflow-x: auto;
+  max-width: 100%;
 }
 
 .tab-btn {
@@ -30,6 +63,15 @@
 .tab-btn.active {
   background: var(--color-surface-blue);
   color: var(--color-primary);
+}
+
+.tabs::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tabs::-webkit-scrollbar-thumb {
+  background: #c5dcef;
+  border-radius: 999px;
 }
 
 .stats-overview {
@@ -56,6 +98,22 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-6);
+}
+
+.analytics-chart-wrap {
+  margin-top: 1rem;
+}
+
+.analytics-chart-wrap--md {
+  height: 260px;
+}
+
+.analytics-chart-wrap--sm {
+  height: 240px;
+}
+
+.analytics-card--full {
+  grid-column: 1 / -1;
 }
 
 .matrix-card h3, .performance-card h3 { margin: 0; color: var(--color-navy); font-size: var(--text-xl);}
@@ -162,9 +220,16 @@
     padding: var(--space-4) var(--space-2);
   }
 
+  .analytics-page-header {
+    margin-bottom: 1rem;
+  }
+
+  .analytics-tabs {
+    width: 100%;
+  }
+
   .tabs {
     width: 100%;
-    overflow-x: auto;
     white-space: nowrap;
   }
 
@@ -187,5 +252,28 @@
   .history-table td {
     padding: var(--space-2) var(--space-3);
     font-size: var(--text-sm);
+  }
+
+  .analytics-chart-wrap--md {
+    height: 230px;
+  }
+
+  .analytics-chart-wrap--sm {
+    height: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  .analytics-page {
+    padding: var(--space-3) var(--space-2);
+  }
+
+  .stat-icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .stat-value {
+    font-size: 1.6rem;
   }
 }

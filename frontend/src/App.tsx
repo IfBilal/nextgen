@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { StudentAuthProvider } from './context/StudentAuthContext'
 import { AdminAuthProvider } from './context/AdminAuthContext'
 import StudentLayout from './layouts/StudentLayout'
+import AdminLayout from './layouts/AdminLayout'
 import StudentProtectedRoute from './components/routing/StudentProtectedRoute'
 import AdminProtectedRoute from './components/routing/AdminProtectedRoute'
 
@@ -20,14 +21,11 @@ import LeaderboardPage     from './pages/student/LeaderboardPage'
 import StudyPartnersPage   from './pages/student/StudyPartnersPage'
 import NotesPage           from './pages/student/NotesPage'
 import AdminLoginPage      from './pages/admin/auth/AdminLoginPage'
-
-// Placeholders for pages not yet built
-const Placeholder = ({ label }: { label: string }) => (
-  <div style={{ padding: 40, fontFamily: 'Inter, sans-serif', color: '#0D2D5E' }}>
-    <h2>🚧 {label}</h2>
-    <p style={{ color: '#4A6A8A', marginTop: 8 }}>This page is coming soon.</p>
-  </div>
-)
+import AdminDashboardPage  from './pages/admin/AdminDashboardPage'
+import AdminStudentsPage   from './pages/admin/AdminStudentsPage'
+import AdminMetricsPage    from './pages/admin/AdminMetricsPage'
+import AdminFinancialsPage from './pages/admin/AdminFinancialsPage'
+import AdminCommentsPage   from './pages/admin/AdminCommentsPage'
 
 export default function App() {
   return (
@@ -66,13 +64,16 @@ export default function App() {
             {/* Admin Auth */}
             <Route path="/admin/login" element={<AdminLoginPage />} />
 
-            {/* Admin Pages (placeholders) */}
+            {/* Admin Pages (With Layout) */}
             <Route element={<AdminProtectedRoute />}>
-              <Route path="/admin/dashboard"  element={<Placeholder label="Admin Dashboard" />} />
-              <Route path="/admin/students"   element={<Placeholder label="Student Insights" />} />
-              <Route path="/admin/metrics"    element={<Placeholder label="Global Metrics" />} />
-              <Route path="/admin/financials" element={<Placeholder label="Financials" />} />
-              <Route path="/admin/comments"   element={<Placeholder label="Comment Moderation" />} />
+              <Route element={<AdminLayout />}>
+                <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+                <Route path="/admin/students" element={<AdminStudentsPage />} />
+                <Route path="/admin/metrics" element={<AdminMetricsPage />} />
+                <Route path="/admin/financials" element={<AdminFinancialsPage />} />
+                <Route path="/admin/comments" element={<AdminCommentsPage />} />
+              </Route>
             </Route>
 
             {/* 404 fallback */}

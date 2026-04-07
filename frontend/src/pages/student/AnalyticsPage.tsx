@@ -24,12 +24,12 @@ export default function AnalyticsPage() {
 
   return (
     <div className="analytics-page">
-      <div className="page-header" style={{ marginBottom: '1.5rem' }}>
+      <div className="page-header analytics-page-header">
         <h1>Analytics & Diagnostics</h1>
         <p>Track trends, identify weak subtopics, and review your test performance history.</p>
       </div>
 
-      <div className="tabs" style={{ marginBottom: '1.25rem', width: 'fit-content' }}>
+      <div className="tabs analytics-tabs">
         <button className={`tab-btn ${tab === 'overview' ? 'active' : ''}`} onClick={() => setTab('overview')}>
           <Activity size={16} /> Overview
         </button>
@@ -43,7 +43,7 @@ export default function AnalyticsPage() {
 
       {tab === 'overview' && (
         <>
-          <div className="stats-overview" style={{ marginBottom: '1.5rem' }}>
+          <div className="stats-overview analytics-overview-grid">
             <article className="card stat-card">
               <div className="stat-icon"><Target size={22} color="#1A6FAD" /></div>
               <div>
@@ -88,8 +88,8 @@ export default function AnalyticsPage() {
       )}
 
       {tab === 'matrix' && (
-        <div className="analytics-layout" style={{ gridTemplateColumns: '1fr' }}>
-          <div className="card ai-diagnosis-box" style={{ marginBottom: '0.75rem' }}>
+        <div className="analytics-layout analytics-matrix-layout">
+          <div className="card ai-diagnosis-box analytics-matrix-banner">
             <Brain size={20} color="#E74C3C" />
             <div className="ai-diagnosis-text">
               <strong>AI Analysis:</strong> The lowest area is <strong>{avgWeakCell.subtopic}</strong> at{' '}
@@ -100,7 +100,7 @@ export default function AnalyticsPage() {
 
           <div className="card matrix-card">
             <h3>Subject × Subtopic Heatmap</h3>
-            <p style={{ color: '#4A6A8A', marginBottom: '1rem' }}>
+            <p className="analytics-matrix-note">
               Red = weak (&lt;50), Yellow = moderate (50–74), Green = strong (75+)
             </p>
             <PerformanceHeatmap rows={performanceHeatmap} />
@@ -110,7 +110,7 @@ export default function AnalyticsPage() {
 
       {tab === 'history' && (
         <div className="card">
-          <h3 className="mb-4" style={{ color: '#0D2D5E' }}>Recent Test History</h3>
+          <h3 className="mb-4 analytics-history-title">Recent Test History</h3>
           <div className="table-responsive">
             <table className="history-table">
               <thead>

@@ -369,17 +369,21 @@
 
   .notes-editor-actions {
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-left: 0;
+    gap: var(--space-2);
+    flex-wrap: wrap;
   }
 
   .notes-editor-actions > span {
-    width: auto;
-    max-width: 45%;
+    width: 100%;
+    max-width: 100%;
+    text-align: left;
+    order: 3;
   }
 
   .notes-editor-actions button {
-    margin-left: auto;
+    margin-left: 0;
   }
 
   .rich-editor__editable {

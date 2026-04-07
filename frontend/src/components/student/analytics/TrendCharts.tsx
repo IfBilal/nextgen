@@ -22,7 +22,7 @@ export default function TrendCharts({ scoreTrend, subjectPerformance, studyHours
     <>
       <div className="card performance-card">
         <h3>Score Trend (30 Days)</h3>
-        <div style={{ height: 260, marginTop: '1rem' }}>
+        <div className="analytics-chart-wrap analytics-chart-wrap--md">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={scoreTrend}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E6EEF7" />
@@ -37,7 +37,7 @@ export default function TrendCharts({ scoreTrend, subjectPerformance, studyHours
 
       <div className="card performance-card">
         <h3>Performance by Subject</h3>
-        <div style={{ height: 260, marginTop: '1rem' }}>
+        <div className="analytics-chart-wrap analytics-chart-wrap--md">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={subjectPerformance} layout="vertical" margin={{ left: 16 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E6EEF7" />
@@ -50,9 +50,9 @@ export default function TrendCharts({ scoreTrend, subjectPerformance, studyHours
         </div>
       </div>
 
-      <div className="card performance-card" style={{ gridColumn: '1 / -1' }}>
+      <div className="card performance-card analytics-card--full">
         <h3>Study Hours by Week</h3>
-        <div style={{ height: 240, marginTop: '1rem' }}>
+        <div className="analytics-chart-wrap analytics-chart-wrap--sm">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={studyHoursByWeek}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E6EEF7" />

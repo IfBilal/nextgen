@@ -420,3 +420,29 @@
     padding: 12px;
   }
 }
+
+@media (max-width: 420px) {
+  .sl-topbar {
+    padding: 0 8px;
+  }
+
+  .sl-topbar__right {
+    gap: 2px;
+  }
+
+  .sl-topbar__icon-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .sl-topbar__badge {
+    width: 14px;
+    height: 14px;
+    font-size: 9px;
+  }
+
+  .sl-topbar__avatar {
+    width: 28px;
+    height: 28px;
+  }
+}

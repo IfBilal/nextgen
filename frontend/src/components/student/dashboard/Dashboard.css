@@ -298,6 +298,10 @@
     padding: var(--space-4);
   }
 
+  .stats-row {
+    flex-wrap: wrap;
+  }
+
   .donut-value {
     font-size: 22px;
   }
