@@ -91,7 +91,7 @@ export default function AdminMetricsPage() {
           </div>
         </article>
 
-        <article className="card admin-metrics-panel">
+        <article className="card admin-metrics-panel admin-metrics-panel--full-row">
           <h3>Weekly Activity Snapshot</h3>
           <p>Simple weekly view of active learners, tests submitted, and average accuracy.</p>
           <div className="admin-metrics-table-wrap">

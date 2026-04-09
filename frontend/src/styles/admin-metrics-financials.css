@@ -104,6 +104,10 @@
   gap: 0.55rem;
 }
 
+.admin-metrics-panel--full-row {
+  grid-column: 1 / -1;
+}
+
 .admin-metrics-panel h3 {
   margin: 0;
   color: #0d2d5e;
