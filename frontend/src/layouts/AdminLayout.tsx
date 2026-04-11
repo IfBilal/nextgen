@@ -6,6 +6,7 @@ import {
   BarChart3,
   Wallet,
   MessageSquareWarning,
+  Megaphone,
   LogOut,
   Menu,
   X,
@@ -20,6 +21,7 @@ const ADMIN_NAV_ITEMS = [
   { to: '/admin/metrics', label: 'Global Metrics', icon: BarChart3 },
   { to: '/admin/financials', label: 'Financials', icon: Wallet },
   { to: '/admin/comments', label: 'Comment Moderation', icon: MessageSquareWarning },
+  { to: '/admin/announcements', label: 'Announcements', icon: Megaphone },
 ]
 
 export default function AdminLayout() {

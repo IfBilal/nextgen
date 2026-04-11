@@ -2691,3 +2691,423 @@ Request body shape expected by frontend integration:
 3. Replace local analytics derivation in `AnalyticsPage.tsx` with API response mapper while keeping existing view models unchanged.
 
 This gives a low-risk migration path: backend can be introduced without redesigning the current frontend state machine.
+
+## 18) ADMIN ANNOUNCEMENTS + STUDENT INBOX (FULL PRODUCTION BLUEPRINT)
+
+This chapter defines exactly how global admin announcements should work end-to-end so every student receives them in an inbox experience.
+
+It covers:
+- Frontend architecture
+- Backend APIs and contracts
+- Database schema and indexing
+- Read/unread semantics
+- Delivery, observability, and edge-case handling
+
+---
+
+### 18.1 Product Goal and User Stories
+
+Primary requirement:
+- Admin can create one announcement.
+- All students can see it in their inbox.
+- Students can mark single message or all messages as read.
+
+Core user stories:
+1. **Admin broadcast:** As an admin, I write and send an announcement visible to all students.
+2. **Student inbox visibility:** As a student, I see all announcements in reverse chronological order.
+3. **Read tracking:** As a student, unread/read status is tracked per student, not globally.
+4. **Notification hint:** Student topbar badge reflects unread count.
+
+---
+
+### 18.2 Current Frontend Implementation (Already Added)
+
+Implemented files:
+
+1. `frontend/src/context/AnnouncementContext.tsx`
+     - Shared announcement store/state.
+     - Supports:
+         - `postAnnouncement()`
+         - `unreadCount(studentKey)`
+         - `isRead(studentKey, announcementId)`
+         - `markAsRead(studentKey, announcementId)`
+         - `markAllAsRead(studentKey)`
+     - Persists demo data to localStorage:
+         - `announcements.v1`
+         - `announcementReadsByStudent.v1`
+
+2. `frontend/src/pages/admin/AdminAnnouncementsPage.tsx`
+     - Admin form for title + message.
+     - Broadcast history list.
+     - Basic KPI cards (total, latest broadcast).
+
+3. `frontend/src/pages/student/InboxPage.tsx`
+     - Inbox list of all announcements.
+     - Read/unread badge per row.
+     - "Mark as read" and "Mark all as read" actions.
+
+4. `frontend/src/layouts/AdminLayout.tsx`
+     - Adds sidebar nav entry: `/admin/announcements`.
+
+5. `frontend/src/layouts/StudentLayout.tsx`
+     - Adds sidebar nav entry: `/student/inbox`.
+     - Topbar bell routes to inbox and shows unread count badge.
+
+6. `frontend/src/App.tsx`
+     - Wires routes:
+         - `/admin/announcements`
+         - `/student/inbox`
+     - Wraps app with `AnnouncementProvider`.
+
+Frontend styles:
+- `frontend/src/styles/admin/admin-announcements.css`
+- `frontend/src/styles/student-inbox.css`
+
+---
+
+### 18.3 Production Data Model (Database)
+
+Use normalized tables with explicit per-student read tracking.
+
+#### 18.3.1 Announcements table
+
+```sql
+CREATE TABLE announcements (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        title VARCHAR(220) NOT NULL,
+        message TEXT NOT NULL,
+        created_by_admin_id UUID NOT NULL REFERENCES admin_users(id),
+        status VARCHAR(20) NOT NULL DEFAULT 'published',
+        published_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        expires_at TIMESTAMPTZ NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        deleted_at TIMESTAMPTZ NULL
+);
+
+CREATE INDEX idx_announcements_published_at ON announcements(published_at DESC)
+WHERE deleted_at IS NULL;
+
+CREATE INDEX idx_announcements_status ON announcements(status)
+WHERE deleted_at IS NULL;
+```
+
+Recommended status enum values:
+- `draft`
+- `published`
+- `archived`
+
+For MVP where send is immediate, you may skip `draft` and write directly as `published`.
+
+#### 18.3.2 Per-student read tracking table
+
+```sql
+CREATE TABLE announcement_reads (
+        announcement_id UUID NOT NULL REFERENCES announcements(id) ON DELETE CASCADE,
+        student_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        read_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        PRIMARY KEY (announcement_id, student_id)
+);
+
+CREATE INDEX idx_announcement_reads_student_time
+ON announcement_reads(student_id, read_at DESC);
+```
+
+This table is essential: read status must be user-specific.
+
+#### 18.3.3 Optional delivery snapshot table (large scale)
+
+```sql
+CREATE TABLE announcement_delivery_snapshots (
+        announcement_id UUID PRIMARY KEY REFERENCES announcements(id) ON DELETE CASCADE,
+        recipient_count BIGINT NOT NULL,
+        read_count BIGINT NOT NULL DEFAULT 0,
+        unread_count BIGINT NOT NULL,
+        computed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+
+Use this only when admin analytics need fast read-rate dashboards.
+
+---
+
+### 18.4 Backend API Contracts
+
+Base path suggestion: `/api/v1`
+
+#### 18.4.1 Admin endpoints
+
+1. Create announcement
+
+```http
+POST /api/v1/admin/announcements
+```
+
+Request:
+
+```json
+{
+    "title": "Platform maintenance window",
+    "message": "System maintenance is scheduled for Sunday 01:00-01:20 UTC.",
+    "publishNow": true,
+    "expiresAt": null
+}
+```
+
+Response:
+
+```json
+{
+    "id": "a7f6d2ab-98fd-4667-9b52-54f3d9477db9",
+    "status": "published",
+    "publishedAt": "2026-04-12T11:18:20.000Z"
+}
+```
+
+2. List announcements (admin)
+
+```http
+GET /api/v1/admin/announcements?status=published&cursor=<token>&limit=20
+```
+
+Includes read-rate aggregates if needed.
+
+3. Archive announcement
+
+```http
+PATCH /api/v1/admin/announcements/:announcementId
+```
+
+Request:
+
+```json
+{
+    "status": "archived"
+}
+```
+
+#### 18.4.2 Student endpoints
+
+1. Inbox list
+
+```http
+GET /api/v1/student/inbox?cursor=<token>&limit=20
+```
+
+Response shape:
+
+```json
+{
+    "rows": [
+        {
+            "id": "a7f6d2ab-98fd-4667-9b52-54f3d9477db9",
+            "title": "Platform maintenance window",
+            "message": "System maintenance is scheduled for Sunday 01:00-01:20 UTC.",
+            "createdBy": "Admin",
+            "publishedAt": "2026-04-12T11:18:20.000Z",
+            "isRead": false,
+            "readAt": null
+        }
+    ],
+    "unreadCount": 3,
+    "nextCursor": null
+}
+```
+
+2. Mark one announcement read
+
+```http
+POST /api/v1/student/inbox/:announcementId/read
+```
+
+Idempotent behavior required: repeated calls should not create duplicates.
+
+3. Mark all announcements read
+
+```http
+POST /api/v1/student/inbox/read-all
+```
+
+Response:
+
+```json
+{
+    "updated": 12,
+    "unreadCount": 0
+}
+```
+
+---
+
+### 18.5 Query Logic (Read/Unread Computation)
+
+Student inbox query pattern:
+
+```sql
+SELECT
+    a.id,
+    a.title,
+    a.message,
+    a.published_at,
+    au.name AS created_by,
+    (ar.read_at IS NOT NULL) AS is_read,
+    ar.read_at
+FROM announcements a
+JOIN admin_users au ON au.id = a.created_by_admin_id
+LEFT JOIN announcement_reads ar
+    ON ar.announcement_id = a.id
+ AND ar.student_id = :student_id
+WHERE a.status = 'published'
+    AND a.deleted_at IS NULL
+    AND (a.expires_at IS NULL OR a.expires_at > NOW())
+ORDER BY a.published_at DESC
+LIMIT :limit;
+```
+
+Unread count pattern:
+
+```sql
+SELECT COUNT(*) AS unread_count
+FROM announcements a
+LEFT JOIN announcement_reads ar
+    ON ar.announcement_id = a.id
+ AND ar.student_id = :student_id
+WHERE a.status = 'published'
+    AND a.deleted_at IS NULL
+    AND (a.expires_at IS NULL OR a.expires_at > NOW())
+    AND ar.announcement_id IS NULL;
+```
+
+---
+
+### 18.6 Delivery Lifecycle (How It Works End-to-End)
+
+1. Admin submits title + message from `/admin/announcements`.
+2. Backend validates payload and stores new row in `announcements` as `published`.
+3. Student inbox endpoint includes this row for every student immediately.
+4. Student opens inbox (`/student/inbox`) and fetches rows + unread count.
+5. Student clicks "Mark as read": backend upserts into `announcement_reads`.
+6. Unread badge decrements in UI (from API response refresh or optimistic update).
+7. "Mark all as read" inserts missing read rows in batch.
+
+Important: this model does **not** duplicate announcement rows per student.
+Read state is represented by join + sparse read table.
+
+---
+
+### 18.7 Caching and Real-Time Strategy
+
+Recommended caching:
+- Cache student inbox list and unread count by `studentId` for short TTL (30–120s).
+- Invalidate on:
+    - new published announcement
+    - mark-read
+    - mark-all-read
+
+Redis key examples:
+- `inbox:{studentId}:page:{cursor}:{limit}`
+- `inbox:{studentId}:unreadCount`
+
+Optional real-time push:
+- Use WebSocket/SSE channel `student:{studentId}:announcements` to push "new announcement" events.
+- On event, trigger inbox refetch and badge refresh.
+
+---
+
+### 18.8 Security and Access Control
+
+Must enforce these rules:
+
+1. Only admin role can call admin announcement create/archive endpoints.
+2. Student endpoints must derive `studentId` from JWT; never trust client-provided IDs.
+3. Sanitization and max length checks:
+     - `title` max 220 chars
+     - `message` max (for example) 5000 chars
+4. Keep immutable audit fields:
+     - who created announcement
+     - when published
+5. Soft-delete (`deleted_at`) for legal/audit traceability.
+
+---
+
+### 18.9 Observability and SLOs
+
+Track metrics:
+- `announcement.create.success_rate`
+- `announcement.create.latency_p95`
+- `student.inbox.fetch.latency_p95`
+- `student.inbox.unread_count.calc.latency_p95`
+- `student.inbox.mark_read.success_rate`
+
+Operational logs:
+- announcement id
+- admin id
+- student id (for read actions)
+- correlation id
+
+Suggested SLOs:
+- P95 inbox fetch < 500ms (cached) and < 1200ms (uncached)
+- Mark-read success > 99.9%
+- Announcement publication propagation < 5s for online students
+
+---
+
+### 18.10 Edge Cases (Must Handle)
+
+1. **Student with zero announcements**
+     - Return empty list and unread count = 0.
+
+2. **Duplicate read event**
+     - Upsert semantics must keep operation idempotent.
+
+3. **Announcement expires**
+     - Expired rows must disappear from inbox queries.
+
+4. **Announcement archived after student read**
+     - Keep read audit row; hide from active inbox list.
+
+5. **Large announcement volume**
+     - Use cursor pagination, not offset for deep scroll.
+
+6. **Out-of-order client refreshes**
+     - Server remains source of truth for unread count.
+
+---
+
+### 18.11 Frontend-to-Backend Cutover Plan
+
+Current frontend uses localStorage-backed context (demo mode). Cutover steps:
+
+1. Keep `AnnouncementContext` public API unchanged.
+2. Replace localStorage read/write internals with API calls.
+3. Preserve route structure and pages:
+     - `/admin/announcements`
+     - `/student/inbox`
+4. Keep unread badge behavior identical.
+5. Add optimistic UI for read actions with rollback on API failure.
+
+Because UI contracts are already stable, backend integration can be done with minimal UI churn.
+
+---
+
+### 18.12 Implementation Checklist (Production)
+
+Backend:
+- [ ] Create `announcements` and `announcement_reads` tables + indexes.
+- [ ] Implement admin create/list/archive endpoints.
+- [ ] Implement student inbox/list/read/read-all endpoints.
+- [ ] Add auth middleware role checks and ownership enforcement.
+- [ ] Add integration tests for read/unread transitions.
+
+Frontend:
+- [ ] Replace demo persistence with API service layer.
+- [ ] Keep `AnnouncementContext` as single client state orchestrator.
+- [ ] Add loading/error/empty states for inbox and admin form.
+- [ ] Add retry/error toasts for failed read actions.
+
+Operations:
+- [ ] Add metrics + logs + alert thresholds.
+- [ ] Add Redis caching and invalidation hooks.
+- [ ] Define retention policy for archived announcements.
+
+This completes the production blueprint for a scalable, auditable admin announcement system with a student inbox that supports accurate per-user read state.

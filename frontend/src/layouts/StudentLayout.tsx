@@ -3,9 +3,10 @@ import { NavLink, useNavigate, Outlet } from 'react-router-dom'
 import {
   LayoutDashboard, Map, BookOpen, Bot, Library,
   BarChart2, Trophy, Users, FileText, MessageSquare, LogOut,
-  ChevronLeft, ChevronRight, Bell, Search, Menu
+  ChevronLeft, ChevronRight, Bell, Search, Menu, Inbox
 } from 'lucide-react'
 import { useStudentAuth } from '../context/StudentAuthContext'
+import { useAnnouncements } from '../context/AnnouncementContext'
 import { getDaysUntilExam } from '../data/dashboard'
 import './StudentLayout.css'
 
@@ -16,6 +17,7 @@ const NAV_ITEMS = [
   { to: '/student/ai-tutor',    icon: Bot,             label: 'AI Tutor' },
   { to: '/student/content',     icon: Library,         label: 'Content Hub' },
   { to: '/student/comments',    icon: MessageSquare,   label: 'Comments' },
+  { to: '/student/inbox',       icon: Inbox,           label: 'Inbox' },
   { to: '/student/analytics',   icon: BarChart2,       label: 'Analytics' },
   { to: '/student/leaderboard', icon: Trophy,          label: 'Leaderboard' },
   { to: '/student/partners',    icon: Users,           label: 'Study Partners' },
@@ -24,10 +26,12 @@ const NAV_ITEMS = [
 
 export default function StudentLayout() {
   const { user, logout } = useStudentAuth()
+  const { unreadCount } = useAnnouncements()
   const navigate = useNavigate()
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const daysLeft = getDaysUntilExam('2025-06-20')
+  const announcementUnreadCount = unreadCount(user?.email ?? '')
 
   const initials = user?.name
     ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
@@ -111,9 +115,17 @@ export default function StudentLayout() {
             <button className="sl-topbar__icon-btn" title="Search">
               <Search size={18} />
             </button>
-            <button className="sl-topbar__icon-btn sl-topbar__bell" title="Notifications">
+            <button
+              className="sl-topbar__icon-btn sl-topbar__bell"
+              title="Notifications"
+              onClick={() => navigate('/student/inbox')}
+            >
               <Bell size={18} />
-              <span className="sl-topbar__badge">3</span>
+              {announcementUnreadCount > 0 ? (
+                <span className="sl-topbar__badge">
+                  {announcementUnreadCount > 9 ? '9+' : announcementUnreadCount}
+                </span>
+              ) : null}
             </button>
             <div className="sl-topbar__avatar">{initials}</div>
           </div>
