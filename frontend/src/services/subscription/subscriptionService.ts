@@ -181,7 +181,6 @@ export class SubscriptionService {
       return (
         feature === 'adaptive_limited' ||
         feature === 'mock_exam_limited' ||
-        feature === 'analytics_basic' ||
         feature === 'marathon_preview'
       )
     }
