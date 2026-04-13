@@ -7,6 +7,7 @@ import {
   Wallet,
   MessageSquareWarning,
   Megaphone,
+  Settings,
   LogOut,
   Menu,
   X,
@@ -22,6 +23,7 @@ const ADMIN_NAV_ITEMS = [
   { to: '/admin/financials', label: 'Financials', icon: Wallet },
   { to: '/admin/comments', label: 'Comment Moderation', icon: MessageSquareWarning },
   { to: '/admin/announcements', label: 'Announcements', icon: Megaphone },
+  { to: '/admin/billing', label: 'Billing & Trial', icon: Settings },
 ]
 
 export default function AdminLayout() {

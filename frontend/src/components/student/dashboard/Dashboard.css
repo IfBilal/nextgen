@@ -26,6 +26,36 @@
   font-size: var(--text-base);
 }
 
+.welcome-plan-row {
+  margin-top: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.welcome-plan-chip,
+.welcome-demo-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.welcome-plan-chip {
+  border: 1px solid #c7ddf3;
+  background: #edf6ff;
+  color: #1a5f9a;
+}
+
+.welcome-demo-chip {
+  border: 1px solid #f1c17b;
+  background: #fff6e7;
+  color: #a86c17;
+}
+
 .exam-badge {
   display: flex;
   align-items: center;

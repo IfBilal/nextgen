@@ -3,10 +3,11 @@ import { NavLink, useNavigate, Outlet } from 'react-router-dom'
 import {
   LayoutDashboard, Map, BookOpen, Library,
   BarChart2, Trophy, Users, FileText, MessageSquare, LogOut,
-  ChevronLeft, ChevronRight, Bell, Search, Menu, Inbox, Layers
+  ChevronLeft, ChevronRight, Bell, Search, Menu, Inbox, Layers, Sparkles, Clock3
 } from 'lucide-react'
 import { useStudentAuth } from '../context/StudentAuthContext'
 import { useAnnouncements } from '../context/AnnouncementContext'
+import { useSubscription } from '../context/SubscriptionContext'
 import { getDaysUntilExam } from '../data/dashboard'
 import './StudentLayout.css'
 
@@ -23,16 +24,23 @@ const NAV_ITEMS = [
   { to: '/student/leaderboard', icon: Trophy,          label: 'Leaderboard' },
   { to: '/student/partners',    icon: Users,           label: 'Study Partners' },
   { to: '/student/notes',       icon: FileText,        label: 'Notes' },
+  { to: '/student/upgrade',     icon: Sparkles,        label: 'Upgrade' },
 ]
 
 export default function StudentLayout() {
   const { user, logout } = useStudentAuth()
+  const { snapshot, planLabel } = useSubscription()
   const { unreadCount } = useAnnouncements()
   const navigate = useNavigate()
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const daysLeft = getDaysUntilExam('2025-06-20')
   const announcementUnreadCount = unreadCount(user?.email ?? '')
+  const demoStatusText = snapshot?.isCurrentPlanTimeBound
+    ? snapshot.isCurrentPlanExpired
+      ? `${planLabel} ended • Upgrade required`
+      : `${snapshot.remainingDays}d left in ${planLabel}`
+    : null
 
   const initials = user?.name
     ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
@@ -88,10 +96,16 @@ export default function StudentLayout() {
             {!collapsed && (
               <div className="sl-user__info">
                 <span className="sl-user__name">{user?.name || 'Student'}</span>
-                <span className="sl-user__tier">Pro Plan</span>
+                <span className="sl-user__tier">{planLabel}</span>
               </div>
             )}
           </div>
+
+          {!collapsed && demoStatusText ? (
+            <div className="sl-demo-chip">
+              <Clock3 size={12} /> {demoStatusText}
+            </div>
+          ) : null}
 
           <button className="sl-logout" onClick={handleLogout} title="Logout">
             <LogOut size={18} />

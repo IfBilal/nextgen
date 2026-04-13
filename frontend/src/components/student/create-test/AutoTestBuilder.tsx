@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { BookOpen, AlertCircle, Settings, PlayCircle } from 'lucide-react'
 import { EXAM_TAXONOMY } from '../../../data/examTaxonomy'
 import { mockRoadmapContext, type TestBlueprint } from '../../../data/createTest'
+import { useSubscription } from '../../../context/SubscriptionContext'
 
 export default function AutoTestBuilder() {
   const navigate = useNavigate()
+  const { canStartMockExam, recordDemoMockUsage, snapshot } = useSubscription()
   const [isCustom, setIsCustom] = useState(false)
   const [questionCount, setQuestionCount] = useState(mockRoadmapContext.questionCount)
 
@@ -52,6 +54,12 @@ export default function AutoTestBuilder() {
   }
 
   const handleStart = () => {
+    if (!canStartMockExam()) {
+      navigate('/student/upgrade')
+      return
+    }
+
+    recordDemoMockUsage()
     navigate('/student/test-session', {
       state: {
         testBlueprint: selectedBlueprint,
@@ -165,9 +173,22 @@ export default function AutoTestBuilder() {
         </div>
       )}
 
-      <button className="btn btn-primary start-btn" onClick={handleStart}>
+      {snapshot?.entitlement.currentPlan === 'demo' ? (
+        <div className="roadmap-context-banner" style={{ marginTop: 12 }}>
+          <div className="banner-icon"><AlertCircle size={24} /></div>
+          <div>
+            <h4>Demo Trial Access</h4>
+            <p>
+              You have used <strong>{snapshot.entitlement.mockExamsUsedInDemo}/1</strong> full mock exam in demo.
+              Upgrade to unlock the full mock exam library.
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      <button className="btn btn-primary start-btn" onClick={handleStart} disabled={!canStartMockExam()}>
         <PlayCircle size={20} />
-        Start {isCustom ? 'Custom' : 'Roadmap'} Test
+        {canStartMockExam() ? `Start ${isCustom ? 'Custom' : 'Roadmap'} Test` : 'Demo mock limit reached'}
       </button>
     </div>
   )

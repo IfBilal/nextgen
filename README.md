@@ -3111,3 +3111,344 @@ Operations:
 - [ ] Define retention policy for archived announcements.
 
 This completes the production blueprint for a scalable, auditable admin announcement system with a student inbox that supports accurate per-user read state.
+
+---
+
+## 19. TIERED SUBSCRIPTIONS + DEMO TRIAL (PRODUCTION BLUEPRINT)
+
+This chapter is the authoritative specification for taking the current frontend-only tier/trial implementation into fully synchronized production with backend, database, billing provider, and secure entitlement enforcement.
+
+### 19.1 Product Rules (Non-Negotiable)
+
+Source of truth is `docs/tiers.md` + current frontend UX.
+
+Plans:
+- **Demo Trial** (time-limited, auto-start on first login)
+- **Basic**
+- **Standard**
+- **Premium**
+
+Core business behavior:
+1. User lands on marketing page, creates account, logs in.
+2. On first authenticated session, trial starts automatically.
+3. Trial duration default is 7 days (admin editable).
+4. All paid plans (`basic`, `standard`, `premium`) are currently 30-day access windows in frontend mode.
+5. User can upgrade during trial or after expiry.
+6. After expiry, restricted resources are blocked by server-side entitlement.
+7. Frontend must show discoverable lock states and upgrade CTA, not silent hiding.
+
+### 19.2 Target Production Architecture
+
+#### Frontend
+- React app keeps current `SubscriptionContext` public API.
+- Context becomes orchestration layer only (no business authority).
+- Feature checks use server-sourced entitlement snapshot.
+
+#### Backend API
+- Node.js/TypeScript API becomes entitlement authority.
+- JWT-authenticated endpoints return signed entitlement and plan capabilities.
+- All protected business endpoints re-check entitlement server-side.
+
+#### Database
+- PostgreSQL stores plans, pricing versions, user subscriptions, trial lifecycle, feature grants.
+- Billing events (webhooks) are persisted and replay-safe.
+
+#### Billing Provider
+- Stripe (or equivalent) for checkout/subscription lifecycle.
+- Webhooks are idempotent and authoritative for payment state.
+
+### 19.3 Canonical Domain Model
+
+#### Enum: `plan_id`
+- `demo`
+- `basic`
+- `standard`
+- `premium`
+
+#### Enum: `subscription_status`
+- `trialing`
+- `active`
+- `past_due`
+- `canceled`
+- `expired`
+
+#### Enum: `feature_key`
+- `dashboard_basic`
+- `adaptive_limited`
+- `adaptive_full`
+- `mock_exam_limited`
+- `mock_exam_full`
+- `analytics_basic`
+- `analytics_advanced`
+- `peer_matching`
+- `leaderboard`
+- `marathon_preview`
+- `marathon_full`
+- `priority_support`
+
+### 19.4 Recommended Database Schema
+
+```sql
+CREATE TYPE plan_id AS ENUM ('demo', 'basic', 'standard', 'premium');
+CREATE TYPE subscription_status AS ENUM ('trialing', 'active', 'past_due', 'canceled', 'expired');
+
+CREATE TABLE billing_settings (
+  id SMALLINT PRIMARY KEY DEFAULT 1,
+  demo_duration_days INT NOT NULL DEFAULT 7,
+  updated_by UUID,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT demo_days_range CHECK (demo_duration_days BETWEEN 1 AND 30)
+);
+
+CREATE TABLE plan_catalog (
+  plan plan_id PRIMARY KEY,
+  display_name VARCHAR(80) NOT NULL,
+  monthly_price_cents INT NOT NULL,
+  currency VARCHAR(8) NOT NULL DEFAULT 'USD',
+  is_most_popular BOOLEAN NOT NULL DEFAULT FALSE,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE plan_feature_grants (
+  plan plan_id NOT NULL,
+  feature_key VARCHAR(64) NOT NULL,
+  PRIMARY KEY (plan, feature_key)
+);
+
+CREATE TABLE user_subscriptions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  plan plan_id NOT NULL,
+  status subscription_status NOT NULL,
+  trial_started_at TIMESTAMPTZ,
+  trial_ends_at TIMESTAMPTZ,
+  current_period_start TIMESTAMPTZ,
+  current_period_end TIMESTAMPTZ,
+  canceled_at TIMESTAMPTZ,
+  provider_customer_id VARCHAR(255),
+  provider_subscription_id VARCHAR(255),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE UNIQUE INDEX idx_user_active_subscription
+ON user_subscriptions(user_id)
+WHERE status IN ('trialing','active','past_due');
+
+CREATE TABLE billing_events (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  provider VARCHAR(32) NOT NULL,
+  provider_event_id VARCHAR(255) NOT NULL UNIQUE,
+  event_type VARCHAR(120) NOT NULL,
+  payload JSONB NOT NULL,
+  received_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  processed_at TIMESTAMPTZ,
+  processing_error TEXT
+);
+
+CREATE TABLE trial_usage_counters (
+  user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  mock_exams_used INT NOT NULL DEFAULT 0,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+
+### 19.5 Plan Access Matrix (Production Contract)
+
+#### Demo Trial
+- Allowed: `adaptive_limited`, `mock_exam_limited` (quota), `analytics_basic`, `marathon_preview`
+- Locked: `mock_exam_full`, `analytics_advanced`, `peer_matching`, `leaderboard`, `marathon_full`, `priority_support`
+
+#### Basic
+- Allowed: `adaptive_limited`, `mock_exam_limited`, `marathon_preview`
+- Locked: `analytics_basic`, `analytics_advanced`, `peer_matching`, `leaderboard`, `marathon_full`, `priority_support`
+
+#### Standard
+- Allowed: full adaptive + full mocks + full analytics (`analytics_basic` + `analytics_advanced`)
+- Locked (Premium-only): `peer_matching`, `leaderboard`, `priority_support`
+
+#### Premium
+- All features unlocked.
+
+### 19.6 Entitlement Resolution Algorithm (Server)
+
+On each authenticated request:
+1. Load active/trial subscription row for `user_id`.
+2. If none exists and user is first-time active session, create trial row.
+3. If `now > trial_ends_at` and plan is demo, transition status to `expired`.
+4. If `now > current_period_end` for paid plans, transition status to `expired`.
+4. Compute granted features using `plan_feature_grants` + trial status checks.
+5. Return signed entitlement payload to frontend.
+
+Pseudo-shape returned by API:
+
+```json
+{
+  "plan": "standard",
+  "status": "active",
+  "trial": {
+     "startedAt": null,
+     "endsAt": null,
+     "remainingDays": 0,
+     "isExpired": false
+  },
+    "grants": ["adaptive_full", "mock_exam_full", "analytics_basic", "analytics_advanced"],
+  "limits": {
+     "demoMockExamsRemaining": 0
+  },
+  "version": "2026-04-13T18:00:00Z"
+}
+```
+
+### 19.7 Required Backend API Contracts
+
+#### Student-facing
+1. `GET /api/v1/billing/entitlement`
+    - Returns current entitlement snapshot.
+
+2. `GET /api/v1/billing/plans`
+    - Returns active plans and display prices.
+
+3. `POST /api/v1/billing/checkout-session`
+    - Creates provider checkout session for selected plan.
+
+4. `POST /api/v1/billing/portal-session`
+    - Opens subscription management portal.
+
+#### Admin-facing
+1. `GET /api/v1/admin/billing/settings`
+2. `PUT /api/v1/admin/billing/settings`
+    - Update fixed frontend-visible prices and demo duration.
+
+3. `GET /api/v1/admin/billing/plans`
+4. `PUT /api/v1/admin/billing/plans/:planId`
+
+#### Webhook
+1. `POST /api/v1/webhooks/stripe`
+    - Verify signature.
+    - Persist event in `billing_events`.
+    - Apply idempotent subscription state transition.
+
+### 19.8 Payment + Subscription Lifecycle
+
+#### Trial start
+- Trigger: first successful login for student with no active subscription.
+- Action: create `user_subscriptions` with `plan='demo'`, `status='trialing'`, set `trial_ends_at`.
+
+#### Upgrade during trial
+- User selects plan in frontend.
+- Backend creates checkout session.
+- On successful payment webhook:
+  - set `plan='basic|standard|premium'`
+  - `status='active'`
+    - set paid period end (currently 30 days in frontend simulation)
+  - clear trial-only restrictions.
+
+#### Expiry handling
+- Evaluated on read and via nightly job.
+- If expired and still demo:
+  - set `status='expired'`
+  - limit access to upgrade-eligible routes only.
+- If expired and paid plan:
+    - set `status='expired'`
+    - limit access to upgrade/renewal routes only.
+
+#### Cancellation
+- Provider event sets `status='canceled'` but user may retain access until period end.
+
+### 19.9 Frontend-Backend Synchronization Contract
+
+Current frontend adapter pattern is already correct for migration:
+- `SubscriptionRepository` = boundary
+- `LocalSubscriptionRepository` = temporary local mode
+- Production replacement = `ApiSubscriptionRepository`
+
+Cutover strategy:
+1. Keep `SubscriptionContext` and UI components unchanged.
+2. Replace storage adapter only.
+3. Ensure all gating reads server entitlement response.
+4. Keep optimistic UX for purchase button, but final truth from webhook-refreshed entitlement.
+
+Refresh cadence:
+- Pull entitlement on login, app boot, and route transitions into protected areas.
+- Revalidate every 60–120s while app is active.
+- Force refresh after checkout success redirect.
+
+### 19.10 Security and Enforcement Requirements
+
+1. **Never trust frontend gating.**
+    - Every protected backend endpoint checks entitlement before serving data.
+
+2. **Webhook idempotency is mandatory.**
+    - Use unique `provider_event_id` constraint.
+
+3. **JWT payload should not be sole source of entitlement.**
+    - JWT can include snapshot hints, but backend must verify against DB.
+
+4. **Auditability.**
+    - Record all entitlement transitions and admin pricing changes.
+
+5. **RLS/authorization policy.**
+    - Students can only read their own subscription row.
+    - Only admin role can mutate billing settings/catalog.
+
+### 19.11 Operational Jobs
+
+1. **Nightly expiry reconciler**
+    - Marks stale trial and paid subscriptions as `expired`.
+
+2. **Billing drift reconciler**
+    - Compares provider state with DB and fixes mismatches.
+
+3. **Trial limits reconciler**
+    - Ensures trial usage counters and entitlement state are consistent.
+
+### 19.12 Observability and Alerts
+
+Metrics:
+- `billing.entitlement.fetch.latency.p95`
+- `billing.checkout.create.success_rate`
+- `billing.webhook.process.success_rate`
+- `billing.webhook.idempotent.duplicates`
+- `subscription.expired.users.count`
+
+Alerts:
+- webhook failure rate > 1%
+- entitlement fetch p95 > 500ms
+- checkout success drop > 20% day-over-day
+
+### 19.13 Migration Plan from Current Frontend Demo Mode
+
+Phase 1 (current):
+- LocalStorage entitlements + admin setting simulation.
+
+Phase 2:
+- Introduce API endpoints and DB tables.
+- Keep local adapter fallback for development.
+
+Phase 3:
+- Swap frontend adapter to API.
+- Enable checkout and webhook processing.
+
+Phase 4:
+- Harden server-side gates for all premium resources.
+- Add integration tests and end-to-end billing tests.
+
+### 19.14 Developer Checklist (Backend Onboarding)
+
+- [ ] Create DB schema in section 19.4.
+- [ ] Seed `plan_catalog` and `plan_feature_grants` from section 19.5.
+- [ ] Implement entitlement resolver algorithm (19.6).
+- [ ] Build API endpoints (19.7).
+- [ ] Add Stripe webhook processor with idempotency (19.7, 19.8).
+- [ ] Implement nightly reconciliation jobs (19.11).
+- [ ] Add audit logs + admin mutation history.
+- [ ] Add integration tests:
+  - first login trial start
+  - trial expiry redirect
+  - upgrade during trial
+  - downgrade/cancel behavior
+  - admin price update propagation
+
+This chapter is the production contract for subscriptions: if implemented as specified, frontend, backend, and DB will remain aligned and low-risk to evolve.

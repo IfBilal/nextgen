@@ -216,6 +216,19 @@
   font-weight: 500;
 }
 
+.sl-demo-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 190, 60, 0.14);
+  border: 1px solid rgba(255, 190, 60, 0.35);
+  color: #ffd180;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 7px 10px;
+}
+
 .sl-logout {
   display: flex;
   align-items: center;

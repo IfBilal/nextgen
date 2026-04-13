@@ -2,13 +2,14 @@
 import React, { createContext, useContext, useState } from 'react'
 import { safeParseJson } from '../services/errorUtils'
 import { captureException, logWarn } from '../services/observability'
+import type { PlanId } from '../types/subscription'
 
 interface StudentUser {
   name: string
   email: string
   medicalSchool?: string
   onboarded: boolean
-  tier: 'Basic' | 'Pro' | 'Elite'
+  tier: PlanId
 }
 
 interface StudentAuthContextType {
@@ -29,8 +30,19 @@ function isStudentUser(value: unknown): value is StudentUser {
     typeof candidate.name === 'string' &&
     typeof candidate.email === 'string' &&
     typeof candidate.onboarded === 'boolean' &&
-    (candidate.tier === 'Basic' || candidate.tier === 'Pro' || candidate.tier === 'Elite')
+    (candidate.tier === 'demo' || candidate.tier === 'basic' || candidate.tier === 'standard' || candidate.tier === 'premium')
   )
+}
+
+function normalizeLegacyTier(tier: unknown): PlanId {
+  if (tier === 'demo' || tier === 'basic' || tier === 'standard' || tier === 'premium') {
+    return tier
+  }
+
+  if (tier === 'Basic') return 'basic'
+  if (tier === 'Pro') return 'standard'
+  if (tier === 'Elite') return 'premium'
+  return 'demo'
 }
 
 export const StudentAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -38,6 +50,21 @@ export const StudentAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const parsed = safeParseJson<unknown>(localStorage.getItem('studentUser'))
     if (!parsed) return null
     if (isStudentUser(parsed)) return parsed
+
+    if (parsed && typeof parsed === 'object') {
+      const candidate = parsed as Partial<StudentUser> & { tier?: unknown }
+      if (typeof candidate.name === 'string' && typeof candidate.email === 'string' && typeof candidate.onboarded === 'boolean') {
+        const migrated: StudentUser = {
+          name: candidate.name,
+          email: candidate.email,
+          onboarded: candidate.onboarded,
+          medicalSchool: candidate.medicalSchool,
+          tier: normalizeLegacyTier(candidate.tier),
+        }
+        localStorage.setItem('studentUser', JSON.stringify(migrated))
+        return migrated
+      }
+    }
 
     logWarn('Ignored malformed persisted student user')
     localStorage.removeItem('studentUser')
@@ -64,7 +91,7 @@ export const StudentAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
       name: 'Demo Student',
       email,
       onboarded: false,
-      tier: 'Pro',
+      tier: 'demo',
     }
     localStorage.setItem('studentUser', JSON.stringify(demoUser))
     setUser(demoUser)
@@ -78,7 +105,7 @@ export const StudentAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
         email,
         medicalSchool,
         onboarded: false,
-        tier: 'Basic',
+        tier: 'demo',
       }
       localStorage.setItem('studentUser', JSON.stringify(newUser))
       setUser(newUser)

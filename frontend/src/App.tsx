@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { StudentAuthProvider } from './context/StudentAuthContext'
 import { AdminAuthProvider } from './context/AdminAuthContext'
 import { AnnouncementProvider } from './context/AnnouncementContext'
+import { SubscriptionProvider } from './context/SubscriptionContext'
 import StudentLayout from './layouts/StudentLayout'
 import AdminLayout from './layouts/AdminLayout'
 import StudentProtectedRoute from './components/routing/StudentProtectedRoute'
@@ -25,6 +26,7 @@ import NotesPage           from './pages/student/NotesPage'
 import CommentsPage        from './pages/student/CommentsPage'
 import InboxPage           from './pages/student/InboxPage'
 import FlashcardsPage      from './pages/student/FlashcardsPage'
+import UpgradePage         from './pages/student/UpgradePage'
 import AdminLoginPage      from './pages/admin/auth/AdminLoginPage'
 import AdminDashboardPage  from './pages/admin/AdminDashboardPage'
 import AdminStudentsPage   from './pages/admin/AdminStudentsPage'
@@ -32,14 +34,17 @@ import AdminMetricsPage    from './pages/admin/AdminMetricsPage'
 import AdminFinancialsPage from './pages/admin/AdminFinancialsPage'
 import AdminCommentsPage   from './pages/admin/AdminCommentsPage'
 import AdminAnnouncementsPage from './pages/admin/AdminAnnouncementsPage'
+import AdminBillingSettingsPage from './pages/admin/AdminBillingSettingsPage'
+import FeatureGate from './components/billing/FeatureGate'
 
 export default function App() {
   return (
     <BrowserRouter>
       <StudentAuthProvider>
-        <AdminAuthProvider>
-          <AnnouncementProvider>
-            <Routes>
+        <SubscriptionProvider>
+          <AdminAuthProvider>
+            <AnnouncementProvider>
+              <Routes>
               {/* Public landing page */}
               <Route path="/" element={<LandingPage />} />
 
@@ -54,9 +59,9 @@ export default function App() {
               <Route element={<StudentProtectedRoute />}>
                 <Route element={<StudentLayout />}>
                   <Route path="/student/dashboard" element={<DashboardPage />} />
-                  <Route path="/student/roadmap" element={<RoadmapPreviewPage />} />
-                  <Route path="/student/create-test" element={<CreateTestPage />} />
-                  <Route path="/student/qbank" element={<CreateTestPage />} />
+                  <Route path="/student/roadmap" element={<FeatureGate feature="adaptive_limited"><RoadmapPreviewPage /></FeatureGate>} />
+                  <Route path="/student/create-test" element={<FeatureGate feature="mock_exam_limited"><CreateTestPage /></FeatureGate>} />
+                  <Route path="/student/qbank" element={<FeatureGate feature="mock_exam_limited"><CreateTestPage /></FeatureGate>} />
                   <Route path="/student/test-session" element={<TestSessionPage />} />
                   <Route path="/student/test-review" element={<TestReviewPage />} />
                   <Route path="/student/tutor" element={<AiTutorPage />} />
@@ -64,10 +69,11 @@ export default function App() {
                   <Route path="/student/comments" element={<CommentsPage />} />
                   <Route path="/student/inbox" element={<InboxPage />} />
                   <Route path="/student/flashcards" element={<FlashcardsPage />} />
-                  <Route path="/student/analytics" element={<AnalyticsPage />} />
-                  <Route path="/student/leaderboard" element={<LeaderboardPage />} />
-                  <Route path="/student/partners" element={<StudyPartnersPage />} />
+                  <Route path="/student/analytics" element={<FeatureGate feature="analytics_basic"><AnalyticsPage /></FeatureGate>} />
+                  <Route path="/student/leaderboard" element={<FeatureGate feature="leaderboard"><LeaderboardPage /></FeatureGate>} />
+                  <Route path="/student/partners" element={<FeatureGate feature="peer_matching"><StudyPartnersPage /></FeatureGate>} />
                   <Route path="/student/notes" element={<NotesPage />} />
+                  <Route path="/student/upgrade" element={<UpgradePage />} />
                 </Route>
               </Route>
 
@@ -84,14 +90,16 @@ export default function App() {
                   <Route path="/admin/financials" element={<AdminFinancialsPage />} />
                   <Route path="/admin/comments" element={<AdminCommentsPage />} />
                   <Route path="/admin/announcements" element={<AdminAnnouncementsPage />} />
+                  <Route path="/admin/billing" element={<AdminBillingSettingsPage />} />
                 </Route>
               </Route>
 
               {/* 404 fallback */}
               <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </AnnouncementProvider>
-        </AdminAuthProvider>
+              </Routes>
+            </AnnouncementProvider>
+          </AdminAuthProvider>
+        </SubscriptionProvider>
       </StudentAuthProvider>
     </BrowserRouter>
   )
