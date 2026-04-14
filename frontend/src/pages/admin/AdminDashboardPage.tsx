@@ -10,7 +10,6 @@ import {
   YAxis,
 } from 'recharts'
 import {
-  ADMIN_ACTIVITY_FEED,
   ADMIN_KPIS,
   AT_RISK_STUDENTS,
   DAILY_ACTIVE_USERS,
@@ -23,7 +22,7 @@ export default function AdminDashboardPage() {
     <div className="admin-overview-page">
       <header className="admin-overview-header">
         <h1>Admin Overview</h1>
-        <p>Live operational telemetry and platform performance summary.</p>
+        <p>Simple snapshot of students and performance.</p>
       </header>
 
       <section className="admin-kpi-grid">
@@ -31,7 +30,6 @@ export default function AdminDashboardPage() {
           <article className="admin-kpi-card" key={kpi.id}>
             <h4>{kpi.label}</h4>
             <p className="admin-kpi-value">{kpi.value}</p>
-            <p className={`admin-kpi-delta ${kpi.trend}`}>{kpi.delta}</p>
           </article>
         ))}
       </section>
@@ -39,7 +37,6 @@ export default function AdminDashboardPage() {
       <section className="admin-overview-grid">
         <article className="admin-panel">
           <h3>Daily Active Users (7-Day)</h3>
-          <p>Tracks usage momentum and engagement volatility.</p>
           <div className="admin-chart-wrap">
             <div className="admin-chart-canvas">
               <ResponsiveContainer width="100%" height="100%">
@@ -55,23 +52,8 @@ export default function AdminDashboardPage() {
           </div>
         </article>
 
-        <article className="admin-panel admin-panel--events">
-          <h3>Recent Platform Events</h3>
-          <p>Most recent product, usage, and risk-related events.</p>
-
-          <div className="admin-activity-list">
-            {ADMIN_ACTIVITY_FEED.map(item => (
-              <div className={`admin-activity-item ${item.severity === 'alert' ? 'alert' : ''}`} key={item.id}>
-                <p className="admin-activity-message">{item.message}</p>
-                <p className="admin-activity-time">{item.timeAgo}</p>
-              </div>
-            ))}
-          </div>
-        </article>
-
         <article className="admin-panel">
           <h3>Score Distribution</h3>
-          <p>Current spread of student performance buckets.</p>
           <div className="admin-chart-wrap">
             <div className="admin-chart-canvas">
               <ResponsiveContainer width="100%" height="100%">
@@ -88,8 +70,7 @@ export default function AdminDashboardPage() {
         </article>
 
         <article className="admin-panel">
-          <h3>At-Risk Students</h3>
-          <p>Students under threshold (&lt; 50% average) needing intervention.</p>
+          <h3>Students Needing Help</h3>
 
           <div className="admin-risk-table-wrap">
             <table className="admin-risk-table">
@@ -108,7 +89,7 @@ export default function AdminDashboardPage() {
                     <td className="admin-risk-score">{student.avgScore}%</td>
                     <td>{student.weakArea}</td>
                     <td>
-                      <span className="admin-risk-chip">At Risk</span>
+                      <span className="admin-risk-chip">Needs Review</span>
                     </td>
                   </tr>
                 ))}

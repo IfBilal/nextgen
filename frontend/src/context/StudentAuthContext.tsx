@@ -30,18 +30,19 @@ function isStudentUser(value: unknown): value is StudentUser {
     typeof candidate.name === 'string' &&
     typeof candidate.email === 'string' &&
     typeof candidate.onboarded === 'boolean' &&
-    (candidate.tier === 'demo' || candidate.tier === 'basic' || candidate.tier === 'standard' || candidate.tier === 'premium')
+    typeof candidate.tier === 'string'
   )
 }
 
 function normalizeLegacyTier(tier: unknown): PlanId {
-  if (tier === 'demo' || tier === 'basic' || tier === 'standard' || tier === 'premium') {
-    return tier
+  if (typeof tier === 'string') {
+    const normalized = tier.trim().toLowerCase()
+    if (normalized.length === 0) return 'demo'
+    if (normalized === 'pro') return 'standard'
+    if (normalized === 'elite') return 'premium'
+    return normalized
   }
 
-  if (tier === 'Basic') return 'basic'
-  if (tier === 'Pro') return 'standard'
-  if (tier === 'Elite') return 'premium'
   return 'demo'
 }
 

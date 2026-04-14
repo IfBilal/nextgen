@@ -33,9 +33,9 @@ export interface RiskStudent {
 
 export const ADMIN_KPIS: AdminKpi[] = [
   { id: 'k1', label: 'Total Students', value: '248', delta: '+12 this week', trend: 'up' },
-  { id: 'k2', label: 'Active This Week', value: '189', delta: '76% engagement', trend: 'up' },
-  { id: 'k3', label: 'Platform Avg. Score', value: '71%', delta: '+2.4% vs last week', trend: 'up' },
-  { id: 'k4', label: 'At-Risk Students', value: '12', delta: '-3 this week', trend: 'down' },
+  { id: 'k2', label: 'Active This Week', value: '189', delta: '76% active', trend: 'up' },
+  { id: 'k3', label: 'Average Score', value: '71%', delta: '+2.4% this week', trend: 'up' },
+  { id: 'k4', label: 'Need Help', value: '12', delta: '-3 this week', trend: 'down' },
 ]
 
 export const DAILY_ACTIVE_USERS: DailyActivePoint[] = [
@@ -61,7 +61,7 @@ export const ADMIN_ACTIVITY_FEED: ActivityItem[] = [
   { id: 'a2', message: 'Noah Khan joined the platform on Pro Monthly plan', timeAgo: '12m ago', severity: 'normal' },
   { id: 'a3', message: 'Liam Jones has not logged in for 7 days', timeAgo: '2h ago', severity: 'alert' },
   { id: 'a4', message: 'Comment moderation queue reached 14 pending items', timeAgo: '3h ago', severity: 'alert' },
-  { id: 'a5', message: 'Daily tutor response latency improved to 0.84s avg', timeAgo: '4h ago', severity: 'normal' },
+  { id: 'a5', message: 'Tutor response time is now 0.84s', timeAgo: '4h ago', severity: 'normal' },
 ]
 
 export const AT_RISK_STUDENTS: RiskStudent[] = [

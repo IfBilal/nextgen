@@ -10,19 +10,34 @@ const USER_ENTITLEMENT_PREFIX = 'nextgen.billing.entitlement.'
 function sanitizeBillingSettings(input: BillingSettings | null): BillingSettings {
   if (!input) return DEFAULT_BILLING_SETTINGS
 
-  const normalizedPlans = DEFAULT_BILLING_SETTINGS.plans.map(plan => {
-    const incoming = input.plans.find(candidate => candidate.id === plan.id)
-    if (!incoming) return plan
+  const sourcePlans = Array.isArray(input.plans) && input.plans.length > 0 ? input.plans : DEFAULT_BILLING_SETTINGS.plans
 
-    const monthlyPrice = Number(incoming.monthlyPrice)
-    const safePrice = Number.isFinite(monthlyPrice) && monthlyPrice > 0 ? monthlyPrice : plan.monthlyPrice
+  const normalizedPlans = sourcePlans
+    .filter(plan => typeof plan?.id === 'string' && plan.id.trim().length > 0)
+    .map((plan, index) => {
+      const fallbackPlan = DEFAULT_BILLING_SETTINGS.plans[index] ?? DEFAULT_BILLING_SETTINGS.plans[0]
+      const monthlyPrice = Number(plan.monthlyPrice)
+      const safePrice = Number.isFinite(monthlyPrice) && monthlyPrice > 0
+        ? monthlyPrice
+        : (fallbackPlan?.monthlyPrice ?? 1)
 
-    return {
-      ...plan,
-      monthlyPrice: safePrice,
-      priceLabel: `$${safePrice}/month`,
-    }
-  })
+      const safeName = typeof plan.name === 'string' && plan.name.trim().length > 0
+        ? plan.name
+        : (fallbackPlan?.name ?? plan.id)
+
+      const incomingFeatures = Array.isArray(plan.features) && plan.features.length > 0
+        ? plan.features
+        : (fallbackPlan?.features ?? [])
+
+      return {
+        id: plan.id,
+        name: safeName,
+        monthlyPrice: safePrice,
+        priceLabel: `$${safePrice}/month`,
+        isMostPopular: Boolean(plan.isMostPopular),
+        features: incomingFeatures,
+      }
+    })
 
   const incomingDemoDays = Number(input.demoDurationDays)
   const demoDurationDays = Number.isFinite(incomingDemoDays)
@@ -31,7 +46,7 @@ function sanitizeBillingSettings(input: BillingSettings | null): BillingSettings
 
   return {
     demoDurationDays,
-    plans: normalizedPlans,
+    plans: normalizedPlans.length > 0 ? normalizedPlans : DEFAULT_BILLING_SETTINGS.plans,
   }
 }
 

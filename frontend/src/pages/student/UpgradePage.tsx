@@ -1,6 +1,6 @@
 import { CheckCircle2, Clock3, Sparkles } from 'lucide-react'
 import { useSubscription } from '../../context/SubscriptionContext'
-import { PLAN_DISPLAY_NAME, type PlanId } from '../../types/subscription'
+import { getPlanDisplayName, type PlanId } from '../../types/subscription'
 import '../../styles/billing.css'
 
 export default function UpgradePage() {
@@ -22,14 +22,14 @@ export default function UpgradePage() {
       {snapshot ? (
         <section className="billing-current-banner">
           <span>
-            Current plan: <strong>{PLAN_DISPLAY_NAME[snapshot.entitlement.currentPlan]}</strong>
+            Current plan: <strong>{getPlanDisplayName(snapshot.entitlement.currentPlan, billingSettings)}</strong>
           </span>
           {snapshot.isCurrentPlanTimeBound ? (
             <span className="billing-countdown-chip">
               <Clock3 size={14} />
               {snapshot.isCurrentPlanExpired
-                ? `${PLAN_DISPLAY_NAME[snapshot.entitlement.currentPlan]} expired`
-                : `${snapshot.remainingDays} day(s) left in ${PLAN_DISPLAY_NAME[snapshot.entitlement.currentPlan]}`}
+                ? `${getPlanDisplayName(snapshot.entitlement.currentPlan, billingSettings)} expired`
+                : `${snapshot.remainingDays} day(s) left in ${getPlanDisplayName(snapshot.entitlement.currentPlan, billingSettings)}`}
             </span>
           ) : null}
         </section>

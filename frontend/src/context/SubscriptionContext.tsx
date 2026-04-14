@@ -10,7 +10,7 @@ import type {
   PlanId,
   UserEntitlement,
 } from '../types/subscription'
-import { DEFAULT_BILLING_SETTINGS, PLAN_DISPLAY_NAME } from '../types/subscription'
+import { DEFAULT_BILLING_SETTINGS, getPlanDisplayName } from '../types/subscription'
 
 const repository = new LocalSubscriptionRepository()
 const subscriptionService = new SubscriptionService(repository)
@@ -81,8 +81,8 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const planLabel = useMemo(() => {
     if (!snapshot) return 'No Plan'
-    return PLAN_DISPLAY_NAME[snapshot.entitlement.currentPlan]
-  }, [snapshot])
+    return getPlanDisplayName(snapshot.entitlement.currentPlan, billingSettings)
+  }, [snapshot, billingSettings])
 
   const lockReason = snapshot ? subscriptionService.getLockReason(snapshot) : 'Upgrade to continue.'
 

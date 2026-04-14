@@ -6,34 +6,39 @@ import '../../styles/billing.css'
 export default function AdminBillingSettingsPage() {
   const { billingSettings, updateBillingSettings } = useBillingSettingsForAdmin()
 
-  const getInitialValues = () => ({
-    demoDays: String(billingSettings.demoDurationDays),
-    basicPrice: String(billingSettings.plans.find(plan => plan.id === 'basic')?.monthlyPrice ?? 15),
-    standardPrice: String(billingSettings.plans.find(plan => plan.id === 'standard')?.monthlyPrice ?? 30),
-    premiumPrice: String(billingSettings.plans.find(plan => plan.id === 'premium')?.monthlyPrice ?? 60),
-  })
+  const getInitialPrices = () =>
+    Object.fromEntries(
+      billingSettings.plans.map(plan => [plan.id, String(plan.monthlyPrice)]),
+    )
 
-  const [demoDays, setDemoDays] = useState(getInitialValues().demoDays)
-  const [basicPrice, setBasicPrice] = useState(getInitialValues().basicPrice)
-  const [standardPrice, setStandardPrice] = useState(getInitialValues().standardPrice)
-  const [premiumPrice, setPremiumPrice] = useState(getInitialValues().premiumPrice)
+  const [demoDays, setDemoDays] = useState(String(billingSettings.demoDurationDays))
+  const [planPrices, setPlanPrices] = useState<Record<string, string>>(getInitialPrices)
   const [savedMessage, setSavedMessage] = useState('')
 
   const parsedValues = useMemo(() => {
+    const parsedPlanPrices = Object.fromEntries(
+      billingSettings.plans.map(plan => {
+        const input = planPrices[plan.id] ?? String(plan.monthlyPrice)
+        return [plan.id, Math.max(1, Number(input) || plan.monthlyPrice)]
+      }),
+    )
+
     return {
       demoDurationDays: Math.min(30, Math.max(1, Number(demoDays) || 7)),
-      basic: Math.max(1, Number(basicPrice) || 15),
-      standard: Math.max(1, Number(standardPrice) || 30),
-      premium: Math.max(1, Number(premiumPrice) || 60),
+      planPrices: parsedPlanPrices,
     }
-  }, [demoDays, basicPrice, standardPrice, premiumPrice])
+  }, [demoDays, planPrices, billingSettings.plans])
 
-  const hasInvalidInput = [demoDays, basicPrice, standardPrice, premiumPrice].some(value => value.trim().length === 0)
+  const hasInvalidInput = [
+    demoDays,
+    ...billingSettings.plans.map(plan => planPrices[plan.id] ?? String(plan.monthlyPrice)),
+  ].some(value => value.trim().length === 0)
+
   const hasChanges =
     parsedValues.demoDurationDays !== billingSettings.demoDurationDays ||
-    parsedValues.basic !== (billingSettings.plans.find(plan => plan.id === 'basic')?.monthlyPrice ?? 15) ||
-    parsedValues.standard !== (billingSettings.plans.find(plan => plan.id === 'standard')?.monthlyPrice ?? 30) ||
-    parsedValues.premium !== (billingSettings.plans.find(plan => plan.id === 'premium')?.monthlyPrice ?? 60)
+    billingSettings.plans.some(
+      plan => parsedValues.planPrices[plan.id] !== plan.monthlyPrice,
+    )
 
   const canSave = hasChanges && !hasInvalidInput
 
@@ -42,18 +47,11 @@ export default function AdminBillingSettingsPage() {
 
     updateBillingSettings({
       demoDurationDays: parsedValues.demoDurationDays,
-      plans: billingSettings.plans.map(plan => {
-        if (plan.id === 'basic') {
-          return { ...plan, monthlyPrice: parsedValues.basic, priceLabel: `$${parsedValues.basic}/month` }
-        }
-        if (plan.id === 'standard') {
-          return { ...plan, monthlyPrice: parsedValues.standard, priceLabel: `$${parsedValues.standard}/month` }
-        }
-        if (plan.id === 'premium') {
-          return { ...plan, monthlyPrice: parsedValues.premium, priceLabel: `$${parsedValues.premium}/month` }
-        }
-        return plan
-      }),
+      plans: billingSettings.plans.map(plan => ({
+        ...plan,
+        monthlyPrice: parsedValues.planPrices[plan.id],
+        priceLabel: `$${parsedValues.planPrices[plan.id]}/month`,
+      })),
     })
     setSavedMessage('Billing settings saved successfully.')
   }
@@ -111,21 +109,30 @@ export default function AdminBillingSettingsPage() {
 
         <article className="billing-admin-card">
           <h3>Monthly plan pricing</h3>
-          <div className="billing-admin-field">
-            <label htmlFor="basicPrice">Basic plan ($/month)</label>
-            <input id="basicPrice" type="number" min={1} value={basicPrice} onChange={event => setBasicPrice(event.target.value)} />
-            <small>Entry tier pricing used on upgrade page and billing summaries.</small>
-          </div>
-          <div className="billing-admin-field">
-            <label htmlFor="standardPrice">Standard plan ($/month)</label>
-            <input id="standardPrice" type="number" min={1} value={standardPrice} onChange={event => setStandardPrice(event.target.value)} />
-            <small>Mark as most popular in UI for stronger conversion positioning.</small>
-          </div>
-          <div className="billing-admin-field">
-            <label htmlFor="premiumPrice">Premium plan ($/month)</label>
-            <input id="premiumPrice" type="number" min={1} value={premiumPrice} onChange={event => setPremiumPrice(event.target.value)} />
-            <small>Includes all premium perks: peer matching, leaderboard, priority support.</small>
-          </div>
+          {billingSettings.plans.map((plan, index) => (
+            <div className="billing-admin-field" key={plan.id}>
+              <label htmlFor={`plan-price-${plan.id}`}>{plan.name} plan ($/month)</label>
+              <input
+                id={`plan-price-${plan.id}`}
+                type="number"
+                min={1}
+                value={planPrices[plan.id] ?? String(plan.monthlyPrice)}
+                onChange={event =>
+                  setPlanPrices(previous => ({
+                    ...previous,
+                    [plan.id]: event.target.value,
+                  }))
+                }
+              />
+              <small>
+                {index === 0
+                  ? 'Starter tier pricing used for entry-level access.'
+                  : index === billingSettings.plans.length - 1
+                    ? 'Top tier pricing for full feature access.'
+                    : 'Mid-tier pricing for expanded capabilities.'}
+              </small>
+            </div>
+          ))}
         </article>
       </section>
 
@@ -135,3 +142,4 @@ export default function AdminBillingSettingsPage() {
     </div>
   )
 }
+                                                        

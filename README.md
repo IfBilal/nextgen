@@ -612,7 +612,7 @@ By strictly executing this technical blueprint across Node.js, Supabase, Groq, a
 
 ## 12. REAL-TIME ADMIN MONITORING IMPLEMENTATION PLAN (PRODUCTION)
 
-This section explains exactly how the current Admin Overview frontend (charts, activity feed, risk tables) should be wired to real users and real production data in near real-time.
+This section explains exactly how the current Admin Overview frontend (KPI cards, charts, and students-needing-help table) should be wired to real users and production data in near real-time.
 
 ### 12.1 Goals and Real-Time SLAs
 
@@ -624,9 +624,9 @@ For Admin pages (`/admin/dashboard`, `/admin/students`, `/admin/metrics`, `/admi
     - High-risk alerts (sudden score drops, abuse spikes)
 
 2. **Near-real-time (15–60s latency):**
-    - Activity feed events
-    - At-risk student table
-    - AI latency and system health cards
+    - Students-needing-help table updates
+    - Score distribution updates
+    - KPI snapshot refresh
 
 3. **Batch (5–60 min latency):**
     - Financial aggregates (MRR trend, churn cohorts)
@@ -710,6 +710,7 @@ Current UI (`AdminDashboardPage.tsx` + `admin-overview.css`) can map directly:
 1. **KPI Cards:**
     - API: `GET /api/admin/overview/kpis`
     - Source: `admin_kpi_snapshots` latest row.
+    - UI note: cards currently show primary values only (no delta line under each box).
 
 2. **DAU 7-Day Line Chart:**
     - API: `GET /api/admin/overview/dau?range=7d`
@@ -719,12 +720,8 @@ Current UI (`AdminDashboardPage.tsx` + `admin-overview.css`) can map directly:
     - API: `GET /api/admin/overview/score-distribution`
     - Source: precomputed buckets from scoring pipeline.
 
-4. **Recent Platform Events Feed:**
-    - API: `GET /api/admin/overview/activity?limit=50`
-    - Source: event stream consumer writes concise feed records.
-
-5. **At-Risk Students Table:**
-    - API: `GET /api/admin/overview/at-risk`
+4. **Students Needing Help Table:**
+    - API: `GET /api/admin/overview/needs-help`
     - Source: risk scoring job updates `admin_risk_students_current`.
 
 ### 12.6 Real-Time Delivery: WebSocket/SSE Pattern
@@ -1595,31 +1592,16 @@ This subsection maps every visible Student Ops element (as currently shown in `A
      - Backend source: `COUNT(*) FROM students WHERE tenant_id = :tenantId AND deleted_at IS NULL`.
      - Update cadence: near-real-time (refresh every 60s + push deltas).
 
-2. **Active Today**
-     - UI meaning: students with at least one learning/auth activity in last 24h and same UTC day boundary.
-     - Backend source:
-         - event table (`student_activity_events`) with `event_ts >= date_trunc('day', now())`.
-         - optional cached read model (`student_activity_rolling_1d`).
-     - Edge rule: if admin uses local timezone dashboards, compute by tenant timezone, not server timezone.
-
-3. **At-Risk (High/Critical)**
-     - UI meaning: count of students where computed risk band is `high|critical`.
-     - Backend source: `student_risk_scores.risk_band` read model.
-     - Recompute policy: every 5–15 minutes, plus immediate recompute on major events (score drop, inactivity burst, payment failure).
-
-4. **Open Interventions**
-     - UI meaning: interventions where status is not resolved.
-     - Backend source:
-         - `COUNT(*) FROM student_interventions WHERE status IN ('new','in_progress','escalated')`.
-     - SLA support: include overdue count as secondary metric in next iteration.
-
-5. **Suspended**
-     - UI meaning: students currently suspended from platform access.
-     - Backend source: `students.status = 'suspended'` (or account status projection).
+2. **Tier Count Cards (Dynamic)**
+    - UI meaning: one card for each tier currently configured in billing (`demo` + all paid tiers).
+    - Backend source:
+        - entitlement/subscription snapshot joined with billing plan config.
+    - Adaptation rule:
+        - if tiers are added/removed in billing config, card set updates automatically.
 
 #### B) Directory Summary
 
-6. **"N matching students"**
+3. **"N matching students"**
      - UI meaning: result count after applying all filters/search.
      - Backend source:
          - `GET /api/admin/students` returns `{ rows, total, filteredTotal }`.
@@ -1629,31 +1611,25 @@ This subsection maps every visible Student Ops element (as currently shown in `A
 
 #### C) Student Table Columns
 
-7. **Name + Email**
+4. **Name + Email**
      - DB: `students.full_name`, `students.email`.
      - Search index: trigram/full-text on name + case-insensitive prefix on email.
 
-8. **Cohort**
+5. **Cohort**
      - DB: `cohorts.name`, joined via `students.cohort_id`.
 
-9. **Status Chip** (`active/inactive/suspended/pending`)
-     - DB: `students.status`.
-     - Mutation path: admin action endpoints update status + audit row.
+6. **Tier**
+      - Derived field from entitlement/subscription state + billing tier configuration.
+      - Legacy compatibility rule in UI:
+      - `trial -> demo`
+      - unknown legacy paid states map to default paid tier.
 
-10. **Risk Chip** (`low/medium/high/critical`)
-        - DB/read model: `student_risk_scores.risk_band`.
-        - Not manually typed by admin (except overrides with expiry).
-
-11. **Subscription** (`trial/active/past_due/canceled`)
-        - DB: `student_subscriptions.state` (latest effective row).
-        - Source-of-truth integration: payment provider webhooks update this state.
-
-12. **Avg Score**
+7. **Avg Score**
         - DB/read model:
             - aggregate from `student_test_attempts` over configured window (e.g., last 30 days),
             - persisted in `student_ops_snapshot.avg_score_30d`.
 
-13. **Last Active**
+8. **Last Active**
         - DB/read model:
             - max event timestamp from `student_activity_events`,
             - denormalized to `student_ops_snapshot.last_active_at`.
@@ -1661,64 +1637,44 @@ This subsection maps every visible Student Ops element (as currently shown in `A
 
 #### D) Right Panel Student Profile Analytics
 
-14. **Risk Badge**
-        - comes from same `risk_band` model; must be consistent with table row.
-        - consistency rule: both sourced from same API payload to avoid mismatch.
+9. **Tier Badge**
+    - shows resolved tier for the selected student.
+    - consistency rule: must use same resolver/data payload as table row tier.
 
-15. **Meta fields (cohort, roadmap, onboarding, phone)**
+10. **Meta fields (cohort, roadmap, phone)**
         - `cohort`: cohorts table.
         - `roadmap stage`: `student_roadmap_progress.current_stage_label`.
-        - `onboarding`: `students.onboarding_status`.
         - `phone`: `students.phone` (PII-masked by role policy).
 
-16. **Video Progress bar**
+11. **Video Progress bar**
         - computed from `video_progress` aggregated by assigned curriculum scope.
         - formula (example):
             $$
             video\_progress\_pct = \frac{\sum completed\_video\_units}{\sum assigned\_video\_units} \times 100
             $$
 
-17. **PDF Progress bar**
+12. **PDF Progress bar**
         - computed from `document_progress` (see section 14).
         - formula (example):
             $$
             pdf\_progress\_pct = \frac{\sum completed\_document\_units}{\sum assigned\_document\_units} \times 100
             $$
 
-18. **Test Completion bar**
+13. **Test Completion bar**
         - derived from assigned tests vs completed tests (or question-bank targets).
         - formula:
             $$
             test\_completion\_pct = \frac{completed\_assigned\_tests}{total\_assigned\_tests} \times 100
             $$
 
-#### E) Ops Workflow Blocks
+#### E) Current Simplification Scope
 
-19. **Admin Actions panel**
-        - actions shown in UI:
-            - suspend/reactivate account,
-            - force logout,
-            - create intervention.
-        - all actions must:
-            - require permission,
-            - accept `reason`,
-            - write to `admin_actions_audit`,
-            - publish realtime event.
-
-20. **Internal Notes list**
-        - DB: `student_notes`.
-        - write endpoint: `POST /api/admin/students/:id/notes`.
-        - order: newest first by `created_at`.
-
-21. **Interventions list**
-        - DB: `student_interventions`.
-        - show: title, status, owner, due date.
-        - queue linkage: same object appears in interventions board.
-
-22. **Recent Activity timeline**
-        - DB source: `student_activity_events` union selected admin action events.
-        - UI renders latest N events (currently 6 in frontend).
-        - should support cursor pagination for deep history.
+14. Current frontend `AdminStudentsPage` intentionally focuses on insights only:
+    - no admin action buttons,
+    - no notes composer/list,
+    - no interventions list,
+    - no recent activity timeline.
+    These can be reintroduced later as separate modules once backend workflows are finalized.
 
 ### 15.14 Backend Analytics Computation Plan (Minute-Level)
 
@@ -1749,23 +1705,20 @@ Recommended workers:
 - response:
     - `rows[]` (table rows with profile summary fields),
     - `total`, `filteredTotal`,
-    - `kpis` (total, activeToday, atRisk, openInterventions, suspended),
+    - `kpis` (total + dynamic `tierCounts` object),
     - `serverTime`, `snapshotVersion`.
 
 `GET /api/admin/students/:id/profile`
 - response:
     - identity/meta,
     - progress metrics (`videoProgressPct`, `pdfProgressPct`, `testCompletionPct`),
-    - `notes[]`, `interventions[]`,
-    - `recentActivity[]`.
+    - resolved tier for badge display.
 
 `GET /api/admin/students/stream` (SSE)
 - event types:
     - `kpi.updated`,
     - `student.updated`,
-    - `intervention.updated`,
-    - `note.created`,
-    - `activity.appended`.
+    - `tier.updated`.
 
 ### 15.16 DB/Read-Model Additions for Current UI
 
@@ -1775,24 +1728,22 @@ Add/ensure these read-model tables for fast page loads:
 - one row per student + tenant,
 - columns:
     - `student_id`, `tenant_id`,
-    - `risk_band`,
-    - `subscription_state`,
+    - `resolved_tier_id`,
     - `avg_score_30d`,
     - `last_active_at`,
     - `video_progress_pct`, `pdf_progress_pct`, `test_completion_pct`,
-    - `open_interventions_count`,
     - `updated_at`.
 
 `student_ops_kpi_snapshot`
 - one row per tenant/time window,
 - columns:
     - `tenant_id`, `window_start`,
-    - `total_students`, `active_today`, `at_risk_count`, `open_interventions`, `suspended_count`,
+    - `total_students`,
+    - `tier_counts_json`,
     - `updated_at`.
 
 Indexes:
-- on `student_ops_snapshot(tenant_id, risk_band, subscription_state, last_active_at)`
-- on `student_interventions(student_id, status, due_at)`
+- on `student_ops_snapshot(tenant_id, resolved_tier_id, last_active_at)`
 - on `student_activity_events(student_id, event_ts desc)`
 
 ### 15.17 Monitoring and Alerting for Each Analytic

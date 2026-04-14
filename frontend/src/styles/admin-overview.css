@@ -42,16 +42,6 @@
   font-weight: 800;
 }
 
-.admin-kpi-delta {
-  margin: 0.25rem 0 0;
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-
-.admin-kpi-delta.up { color: #1d9b57; }
-.admin-kpi-delta.down { color: #d64545; }
-.admin-kpi-delta.neutral { color: #5f7fa2; }
-
 .admin-overview-grid {
   display: grid;
   grid-template-columns: 1.15fr 1fr;

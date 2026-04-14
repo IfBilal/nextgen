@@ -1,4 +1,4 @@
-export type PlanId = 'demo' | 'basic' | 'standard' | 'premium'
+export type PlanId = string
 
 export type FeatureKey =
   | 'dashboard_basic'
@@ -77,9 +77,19 @@ export const DEFAULT_BILLING_SETTINGS: BillingSettings = {
   ],
 }
 
-export const PLAN_DISPLAY_NAME: Record<PlanId, string> = {
-  demo: 'Demo Trial',
-  basic: 'Basic',
-  standard: 'Standard',
-  premium: 'Premium',
+export function getPlanDisplayName(planId: PlanId, billingSettings?: BillingSettings): string {
+  if (planId === 'demo') {
+    return 'Demo Trial'
+  }
+
+  const matchedPlan = billingSettings?.plans.find(plan => plan.id === planId)
+  if (matchedPlan) {
+    return matchedPlan.name
+  }
+
+  if (!planId) {
+    return 'Unknown Plan'
+  }
+
+  return planId.charAt(0).toUpperCase() + planId.slice(1)
 }

@@ -14,12 +14,40 @@ function getPaidDurationMs() {
   return PAID_PLAN_DURATION_DAYS * 24 * 60 * 60 * 1000
 }
 
-function getAccessEndsAtForEntitlement(entitlement: UserEntitlement): string | null {
+function isPaidPlan(planId: PlanId, settings: BillingSettings): boolean {
+  return settings.plans.some(plan => plan.id === planId)
+}
+
+function getFallbackPaidPlan(settings: BillingSettings): PlanId {
+  return settings.plans[0]?.id ?? 'demo'
+}
+
+function normalizePlanId(planId: PlanId, settings: BillingSettings): PlanId {
+  if (planId === 'demo' || isPaidPlan(planId, settings)) {
+    return planId
+  }
+
+  return getFallbackPaidPlan(settings)
+}
+
+function getPlanBand(planId: PlanId, settings: BillingSettings): 'demo' | 'starter' | 'core' | 'top' | 'unknown' {
+  if (planId === 'demo') return 'demo'
+
+  const planIndex = settings.plans.findIndex(plan => plan.id === planId)
+  if (planIndex < 0) return 'unknown'
+
+  if (settings.plans.length === 1) return 'top'
+  if (planIndex === 0) return 'starter'
+  if (planIndex === settings.plans.length - 1) return 'top'
+  return 'core'
+}
+
+function getAccessEndsAtForEntitlement(entitlement: UserEntitlement, settings: BillingSettings): string | null {
   if (entitlement.currentPlan === 'demo') {
     return entitlement.demoEndsAt
   }
 
-  if (entitlement.currentPlan === 'basic' || entitlement.currentPlan === 'standard' || entitlement.currentPlan === 'premium') {
+  if (isPaidPlan(entitlement.currentPlan, settings)) {
     if (entitlement.accessEndsAt) {
       return entitlement.accessEndsAt
     }
@@ -76,12 +104,22 @@ export class SubscriptionService {
 
   getEntitlementSnapshot(email: string): EntitlementSnapshot {
     const entitlement = this.ensureEntitlementForUser(email)
+    const settings = this.repository.getBillingSettings()
+    const normalizedPlan = normalizePlanId(entitlement.currentPlan, settings)
+    const normalizedEntitlement = normalizedPlan === entitlement.currentPlan
+      ? entitlement
+      : { ...entitlement, currentPlan: normalizedPlan, updatedAt: new Date().toISOString() }
+
+    if (normalizedPlan !== entitlement.currentPlan) {
+      this.repository.saveUserEntitlement(email, normalizedEntitlement)
+    }
+
     const now = Date.now()
 
-    const isDemoPlan = entitlement.currentPlan === 'demo'
-    const accessEndsAt = getAccessEndsAtForEntitlement(entitlement)
+    const isDemoPlan = normalizedEntitlement.currentPlan === 'demo'
+    const accessEndsAt = getAccessEndsAtForEntitlement(normalizedEntitlement, settings)
     const accessEndsAtMs = accessEndsAt ? Date.parse(accessEndsAt) : 0
-    const isCurrentPlanTimeBound = entitlement.currentPlan === 'demo' || entitlement.currentPlan === 'basic' || entitlement.currentPlan === 'standard' || entitlement.currentPlan === 'premium'
+    const isCurrentPlanTimeBound = normalizedEntitlement.currentPlan === 'demo' || isPaidPlan(normalizedEntitlement.currentPlan, settings)
     const remainingMs = isCurrentPlanTimeBound ? Math.max(0, accessEndsAtMs - now) : 0
     const isCurrentPlanExpired = isCurrentPlanTimeBound && remainingMs <= 0
     const isDemoExpired = isDemoPlan && remainingMs <= 0
@@ -89,7 +127,7 @@ export class SubscriptionService {
 
     return {
       entitlement: {
-        ...entitlement,
+        ...normalizedEntitlement,
         accessEndsAt,
       },
       isDemoActive,
@@ -105,15 +143,17 @@ export class SubscriptionService {
     const entitlement = this.ensureEntitlementForUser(email)
     const now = Date.now()
     const settings = this.repository.getBillingSettings()
+    const defaultPaidPlan = getFallbackPaidPlan(settings)
+    const safePlan = plan === 'demo' || isPaidPlan(plan, settings) ? plan : defaultPaidPlan
     const timestamp = new Date(now).toISOString()
     const demoEndsAt = new Date(now + settings.demoDurationDays * 24 * 60 * 60 * 1000).toISOString()
 
     const next: UserEntitlement = {
       ...entitlement,
-      currentPlan: plan,
-      demoStartedAt: plan === 'demo' ? timestamp : null,
-      demoEndsAt: plan === 'demo' ? demoEndsAt : null,
-      accessEndsAt: plan === 'demo' ? demoEndsAt : new Date(now + getPaidDurationMs()).toISOString(),
+      currentPlan: safePlan,
+      demoStartedAt: safePlan === 'demo' ? timestamp : null,
+      demoEndsAt: safePlan === 'demo' ? demoEndsAt : null,
+      accessEndsAt: safePlan === 'demo' ? demoEndsAt : new Date(now + getPaidDurationMs()).toISOString(),
       updatedAt: timestamp,
     }
 
@@ -123,7 +163,9 @@ export class SubscriptionService {
 
   incrementDemoMockUsage(email: string): UserEntitlement {
     const entitlement = this.ensureEntitlementForUser(email)
-    if (entitlement.currentPlan !== 'demo' && entitlement.currentPlan !== 'basic') return entitlement
+    const settings = this.repository.getBillingSettings()
+    const band = getPlanBand(entitlement.currentPlan, settings)
+    if (band !== 'demo' && band !== 'starter') return entitlement
 
     const next: UserEntitlement = {
       ...entitlement,
@@ -137,7 +179,10 @@ export class SubscriptionService {
   canStartMockExam(snapshot: EntitlementSnapshot): boolean {
     if (snapshot.isCurrentPlanExpired) return false
 
-    if (snapshot.entitlement.currentPlan === 'demo' || snapshot.entitlement.currentPlan === 'basic') {
+    const settings = this.repository.getBillingSettings()
+    const band = getPlanBand(snapshot.entitlement.currentPlan, settings)
+
+    if (band === 'demo' || band === 'starter') {
       return snapshot.entitlement.mockExamsUsedInDemo < DEMO_MOCK_LIMIT
     }
 
@@ -146,6 +191,8 @@ export class SubscriptionService {
 
   canAccessFeature(snapshot: EntitlementSnapshot, feature: FeatureKey): boolean {
     const plan = snapshot.entitlement.currentPlan
+    const settings = this.repository.getBillingSettings()
+    const band = getPlanBand(plan, settings)
 
     if (snapshot.isCurrentPlanExpired) {
       return false
@@ -153,11 +200,11 @@ export class SubscriptionService {
 
     if (feature === 'dashboard_basic') return true
 
-    if (plan === 'premium') {
+    if (band === 'top') {
       return true
     }
 
-    if (plan === 'standard') {
+    if (band === 'core') {
       return (
         feature !== 'priority_support' &&
         feature !== 'peer_matching' &&
@@ -165,7 +212,7 @@ export class SubscriptionService {
       )
     }
 
-    if (plan === 'basic') {
+    if (band === 'starter') {
       return (
         feature === 'adaptive_limited' ||
         feature === 'mock_exam_limited' ||
@@ -173,7 +220,7 @@ export class SubscriptionService {
       )
     }
 
-    if (plan === 'demo') {
+    if (band === 'demo') {
       if (snapshot.isDemoExpired) {
         return false
       }

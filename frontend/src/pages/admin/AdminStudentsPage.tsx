@@ -1,168 +1,98 @@
-import { useMemo, useState } from 'react'
-import { Activity, AlertTriangle, Search, Shield, UserRoundCog } from 'lucide-react'
-import {
-  ADMIN_STUDENT_OPS_DATA,
-  OPS_RISK_FILTERS,
-  OPS_STATUS_FILTERS,
-  OPS_SUBSCRIPTION_FILTERS,
-  type OpsIntervention,
-  type OpsStudentRecord,
-} from '../../data/adminStudentOps'
+import { useCallback, useMemo, useState } from 'react'
+import { Search } from 'lucide-react'
+import { ADMIN_STUDENT_OPS_DATA } from '../../data/adminStudentOps'
+import { useBillingSettingsForAdmin } from '../../context/SubscriptionContext'
 import '../../styles/admin-student-ops.css'
 
 export default function AdminStudentsPage() {
-  const [students, setStudents] = useState<OpsStudentRecord[]>(ADMIN_STUDENT_OPS_DATA)
+  const { billingSettings } = useBillingSettingsForAdmin()
+  const students = ADMIN_STUDENT_OPS_DATA
+
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<(typeof OPS_STATUS_FILTERS)[number]>('all')
-  const [riskFilter, setRiskFilter] = useState<(typeof OPS_RISK_FILTERS)[number]>('all')
-  const [subscriptionFilter, setSubscriptionFilter] = useState<(typeof OPS_SUBSCRIPTION_FILTERS)[number]>('all')
-  const [selectedStudentId, setSelectedStudentId] = useState(ADMIN_STUDENT_OPS_DATA[0]?.id ?? '')
-  const [newNote, setNewNote] = useState('')
-  const [actionNotice, setActionNotice] = useState('')
+  const [selectedStudentRowKey, setSelectedStudentRowKey] = useState(
+    ADMIN_STUDENT_OPS_DATA[0] ? `${ADMIN_STUDENT_OPS_DATA[0].id}-${ADMIN_STUDENT_OPS_DATA[0].email}-0` : '',
+  )
+
+  const tierIds = useMemo(() => ['demo', ...billingSettings.plans.map(plan => plan.id)], [billingSettings.plans])
+  const defaultPaidTier = useMemo(() => billingSettings.plans[0]?.id ?? 'demo', [billingSettings.plans])
+  const tierFilters = useMemo(() => ['all', ...tierIds], [tierIds])
+  const [tierFilter, setTierFilter] = useState<(typeof tierFilters)[number]>('all')
 
   const cohortOptions = useMemo(() => ['all', ...new Set(students.map(student => student.cohort))], [students])
   const [cohortFilter, setCohortFilter] = useState<(typeof cohortOptions)[number]>('all')
 
+  const resolveTierId = useCallback(
+    (subscription: string) => {
+      const normalized = subscription.trim().toLowerCase()
+      if (tierIds.includes(normalized)) return normalized
+      if (normalized === 'trial') return 'demo'
+
+      if (normalized === 'active' || normalized === 'past_due' || normalized === 'canceled') {
+        return defaultPaidTier
+      }
+
+      return defaultPaidTier
+    },
+    [tierIds, defaultPaidTier],
+  )
+
+  const studentsWithTier = useMemo(
+    () =>
+      students.map((student, index) => ({
+        ...student,
+        rowKey: `${student.id}-${student.email}-${index}`,
+        resolvedTier: resolveTierId(student.subscription),
+      })),
+    [students, resolveTierId],
+  )
+
   const filteredStudents = useMemo(() => {
     const normalizedQuery = searchTerm.trim().toLowerCase()
 
-    return students.filter(student => {
+    return studentsWithTier.filter(student => {
       const matchesSearch =
         normalizedQuery.length === 0 ||
         student.name.toLowerCase().includes(normalizedQuery) ||
         student.email.toLowerCase().includes(normalizedQuery)
 
-      const matchesStatus = statusFilter === 'all' || student.status === statusFilter
-      const matchesRisk = riskFilter === 'all' || student.risk === riskFilter
-      const matchesSubscription = subscriptionFilter === 'all' || student.subscription === subscriptionFilter
+      const matchesTier = tierFilter === 'all' || student.resolvedTier === tierFilter
       const matchesCohort = cohortFilter === 'all' || student.cohort === cohortFilter
 
-      return matchesSearch && matchesStatus && matchesRisk && matchesSubscription && matchesCohort
+      return matchesSearch && matchesTier && matchesCohort
     })
-  }, [searchTerm, statusFilter, riskFilter, subscriptionFilter, cohortFilter, students])
+  }, [studentsWithTier, searchTerm, tierFilter, cohortFilter])
 
-  const activeStudentId =
-    filteredStudents.some(student => student.id === selectedStudentId) ? selectedStudentId : (filteredStudents[0]?.id ?? '')
+  const activeStudentRowKey =
+    filteredStudents.some(student => student.rowKey === selectedStudentRowKey)
+      ? selectedStudentRowKey
+      : (filteredStudents[0]?.rowKey ?? '')
 
   const selectedStudent = useMemo(
-    () => students.find(student => student.id === activeStudentId) ?? null,
-    [students, activeStudentId],
+    () => studentsWithTier.find(student => student.rowKey === activeStudentRowKey) ?? null,
+    [studentsWithTier, activeStudentRowKey],
   )
 
   const kpis = useMemo(() => {
-    const activeToday = students.filter(student => student.activeToday).length
-    const atRisk = students.filter(student => student.risk === 'high' || student.risk === 'critical').length
-    const suspended = students.filter(student => student.status === 'suspended').length
-    const openInterventions = students.reduce(
-      (count, student) =>
-        count + student.interventions.filter(intervention => intervention.status !== 'resolved').length,
-      0,
-    )
+    const tierCounts = tierIds.reduce<Record<string, number>>((accumulator, tierId) => {
+      accumulator[tierId] = 0
+      return accumulator
+    }, {})
 
-    return { total: students.length, activeToday, atRisk, suspended, openInterventions }
-  }, [students])
+    studentsWithTier.forEach(student => {
+      tierCounts[student.resolvedTier] = (tierCounts[student.resolvedTier] ?? 0) + 1
+    })
 
-  const updateStudent = (studentId: string, updater: (student: OpsStudentRecord) => OpsStudentRecord) => {
-    setStudents(previous => previous.map(student => (student.id === studentId ? updater(student) : student)))
-  }
-
-  const prependActivity = (student: OpsStudentRecord, event: string) => {
     return {
-      ...student,
-      activity: [
-        {
-          id: `act-${Date.now()}`,
-          event,
-          time: 'Just now',
-        },
-        ...student.activity,
-      ],
+      total: students.length,
+      tierCounts,
     }
-  }
-
-  const handleSuspendToggle = () => {
-    if (!selectedStudent) return
-
-    const nextStatus = selectedStudent.status === 'suspended' ? 'active' : 'suspended'
-    updateStudent(selectedStudent.id, student =>
-      prependActivity(
-        {
-          ...student,
-          status: nextStatus,
-          risk: nextStatus === 'suspended' ? 'high' : student.risk,
-        },
-        nextStatus === 'suspended' ? 'Account suspended by admin action.' : 'Account reactivated by admin action.',
-      ),
-    )
-
-    setActionNotice(
-      nextStatus === 'suspended'
-        ? `${selectedStudent.name} has been suspended (demo action).`
-        : `${selectedStudent.name} has been reactivated (demo action).`,
-    )
-  }
-
-  const handleForceLogout = () => {
-    if (!selectedStudent) return
-    updateStudent(selectedStudent.id, student => prependActivity(student, 'Forced logout triggered by admin.'))
-    setActionNotice(`Forced logout sent to ${selectedStudent.name} (demo action).`)
-  }
-
-  const handleAssignIntervention = () => {
-    if (!selectedStudent) return
-
-    const intervention: OpsIntervention = {
-      id: `int-${Date.now()}`,
-      title: `Follow-up for ${selectedStudent.weakArea}`,
-      status: 'new',
-      severity: selectedStudent.risk,
-      owner: 'Unassigned',
-      dueAt: '2026-04-14',
-    }
-
-    updateStudent(selectedStudent.id, student =>
-      prependActivity(
-        {
-          ...student,
-          interventions: [intervention, ...student.interventions],
-        },
-        `Intervention created: ${intervention.title}`,
-      ),
-    )
-
-    setActionNotice(`New intervention created for ${selectedStudent.name} (demo action).`)
-  }
-
-  const handleAddNote = () => {
-    if (!selectedStudent || newNote.trim().length < 3) return
-
-    updateStudent(selectedStudent.id, student =>
-      prependActivity(
-        {
-          ...student,
-          notes: [
-            {
-              id: `note-${Date.now()}`,
-              author: 'Admin User',
-              createdAt: 'Just now',
-              body: newNote.trim(),
-            },
-            ...student.notes,
-          ],
-        },
-        'Admin note added to student timeline.',
-      ),
-    )
-
-    setActionNotice(`Note added for ${selectedStudent.name} (demo action).`)
-    setNewNote('')
-  }
+  }, [studentsWithTier, students.length, tierIds])
 
   return (
     <div className="admin-students-page">
       <header className="admin-students-header">
-        <h1>Admin Student Ops</h1>
-        <p>Operational workspace for student search, triage, support actions, and intervention follow-up.</p>
+        <h1>Student Insights</h1>
+        <p>Overview of total students and distribution across tiers.</p>
       </header>
 
       <section className="admin-students-kpis">
@@ -170,22 +100,12 @@ export default function AdminStudentsPage() {
           <h4>Total Students</h4>
           <p>{kpis.total}</p>
         </article>
-        <article className="admin-students-kpi">
-          <h4>Active Today</h4>
-          <p>{kpis.activeToday}</p>
-        </article>
-        <article className="admin-students-kpi">
-          <h4>At-Risk (High/Critical)</h4>
-          <p>{kpis.atRisk}</p>
-        </article>
-        <article className="admin-students-kpi">
-          <h4>Open Interventions</h4>
-          <p>{kpis.openInterventions}</p>
-        </article>
-        <article className="admin-students-kpi">
-          <h4>Suspended</h4>
-          <p>{kpis.suspended}</p>
-        </article>
+        {tierIds.map(tierId => (
+          <article className="admin-students-kpi" key={tierId}>
+            <h4>{tierId.charAt(0).toUpperCase() + tierId.slice(1)}</h4>
+            <p>{kpis.tierCounts[tierId] ?? 0}</p>
+          </article>
+        ))}
       </section>
 
       <section className="admin-students-filters card">
@@ -198,26 +118,10 @@ export default function AdminStudentsPage() {
           />
         </label>
 
-        <select value={statusFilter} onChange={event => setStatusFilter(event.target.value as typeof statusFilter)}>
-          {OPS_STATUS_FILTERS.map(option => (
+        <select value={tierFilter} onChange={event => setTierFilter(event.target.value as typeof tierFilter)}>
+          {tierFilters.map(option => (
             <option key={option} value={option}>
-              Status: {option}
-            </option>
-          ))}
-        </select>
-
-        <select value={riskFilter} onChange={event => setRiskFilter(event.target.value as typeof riskFilter)}>
-          {OPS_RISK_FILTERS.map(option => (
-            <option key={option} value={option}>
-              Risk: {option}
-            </option>
-          ))}
-        </select>
-
-        <select value={subscriptionFilter} onChange={event => setSubscriptionFilter(event.target.value as typeof subscriptionFilter)}>
-          {OPS_SUBSCRIPTION_FILTERS.map(option => (
-            <option key={option} value={option}>
-              Subscription: {option}
+              Tier: {option}
             </option>
           ))}
         </select>
@@ -242,9 +146,7 @@ export default function AdminStudentsPage() {
                 <tr>
                   <th>Name</th>
                   <th>Cohort</th>
-                  <th>Status</th>
-                  <th>Risk</th>
-                  <th>Subscription</th>
+                  <th>Tier</th>
                   <th>Avg Score</th>
                   <th>Last Active</th>
                 </tr>
@@ -252,22 +154,16 @@ export default function AdminStudentsPage() {
               <tbody>
                 {filteredStudents.map(student => (
                   <tr
-                    key={student.id}
-                    className={student.id === activeStudentId ? 'selected' : ''}
-                    onClick={() => setSelectedStudentId(student.id)}
+                    key={student.rowKey}
+                    className={student.rowKey === activeStudentRowKey ? 'selected' : ''}
+                    onClick={() => setSelectedStudentRowKey(student.rowKey)}
                   >
                     <td>
                       <strong>{student.name}</strong>
                       <span>{student.email}</span>
                     </td>
                     <td>{student.cohort}</td>
-                    <td>
-                      <span className={`ops-chip status-${student.status}`}>{student.status}</span>
-                    </td>
-                    <td>
-                      <span className={`ops-chip risk-${student.risk}`}>{student.risk}</span>
-                    </td>
-                    <td>{student.subscription}</td>
+                    <td>{student.resolvedTier}</td>
                     <td>{student.avgScore}%</td>
                     <td>{student.lastActive}</td>
                   </tr>
@@ -287,15 +183,12 @@ export default function AdminStudentsPage() {
                   <h3>{selectedStudent.name}</h3>
                   <p>{selectedStudent.email}</p>
                 </div>
-                <span className={`ops-chip risk-${selectedStudent.risk}`}>
-                  <AlertTriangle size={12} /> {selectedStudent.risk} risk
-                </span>
+                <span className="ops-chip">Tier: {selectedStudent.resolvedTier}</span>
               </header>
 
               <div className="admin-students-meta">
                 <span>Cohort: {selectedStudent.cohort}</span>
                 <span>Roadmap: {selectedStudent.roadmapStage}</span>
-                <span>Onboarding: {selectedStudent.onboardingStatus}</span>
                 <span>Phone: {selectedStudent.phone}</span>
               </div>
 
@@ -313,83 +206,9 @@ export default function AdminStudentsPage() {
                   <div className="ops-progress"><span style={{ width: `${selectedStudent.testCompletion}%` }} /></div>
                 </div>
               </div>
-
-              <section className="admin-students-actions">
-                <h4>
-                  <UserRoundCog size={16} /> Admin Actions
-                </h4>
-                <div className="admin-students-actions-row">
-                  <button type="button" onClick={handleSuspendToggle}>
-                    <Shield size={14} /> {selectedStudent.status === 'suspended' ? 'Reactivate Account' : 'Suspend Account'}
-                  </button>
-                  <button type="button" onClick={handleForceLogout}>
-                    Force Logout
-                  </button>
-                  <button type="button" onClick={handleAssignIntervention}>
-                    Create Intervention
-                  </button>
-                </div>
-                {actionNotice ? <p className="admin-students-notice">{actionNotice}</p> : null}
-              </section>
-
-              <section className="admin-students-notes">
-                <h4>Internal Notes</h4>
-                <div className="admin-students-note-compose">
-                  <textarea
-                    placeholder="Add support or academic note"
-                    value={newNote}
-                    onChange={event => setNewNote(event.target.value)}
-                  />
-                  <button type="button" onClick={handleAddNote}>
-                    Add Note
-                  </button>
-                </div>
-                <div className="admin-students-note-list">
-                  {selectedStudent.notes.map(note => (
-                    <article key={note.id}>
-                      <p>{note.body}</p>
-                      <span>
-                        {note.author} · {note.createdAt}
-                      </span>
-                    </article>
-                  ))}
-                </div>
-              </section>
-
-              <section className="admin-students-interventions">
-                <h4>Interventions</h4>
-                <div className="admin-students-intervention-list">
-                  {selectedStudent.interventions.length ? (
-                    selectedStudent.interventions.map(intervention => (
-                      <article key={intervention.id}>
-                        <p>{intervention.title}</p>
-                        <span>
-                          {intervention.status} · {intervention.owner} · Due {intervention.dueAt}
-                        </span>
-                      </article>
-                    ))
-                  ) : (
-                    <p className="admin-students-empty-inline">No interventions yet.</p>
-                  )}
-                </div>
-              </section>
-
-              <section className="admin-students-activity">
-                <h4>
-                  <Activity size={15} /> Recent Activity
-                </h4>
-                <div className="admin-students-activity-list">
-                  {selectedStudent.activity.slice(0, 6).map(activity => (
-                    <article key={activity.id}>
-                      <p>{activity.event}</p>
-                      <span>{activity.time}</span>
-                    </article>
-                  ))}
-                </div>
-              </section>
             </>
           ) : (
-            <p className="admin-students-empty-inline">Select a student to view operations panel.</p>
+            <p className="admin-students-empty-inline">Select a student to view insights.</p>
           )}
         </article>
       </section>
