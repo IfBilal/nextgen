@@ -214,6 +214,47 @@
   gap: 12px;
 }
 
+.billing-admin-card--span-2 {
+  grid-column: span 2;
+}
+
+.billing-feature-access-block {
+  border: 1px solid #e1edf9;
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.billing-feature-access-block h4 {
+  margin: 0;
+  color: #264f76;
+  font-size: 0.9rem;
+}
+
+.billing-feature-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 8px;
+}
+
+.billing-feature-toggle {
+  border: 1px solid #cbe0f5;
+  border-radius: 10px;
+  background: #fff;
+  color: #2f608e;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.billing-feature-toggle.enabled {
+  background: #1a6fad;
+  border-color: #1a6fad;
+  color: #fff;
+}
+
 .billing-admin-field {
   display: grid;
   gap: 6px;
@@ -294,6 +335,10 @@
   .billing-plan-grid,
   .billing-admin-grid {
     grid-template-columns: 1fr;
+  }
+
+  .billing-admin-card--span-2 {
+    grid-column: auto;
   }
 
   .billing-admin-toolbar {

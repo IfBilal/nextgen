@@ -1,18 +1,31 @@
 import { useMemo, useState } from 'react'
 import { Save, Settings, Sparkles } from 'lucide-react'
 import { useBillingSettingsForAdmin } from '../../context/SubscriptionContext'
+import {
+  CONFIGURABLE_FEATURE_KEYS,
+  FEATURE_LABELS,
+  type FeatureKey,
+} from '../../types/subscription'
 import '../../styles/billing.css'
 
 export default function AdminBillingSettingsPage() {
   const { billingSettings, updateBillingSettings } = useBillingSettingsForAdmin()
+
+  const tierIds = useMemo(() => ['demo', ...billingSettings.plans.map(plan => plan.id)], [billingSettings.plans])
 
   const getInitialPrices = () =>
     Object.fromEntries(
       billingSettings.plans.map(plan => [plan.id, String(plan.monthlyPrice)]),
     )
 
+  const getInitialTierFeatures = () =>
+    Object.fromEntries(
+      tierIds.map(tierId => [tierId, billingSettings.tierFeatureAccess[tierId] ?? []]),
+    ) as Record<string, FeatureKey[]>
+
   const [demoDays, setDemoDays] = useState(String(billingSettings.demoDurationDays))
   const [planPrices, setPlanPrices] = useState<Record<string, string>>(getInitialPrices)
+  const [tierFeatures, setTierFeatures] = useState<Record<string, FeatureKey[]>>(getInitialTierFeatures)
   const [savedMessage, setSavedMessage] = useState('')
 
   const parsedValues = useMemo(() => {
@@ -23,11 +36,22 @@ export default function AdminBillingSettingsPage() {
       }),
     )
 
+    const parsedTierFeatures = Object.fromEntries(
+      tierIds.map(tierId => {
+        const incoming = tierFeatures[tierId] ?? billingSettings.tierFeatureAccess[tierId] ?? []
+        const safe = Array.from(
+          new Set(incoming.filter((feature): feature is FeatureKey => CONFIGURABLE_FEATURE_KEYS.includes(feature))),
+        )
+        return [tierId, safe]
+      }),
+    ) as Record<string, FeatureKey[]>
+
     return {
       demoDurationDays: Math.min(30, Math.max(1, Number(demoDays) || 7)),
       planPrices: parsedPlanPrices,
+      tierFeatures: parsedTierFeatures,
     }
-  }, [demoDays, planPrices, billingSettings.plans])
+  }, [demoDays, planPrices, tierFeatures, billingSettings.plans, billingSettings.tierFeatureAccess, tierIds])
 
   const hasInvalidInput = [
     demoDays,
@@ -38,7 +62,14 @@ export default function AdminBillingSettingsPage() {
     parsedValues.demoDurationDays !== billingSettings.demoDurationDays ||
     billingSettings.plans.some(
       plan => parsedValues.planPrices[plan.id] !== plan.monthlyPrice,
-    )
+    ) ||
+    tierIds.some(tierId => {
+      const current = billingSettings.tierFeatureAccess[tierId] ?? []
+      const next = parsedValues.tierFeatures[tierId] ?? []
+      if (current.length !== next.length) return true
+      const currentSet = new Set(current)
+      return next.some(feature => !currentSet.has(feature))
+    })
 
   const canSave = hasChanges && !hasInvalidInput
 
@@ -52,8 +83,29 @@ export default function AdminBillingSettingsPage() {
         monthlyPrice: parsedValues.planPrices[plan.id],
         priceLabel: `$${parsedValues.planPrices[plan.id]}/month`,
       })),
+      tierFeatureAccess: parsedValues.tierFeatures,
     })
     setSavedMessage('Billing settings saved successfully.')
+  }
+
+  const toggleTierFeature = (tierId: string, feature: FeatureKey) => {
+    setTierFeatures(previous => {
+      const existing = previous[tierId] ?? billingSettings.tierFeatureAccess[tierId] ?? []
+      const hasFeature = existing.includes(feature)
+      const updated = hasFeature
+        ? existing.filter(item => item !== feature)
+        : [...existing, feature]
+
+      return {
+        ...previous,
+        [tierId]: updated,
+      }
+    })
+  }
+
+  const getTierDisplayName = (tierId: string) => {
+    if (tierId === 'demo') return 'Demo Trial'
+    return billingSettings.plans.find(plan => plan.id === tierId)?.name ?? tierId
   }
 
   return (
@@ -134,6 +186,30 @@ export default function AdminBillingSettingsPage() {
             </div>
           ))}
         </article>
+
+        <article className="billing-admin-card billing-admin-card--span-2">
+          <h3>Tier feature accessibility</h3>
+          {tierIds.map(tierId => (
+            <div className="billing-feature-access-block" key={tierId}>
+              <h4>{getTierDisplayName(tierId)}</h4>
+              <div className="billing-feature-toggle-grid">
+                {CONFIGURABLE_FEATURE_KEYS.map(feature => {
+                  const enabled = (tierFeatures[tierId] ?? billingSettings.tierFeatureAccess[tierId] ?? []).includes(feature)
+                  return (
+                    <button
+                      key={`${tierId}-${feature}`}
+                      type="button"
+                      className={`billing-feature-toggle ${enabled ? 'enabled' : ''}`}
+                      onClick={() => toggleTierFeature(tierId, feature)}
+                    >
+                      {FEATURE_LABELS[feature]}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+        </article>
       </section>
 
       {!canSave && hasChanges ? (
@@ -142,4 +218,3 @@ export default function AdminBillingSettingsPage() {
     </div>
   )
 }
-                                                        

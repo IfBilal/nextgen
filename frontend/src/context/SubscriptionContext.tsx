@@ -14,6 +14,7 @@ import { DEFAULT_BILLING_SETTINGS, getPlanDisplayName } from '../types/subscript
 
 const repository = new LocalSubscriptionRepository()
 const subscriptionService = new SubscriptionService(repository)
+const BILLING_SETTINGS_KEY = 'nextgen.billing.settings'
 
 interface SubscriptionContextType {
   billingSettings: BillingSettings
@@ -50,6 +51,17 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     return () => window.clearInterval(intervalId)
   }, [snapshot?.isCurrentPlanTimeBound, snapshot?.isCurrentPlanExpired])
+
+  useEffect(() => {
+    const handleStorageUpdate = (event: StorageEvent) => {
+      if (event.key !== BILLING_SETTINGS_KEY) return
+      setBillingSettings(subscriptionService.getBillingSettings())
+      refreshSnapshot()
+    }
+
+    window.addEventListener('storage', handleStorageUpdate)
+    return () => window.removeEventListener('storage', handleStorageUpdate)
+  }, [refreshSnapshot])
 
   const purchasePlan = (plan: PlanId) => {
     if (!user?.email) return

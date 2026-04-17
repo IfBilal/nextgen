@@ -18,6 +18,27 @@ function isPaidPlan(planId: PlanId, settings: BillingSettings): boolean {
   return settings.plans.some(plan => plan.id === planId)
 }
 
+function getTierFeatures(planId: PlanId, settings: BillingSettings): FeatureKey[] {
+  return settings.tierFeatureAccess[planId] ?? []
+}
+
+function getExpandedFeatures(features: FeatureKey[]): Set<FeatureKey> {
+  const expanded = new Set<FeatureKey>(features)
+
+  if (expanded.has('adaptive_full')) expanded.add('adaptive_limited')
+  if (expanded.has('mock_exam_full')) expanded.add('mock_exam_limited')
+  if (expanded.has('analytics_advanced')) expanded.add('analytics_basic')
+  if (expanded.has('marathon_full')) expanded.add('marathon_preview')
+
+  return expanded
+}
+
+function canAccessTierFeature(planId: PlanId, feature: FeatureKey, settings: BillingSettings): boolean {
+  const features = getTierFeatures(planId, settings)
+  const expanded = getExpandedFeatures(features)
+  return expanded.has(feature)
+}
+
 function getFallbackPaidPlan(settings: BillingSettings): PlanId {
   return settings.plans[0]?.id ?? 'demo'
 }
@@ -28,18 +49,6 @@ function normalizePlanId(planId: PlanId, settings: BillingSettings): PlanId {
   }
 
   return getFallbackPaidPlan(settings)
-}
-
-function getPlanBand(planId: PlanId, settings: BillingSettings): 'demo' | 'starter' | 'core' | 'top' | 'unknown' {
-  if (planId === 'demo') return 'demo'
-
-  const planIndex = settings.plans.findIndex(plan => plan.id === planId)
-  if (planIndex < 0) return 'unknown'
-
-  if (settings.plans.length === 1) return 'top'
-  if (planIndex === 0) return 'starter'
-  if (planIndex === settings.plans.length - 1) return 'top'
-  return 'core'
 }
 
 function getAccessEndsAtForEntitlement(entitlement: UserEntitlement, settings: BillingSettings): string | null {
@@ -164,8 +173,14 @@ export class SubscriptionService {
   incrementDemoMockUsage(email: string): UserEntitlement {
     const entitlement = this.ensureEntitlementForUser(email)
     const settings = this.repository.getBillingSettings()
-    const band = getPlanBand(entitlement.currentPlan, settings)
-    if (band !== 'demo' && band !== 'starter') return entitlement
+
+    if (!canAccessTierFeature(entitlement.currentPlan, 'mock_exam_limited', settings)) {
+      return entitlement
+    }
+
+    if (canAccessTierFeature(entitlement.currentPlan, 'mock_exam_full', settings)) {
+      return entitlement
+    }
 
     const next: UserEntitlement = {
       ...entitlement,
@@ -180,9 +195,19 @@ export class SubscriptionService {
     if (snapshot.isCurrentPlanExpired) return false
 
     const settings = this.repository.getBillingSettings()
-    const band = getPlanBand(snapshot.entitlement.currentPlan, settings)
 
-    if (band === 'demo' || band === 'starter') {
+    const hasLimitedMock = canAccessTierFeature(snapshot.entitlement.currentPlan, 'mock_exam_limited', settings)
+    const hasFullMock = canAccessTierFeature(snapshot.entitlement.currentPlan, 'mock_exam_full', settings)
+
+    if (!hasLimitedMock && !hasFullMock) {
+      return false
+    }
+
+    if (hasFullMock) {
+      return true
+    }
+
+    if (hasLimitedMock) {
       return snapshot.entitlement.mockExamsUsedInDemo < DEMO_MOCK_LIMIT
     }
 
@@ -192,7 +217,6 @@ export class SubscriptionService {
   canAccessFeature(snapshot: EntitlementSnapshot, feature: FeatureKey): boolean {
     const plan = snapshot.entitlement.currentPlan
     const settings = this.repository.getBillingSettings()
-    const band = getPlanBand(plan, settings)
 
     if (snapshot.isCurrentPlanExpired) {
       return false
@@ -200,39 +224,7 @@ export class SubscriptionService {
 
     if (feature === 'dashboard_basic') return true
 
-    if (band === 'top') {
-      return true
-    }
-
-    if (band === 'core') {
-      return (
-        feature !== 'priority_support' &&
-        feature !== 'peer_matching' &&
-        feature !== 'leaderboard'
-      )
-    }
-
-    if (band === 'starter') {
-      return (
-        feature === 'adaptive_limited' ||
-        feature === 'mock_exam_limited' ||
-        feature === 'marathon_preview'
-      )
-    }
-
-    if (band === 'demo') {
-      if (snapshot.isDemoExpired) {
-        return false
-      }
-
-      return (
-        feature === 'adaptive_limited' ||
-        feature === 'mock_exam_limited' ||
-        feature === 'marathon_preview'
-      )
-    }
-
-    return false
+    return canAccessTierFeature(plan, feature, settings)
   }
 
   getLockReason(snapshot: EntitlementSnapshot): string {

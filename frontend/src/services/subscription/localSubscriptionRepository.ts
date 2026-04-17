@@ -1,7 +1,11 @@
 import { safeParseJson } from '../errorUtils'
 import { logWarn } from '../observability'
-import type { BillingSettings, UserEntitlement } from '../../types/subscription'
-import { DEFAULT_BILLING_SETTINGS } from '../../types/subscription'
+import type { BillingSettings, FeatureKey, UserEntitlement } from '../../types/subscription'
+import {
+  CONFIGURABLE_FEATURE_KEYS,
+  DEFAULT_BILLING_SETTINGS,
+  getDefaultTierFeatureAccess,
+} from '../../types/subscription'
 import type { SubscriptionRepository } from './subscriptionRepository'
 
 const BILLING_SETTINGS_KEY = 'nextgen.billing.settings'
@@ -44,9 +48,23 @@ function sanitizeBillingSettings(input: BillingSettings | null): BillingSettings
     ? Math.min(30, Math.max(1, Math.round(incomingDemoDays)))
     : DEFAULT_BILLING_SETTINGS.demoDurationDays
 
+  const defaultTierAccess = getDefaultTierFeatureAccess(normalizedPlans)
+  const normalizedTierFeatureAccess = Object.fromEntries(
+    Object.entries(defaultTierAccess).map(([tierId, defaultFeatures]) => {
+      const incomingFeatures = input.tierFeatureAccess?.[tierId]
+      const hasIncomingFeatures = Array.isArray(incomingFeatures)
+      const safeFeatures = hasIncomingFeatures
+        ? Array.from(new Set(incomingFeatures.filter((feature): feature is FeatureKey => CONFIGURABLE_FEATURE_KEYS.includes(feature))))
+        : defaultFeatures
+
+      return [tierId, hasIncomingFeatures ? safeFeatures : defaultFeatures]
+    }),
+  )
+
   return {
     demoDurationDays,
     plans: normalizedPlans.length > 0 ? normalizedPlans : DEFAULT_BILLING_SETTINGS.plans,
+    tierFeatureAccess: normalizedTierFeatureAccess,
   }
 }
 
