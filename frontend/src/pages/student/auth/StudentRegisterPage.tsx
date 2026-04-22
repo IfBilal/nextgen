@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Mail, Lock, User, Building2, ArrowRight } from 'lucide-react'
 import { useStudentAuth } from '../../../context/StudentAuthContext'
+import { normalizeError } from '../../../services/errorUtils'
+import { captureException } from '../../../services/observability'
 import './Auth.css'
 
 export default function StudentRegisterPage() {
@@ -20,7 +22,7 @@ export default function StudentRegisterPage() {
     if (!form.email.trim()) errs.email = 'Email is required'
     else if (!/\S+@\S+\.\S+/.test(form.email)) errs.email = 'Enter a valid email'
     if (!form.password) errs.password = 'Password is required'
-    else if (form.password.length < 6) errs.password = 'Password must be at least 6 characters'
+    else if (form.password.length < 8) errs.password = 'Password must be at least 8 characters'
     if (form.password !== form.confirm) errs.confirm = 'Passwords do not match'
     return errs
   }
@@ -32,13 +34,22 @@ export default function StudentRegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
     const errs = validate()
     if (Object.keys(errs).length) { setErrors(errs); return }
-    setLoading(true)
-    await new Promise(r => setTimeout(r, 1000))
-    register(form.name, form.email, form.password, form.school || undefined)
-    setLoading(false)
-    navigate('/student/onboarding')
+
+    try {
+      setErrors({})
+      setLoading(true)
+      await register(form.name, form.email, form.password, form.school || undefined)
+      navigate('/student/onboarding')
+    } catch (error) {
+      const normalized = normalizeError(error)
+      setErrors({ form: normalized.message || 'Unable to create account. Please try again.' })
+      captureException(error, { feature: 'student-register', action: 'submit' })
+    } finally {
+      setLoading(false)
+    }
   }
 
   const field = (key: string) => ({
@@ -83,6 +94,8 @@ export default function StudentRegisterPage() {
             <p className="auth-form-subtitle">Get started with your personalized USMLE Step 1 roadmap</p>
           </div>
 
+          {errors.form && <div className="auth-error">{errors.form}</div>}
+
           <form onSubmit={handleSubmit} className="auth-form">
             {/* Name */}
             <div className="auth-field">
@@ -124,7 +137,7 @@ export default function StudentRegisterPage() {
                   {...field('password')}
                   type={showPassword ? 'text' : 'password'}
                   className={`auth-input auth-input--password ${errors.password ? 'auth-input--error' : ''}`}
-                  placeholder="Min. 6 characters"
+                  placeholder="Min. 8 characters"
                 />
                 <button type="button" className="auth-eye" onClick={() => setShowPassword(!showPassword)}>
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}

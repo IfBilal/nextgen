@@ -2,9 +2,11 @@
 import React, { createContext, useContext, useState } from 'react'
 import { safeParseJson } from '../services/errorUtils'
 import { captureException, logWarn } from '../services/observability'
+import { loginStudent, registerStudent } from '../services/authApi'
 import type { PlanId } from '../types/subscription'
 
 interface StudentUser {
+  id: string
   name: string
   email: string
   medicalSchool?: string
@@ -12,26 +14,53 @@ interface StudentUser {
   tier: PlanId
 }
 
+interface StudentSession {
+  accessToken: string
+  refreshToken: string | null
+}
+
+interface PersistedStudentAuth {
+  user: StudentUser
+  session: StudentSession
+}
+
 interface StudentAuthContextType {
   user: StudentUser | null
-  login: (email: string, password: string) => boolean
-  register: (name: string, email: string, password: string, medicalSchool?: string) => void
+  login: (email: string, password: string) => Promise<StudentUser>
+  register: (name: string, email: string, password: string, medicalSchool?: string) => Promise<StudentUser>
   logout: () => void
   completeOnboarding: () => void
 }
 
 const StudentAuthContext = createContext<StudentAuthContextType | null>(null)
+const STUDENT_AUTH_KEY = 'nextgen.student.auth'
+const LEGACY_STUDENT_KEY = 'studentUser'
+const STUDENT_ONBOARDING_KEY = 'nextgen.student.onboarding'
+
+type OnboardingByEmail = Record<string, boolean>
 
 function isStudentUser(value: unknown): value is StudentUser {
   if (!value || typeof value !== 'object') return false
 
   const candidate = value as Partial<StudentUser>
   return (
+    typeof candidate.id === 'string' &&
     typeof candidate.name === 'string' &&
     typeof candidate.email === 'string' &&
     typeof candidate.onboarded === 'boolean' &&
     typeof candidate.tier === 'string'
   )
+}
+
+function isPersistedStudentAuth(value: unknown): value is PersistedStudentAuth {
+  if (!value || typeof value !== 'object') return false
+
+  const candidate = value as Partial<PersistedStudentAuth>
+  if (!isStudentUser(candidate.user)) return false
+  if (!candidate.session || typeof candidate.session !== 'object') return false
+
+  const session = candidate.session as Partial<StudentSession>
+  return typeof session.accessToken === 'string' && (typeof session.refreshToken === 'string' || session.refreshToken === null)
 }
 
 function normalizeLegacyTier(tier: unknown): PlanId {
@@ -46,77 +75,153 @@ function normalizeLegacyTier(tier: unknown): PlanId {
   return 'demo'
 }
 
-export const StudentAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<StudentUser | null>(() => {
-    const parsed = safeParseJson<unknown>(localStorage.getItem('studentUser'))
-    if (!parsed) return null
-    if (isStudentUser(parsed)) return parsed
+function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase()
+}
 
-    if (parsed && typeof parsed === 'object') {
-      const candidate = parsed as Partial<StudentUser> & { tier?: unknown }
-      if (typeof candidate.name === 'string' && typeof candidate.email === 'string' && typeof candidate.onboarded === 'boolean') {
-        const migrated: StudentUser = {
-          name: candidate.name,
-          email: candidate.email,
-          onboarded: candidate.onboarded,
-          medicalSchool: candidate.medicalSchool,
-          tier: normalizeLegacyTier(candidate.tier),
-        }
-        localStorage.setItem('studentUser', JSON.stringify(migrated))
-        return migrated
-      }
-    }
+function loadOnboardingByEmail(): OnboardingByEmail {
+  const parsed = safeParseJson<unknown>(localStorage.getItem(STUDENT_ONBOARDING_KEY))
+  if (!parsed || typeof parsed !== 'object') return {}
 
-    logWarn('Ignored malformed persisted student user')
-    localStorage.removeItem('studentUser')
-    return null
-  })
+  const entries = Object.entries(parsed as Record<string, unknown>)
+  return Object.fromEntries(entries.filter(([, value]) => typeof value === 'boolean')) as OnboardingByEmail
+}
 
-  const login = (email: string, password: string): boolean => {
-    // Demo: any non-empty credentials work; preset demo account
-    void password
-    if (!email.trim()) return false
-    const stored = localStorage.getItem('studentUser')
-    if (stored) {
-      const parsed = safeParseJson<unknown>(stored)
-      if (isStudentUser(parsed)) {
-        setUser(parsed)
-        return true
-      }
+function saveOnboardingByEmail(map: OnboardingByEmail) {
+  localStorage.setItem(STUDENT_ONBOARDING_KEY, JSON.stringify(map))
+}
 
-      logWarn('Clearing invalid persisted student user during login')
-      localStorage.removeItem('studentUser')
-    }
-    // Create demo user if none exists
-    const demoUser: StudentUser = {
-      name: 'Demo Student',
-      email,
-      onboarded: false,
-      tier: 'demo',
-    }
-    localStorage.setItem('studentUser', JSON.stringify(demoUser))
-    setUser(demoUser)
-    return true
+function getPersistedOnboarding(email: string): boolean {
+  const map = loadOnboardingByEmail()
+  return map[normalizeEmail(email)] ?? false
+}
+
+function setPersistedOnboarding(email: string, onboarded: boolean) {
+  const map = loadOnboardingByEmail()
+  map[normalizeEmail(email)] = onboarded
+  saveOnboardingByEmail(map)
+}
+
+function getNameFromEmail(email: string): string {
+  const localPart = email.split('@')[0]?.trim()
+  if (!localPart) return 'Student'
+
+  return localPart
+    .replace(/[._-]+/g, ' ')
+    .split(' ')
+    .filter(Boolean)
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
+
+function persistStudentAuth(state: PersistedStudentAuth) {
+  localStorage.setItem(STUDENT_AUTH_KEY, JSON.stringify(state))
+  localStorage.setItem(LEGACY_STUDENT_KEY, JSON.stringify(state.user))
+  setPersistedOnboarding(state.user.email, state.user.onboarded)
+}
+
+function loadInitialStudentUser(): StudentUser | null {
+  const persisted = safeParseJson<unknown>(localStorage.getItem(STUDENT_AUTH_KEY))
+  if (isPersistedStudentAuth(persisted)) {
+    return persisted.user
   }
 
-  const register = (name: string, email: string, _password: string, medicalSchool?: string) => {
-    try {
-      const newUser: StudentUser = {
-        name,
-        email,
-        medicalSchool,
-        onboarded: false,
-        tier: 'demo',
-      }
-      localStorage.setItem('studentUser', JSON.stringify(newUser))
-      setUser(newUser)
-    } catch (error) {
-      captureException(error, { feature: 'student-auth', action: 'register' })
+  const legacy = safeParseJson<unknown>(localStorage.getItem(LEGACY_STUDENT_KEY))
+  if (!legacy || typeof legacy !== 'object') {
+    return null
+  }
+
+  const candidate = legacy as Partial<StudentUser> & { tier?: unknown }
+  if (typeof candidate.name !== 'string' || typeof candidate.email !== 'string' || typeof candidate.onboarded !== 'boolean') {
+    logWarn('Ignored malformed persisted student user')
+    localStorage.removeItem(LEGACY_STUDENT_KEY)
+    localStorage.removeItem(STUDENT_AUTH_KEY)
+    return null
+  }
+
+  const migratedUser: StudentUser = {
+    id: typeof candidate.id === 'string' ? candidate.id : `legacy-${candidate.email.toLowerCase()}`,
+    name: candidate.name,
+    email: candidate.email,
+    onboarded: candidate.onboarded,
+    medicalSchool: candidate.medicalSchool,
+    tier: normalizeLegacyTier(candidate.tier),
+  }
+
+  localStorage.setItem(LEGACY_STUDENT_KEY, JSON.stringify(migratedUser))
+  return migratedUser
+}
+
+export const StudentAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<StudentUser | null>(() => loadInitialStudentUser())
+
+  const login = async (email: string, password: string): Promise<StudentUser> => {
+    const normalizedEmail = normalizeEmail(email)
+    const response = await loginStudent({ email: normalizedEmail, password })
+
+    if (!response.session?.access_token) {
+      throw new Error('Unable to sign in. Please try again.')
     }
+
+    const previousUser = user?.email.toLowerCase() === normalizedEmail ? user : null
+    const persistedOnboarded = getPersistedOnboarding(response.user.email)
+
+    const loggedInUser: StudentUser = {
+      id: response.user.id,
+      name: previousUser?.name ?? getNameFromEmail(response.user.email),
+      email: response.user.email,
+      medicalSchool: previousUser?.medicalSchool,
+      onboarded: previousUser?.onboarded ?? persistedOnboarded,
+      tier: previousUser?.tier ?? 'demo',
+    }
+
+    const session: StudentSession = {
+      accessToken: response.session.access_token,
+      refreshToken: response.session.refresh_token,
+    }
+
+    persistStudentAuth({ user: loggedInUser, session })
+    setUser(loggedInUser)
+    return loggedInUser
+  }
+
+  const register = async (name: string, email: string, password: string, medicalSchool?: string): Promise<StudentUser> => {
+    const normalizedEmail = normalizeEmail(email)
+    const response = await registerStudent({
+      email: normalizedEmail,
+      password,
+      fullName: name.trim(),
+      medicalSchool: medicalSchool?.trim() ? medicalSchool.trim() : undefined,
+    })
+
+    const persistedOnboarded = getPersistedOnboarding(response.user.email)
+
+    if (!response.session?.access_token) {
+      throw new Error('Account created. Please verify your email before signing in.')
+    }
+
+    const newUser: StudentUser = {
+      id: response.user.id,
+      name: name.trim(),
+      email: response.user.email,
+      medicalSchool: medicalSchool?.trim() ? medicalSchool.trim() : undefined,
+      onboarded: persistedOnboarded,
+      tier: 'demo',
+    }
+
+    const session: StudentSession = {
+      accessToken: response.session.access_token,
+      refreshToken: response.session.refresh_token,
+    }
+
+    persistStudentAuth({ user: newUser, session })
+    setUser(newUser)
+    return newUser
   }
 
   const logout = () => {
-    localStorage.removeItem('studentUser')
+    localStorage.removeItem(STUDENT_AUTH_KEY)
+    localStorage.removeItem(LEGACY_STUDENT_KEY)
     setUser(null)
   }
 
@@ -124,7 +229,15 @@ export const StudentAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (!user) return
     try {
       const updated = { ...user, onboarded: true }
-      localStorage.setItem('studentUser', JSON.stringify(updated))
+      setPersistedOnboarding(updated.email, true)
+
+      const persisted = safeParseJson<unknown>(localStorage.getItem(STUDENT_AUTH_KEY))
+      if (isPersistedStudentAuth(persisted)) {
+        persistStudentAuth({ ...persisted, user: updated })
+      } else {
+        localStorage.setItem(LEGACY_STUDENT_KEY, JSON.stringify(updated))
+      }
+
       setUser(updated)
     } catch (error) {
       captureException(error, { feature: 'student-auth', action: 'complete-onboarding' })

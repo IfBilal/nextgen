@@ -337,6 +337,17 @@
   margin-bottom: var(--space-4);
 }
 
+.auth-success {
+  background: rgba(39,174,96,0.08);
+  border: 1px solid rgba(39,174,96,0.25);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  color: #1e874b;
+  font-weight: 500;
+  margin-bottom: var(--space-4);
+}
+
 .auth-divider {
   display: flex;
   align-items: center;

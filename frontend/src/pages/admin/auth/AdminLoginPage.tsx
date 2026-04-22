@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Mail, Lock, ShieldCheck, ArrowRight } from 'lucide-react'
 import { useAdminAuth } from '../../../context/AdminAuthContext'
+import { normalizeError } from '../../../services/errorUtils'
+import { captureException } from '../../../services/observability'
 import './Auth.css'
 import './AdminAuth.css'
 
@@ -17,19 +19,23 @@ export default function AdminLoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
     setError('')
     if (!email.trim() || !password.trim()) {
       setError('Please enter your credentials.')
       return
     }
-    setLoading(true)
-    await new Promise(r => setTimeout(r, 1000))
-    const success = login(email, password)
-    setLoading(false)
-    if (success) {
+
+    try {
+      setLoading(true)
+      await login(email, password)
       navigate('/admin/dashboard')
-    } else {
-      setError('Invalid credentials. Access denied.')
+    } catch (error) {
+      const normalized = normalizeError(error)
+      setError(normalized.message || 'Invalid credentials. Access denied.')
+      captureException(error, { feature: 'admin-login', action: 'submit' })
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -99,10 +105,6 @@ export default function AdminLoginPage() {
             {loading ? <span className="spinner" /> : <>Sign In <ArrowRight size={16} /></>}
           </button>
         </form>
-
-        <div className="admin-demo-hint">
-          <span>Demo:</span> admin@nextgen.com / admin123
-        </div>
 
         <div className="admin-auth-footer">
           <ShieldCheck size={12} />

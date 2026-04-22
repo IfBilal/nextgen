@@ -11,6 +11,8 @@ import LandingPage from './pages/LandingPage'
 
 import StudentLoginPage    from './pages/student/auth/StudentLoginPage'
 import StudentRegisterPage from './pages/student/auth/StudentRegisterPage'
+import StudentForgotPasswordPage from './pages/student/auth/StudentForgotPasswordPage'
+import StudentResetPasswordPage from './pages/student/auth/StudentResetPasswordPage'
 import OnboardingPage      from './pages/student/OnboardingPage'
 import RoadmapPreviewPage  from './pages/student/RoadmapPreviewPage'
 import DashboardPage       from './pages/student/DashboardPage'
@@ -51,6 +53,8 @@ export default function App() {
               {/* Student Auth (No Layout) */}
               <Route path="/student/login" element={<StudentLoginPage />} />
               <Route path="/student/register" element={<StudentRegisterPage />} />
+              <Route path="/student/forgot-password" element={<StudentForgotPasswordPage />} />
+              <Route path="/student/reset-password" element={<StudentResetPasswordPage />} />
               <Route element={<StudentProtectedRoute requireOnboarded={false} />}>
                 <Route path="/student/onboarding" element={<OnboardingPage />} />
               </Route>

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
 import { useStudentAuth } from '../../../context/StudentAuthContext'
-import { safeParseJson } from '../../../services/errorUtils'
+import { normalizeError } from '../../../services/errorUtils'
 import { captureException } from '../../../services/observability'
 import './Auth.css'
 
@@ -17,29 +17,29 @@ export default function StudentLoginPage() {
   const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
     try {
-      e.preventDefault()
       setError('')
       if (!email.trim() || !password.trim()) {
         setError('Please enter your email and password.')
         return
       }
+
       setLoading(true)
-      await new Promise(r => setTimeout(r, 1000))
-      const success = login(email, password)
-      setLoading(false)
-      if (success) {
-        const user = safeParseJson<{ onboarded?: boolean }>(localStorage.getItem('studentUser'))
-        if (user?.onboarded) {
-          navigate('/student/dashboard')
-        } else {
-          navigate('/student/onboarding')
-        }
+
+      const loggedInUser = await login(email, password)
+      if (loggedInUser.onboarded) {
+        navigate('/student/dashboard')
+      } else {
+        navigate('/student/onboarding')
       }
     } catch (error) {
-      setLoading(false)
-      setError('Something went wrong while signing in. Please try again.')
+      const normalized = normalizeError(error)
+      setError(normalized.message || 'Something went wrong while signing in. Please try again.')
       captureException(error, { feature: 'student-login', action: 'submit' })
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -97,7 +97,7 @@ export default function StudentLoginPage() {
             <div className="auth-field">
               <div className="auth-label-row">
                 <label className="auth-label">Password</label>
-                <button type="button" className="auth-forgot">Forgot password?</button>
+                <Link to="/student/forgot-password" className="auth-forgot">Forgot password?</Link>
               </div>
               <div className="auth-input-wrap">
                 <Lock size={16} className="auth-input-icon" />
@@ -126,10 +126,6 @@ export default function StudentLoginPage() {
             Don't have an account?{' '}
             <Link to="/student/register">Create one</Link>
           </p>
-
-          <div className="auth-demo-hint">
-            <span>Demo:</span> student@demo.com / demo123
-          </div>
         </div>
       </div>
     </div>
