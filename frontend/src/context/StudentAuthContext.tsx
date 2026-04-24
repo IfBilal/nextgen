@@ -171,7 +171,7 @@ export const StudentAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
       name: previousUser?.name ?? getNameFromEmail(response.user.email),
       email: response.user.email,
       medicalSchool: previousUser?.medicalSchool,
-      onboarded: response.user.onboarded ?? previousUser?.onboarded ?? persistedOnboarded,
+      onboarded: response.user.onboarded || previousUser?.onboarded || persistedOnboarded,
       tier: previousUser?.tier ?? 'demo',
     }
 
@@ -205,7 +205,7 @@ export const StudentAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
       name: name.trim(),
       email: response.user.email,
       medicalSchool: medicalSchool?.trim() ? medicalSchool.trim() : undefined,
-      onboarded: response.user.onboarded ?? persistedOnboarded,
+      onboarded: response.user.onboarded || persistedOnboarded,
       tier: 'demo',
     }
 
