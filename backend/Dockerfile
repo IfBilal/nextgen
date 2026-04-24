@@ -4,9 +4,9 @@ FROM node:20-slim AS base
 # Set working directory
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies (including devDependencies for tsc)
 COPY package*.json ./
-RUN npm install
+RUN npm install --include=dev
 
 # Copy source code
 COPY . .

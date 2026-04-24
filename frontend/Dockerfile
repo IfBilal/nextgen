@@ -3,9 +3,9 @@ FROM node:20-slim AS build
 
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies (including devDependencies for vite/tsc)
 COPY package*.json ./
-RUN npm install
+RUN npm install --include=dev
 
 # Copy source code
 COPY . .
