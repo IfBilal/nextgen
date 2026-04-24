@@ -140,7 +140,7 @@ export async function createSession(payload: CreateSessionPayload): Promise<LmsS
     scheduledAt: payload.scheduledAt,
     durationMinutes: payload.durationMinutes,
     status: 'scheduled',
-    meetingLink: payload.meetingLink,
+    meetingLink: payload.meetingLink ?? generateMeetingLink(payload.classId),
     createdAt: new Date().toISOString(),
   }
   saveSessions([...sessions, newSession])
@@ -157,7 +157,7 @@ export async function updateSession(id: string, payload: UpdateSessionPayload): 
     ...sessions[idx],
     scheduledAt: payload.scheduledAt,
     durationMinutes: payload.durationMinutes,
-    meetingLink: payload.meetingLink,
+    meetingLink: payload.meetingLink ?? sessions[idx].meetingLink,
     changeNote: payload.changeNote,
   }
   sessions[idx] = updated
