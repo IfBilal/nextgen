@@ -147,3 +147,114 @@ export interface ClassWithProduct extends LmsClass {
   teacherName: string
   nextSession?: LmsSession
 }
+
+// ─── Second half types ───────────────────────────────────────────────────────
+
+export interface ChatMessage {
+  id: string
+  classId: string
+  studentId: string
+  senderRole: 'student' | 'teacher'
+  text: string
+  sentAt: string
+  read: boolean
+}
+
+export interface AttendanceRecord {
+  sessionId: string
+  classId: string
+  scheduledAt: string
+  durationMinutes: number
+  status: 'attended' | 'missed' | 'cancelled'
+}
+
+export interface RecordedSession {
+  sessionId: string
+  classId: string
+  scheduledAt: string
+  durationMinutes: number
+  recordingUrl: string | null
+  accessLevel: 'full' | 'demo_only' | 'locked'
+}
+
+export interface Coupon {
+  id: string
+  code: string
+  discountType: 'percentage' | 'fixed'
+  discountValue: number
+  maxUses: number           // 0 = unlimited
+  usedCount: number
+  productId: string | null  // null = all products
+  expiresAt: string | null
+  isActive: boolean
+  createdAt: string
+}
+
+export interface NotificationPrefs {
+  studentId: string
+  emailEnabled: boolean
+  pushEnabled: boolean
+  sessionReminder: boolean
+  sessionStarted: boolean
+  sessionRescheduled: boolean
+  noticePosted: boolean
+}
+
+export type LmsNotificationType =
+  | 'session_starting'
+  | 'session_live'
+  | 'session_rescheduled'
+  | 'notice_posted'
+  | 'demo_expiring'
+
+export interface LmsNotification {
+  id: string
+  type: LmsNotificationType
+  message: string
+  classId?: string
+  read: boolean
+  createdAt: string
+}
+
+export interface SessionAnalytics {
+  sessionId: string
+  scheduledAt: string
+  scheduledDuration: number
+  actualDuration: number | null
+  attendanceCount: number | null
+  attendancePercent: number | null
+}
+
+export interface TeacherAnalytics {
+  teacherId: string
+  totalSessionsCompleted: number
+  avgAttendanceRate: number
+  avgActualDuration: number
+  totalStudentsTaught: number
+  perSession: SessionAnalytics[]
+}
+
+export interface CreateCouponPayload {
+  code: string
+  discountType: 'percentage' | 'fixed'
+  discountValue: number
+  maxUses: number
+  productId: string | null
+  expiresAt: string | null
+}
+
+export interface CreateClassPayload {
+  productId: string
+  name: string
+  description: string
+  teacherId: string
+  defaultDurationMinutes: number
+}
+
+export interface EnrollStudentPayload {
+  classId: string
+  studentId: string
+  studentName: string
+  studentEmail: string
+  demoExpiresAt: string | null  // null = full access
+}

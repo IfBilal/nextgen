@@ -25,6 +25,7 @@ import LandingPage from './pages/LandingPage'
 import AboutPage from './pages/public/AboutPage'
 import ContactPage from './pages/public/ContactPage'
 import FaqsPage from './pages/public/FaqsPage'
+import ProductDetailPage from './pages/public/ProductDetailPage'
 
 // Student auth
 import StudentLoginPage    from './pages/student/auth/StudentLoginPage'
@@ -51,6 +52,17 @@ import FlashcardsPage      from './pages/student/FlashcardsPage'
 import UpgradePage         from './pages/student/UpgradePage'
 import MyClassesPage       from './pages/student/MyClassesPage'
 import LiveSessionPage     from './pages/student/LiveSessionPage'
+import StudentProfilePage  from './pages/student/StudentProfilePage'
+import AttendancePage      from './pages/student/AttendancePage'
+import RecordedSessionsPage from './pages/student/RecordedSessionsPage'
+import StudentChatPage     from './pages/student/StudentChatPage'
+import DemoExpiredPage     from './pages/student/DemoExpiredPage'
+import LmsFomoPreviewPage  from './pages/student/LmsFomoPreviewPage'
+import CheckoutPage        from './pages/student/CheckoutPage'
+import PaymentSuccessPage  from './pages/student/PaymentSuccessPage'
+import BillingPage         from './pages/student/BillingPage'
+import NotificationPreferencesPage from './pages/student/NotificationPreferencesPage'
+import StudentProgramsPage from './pages/student/StudentProgramsPage'
 
 // Admin pages
 import AdminLoginPage      from './pages/admin/auth/AdminLoginPage'
@@ -65,6 +77,9 @@ import AdminAffiliatesPage from './pages/admin/AdminAffiliatesPage'
 import AdminTeachersPage   from './pages/admin/AdminTeachersPage'
 import AdminProductsPage   from './pages/admin/AdminProductsPage'
 import AdminLmsSessionsPage from './pages/admin/AdminLmsSessionsPage'
+import AdminClassesPage    from './pages/admin/AdminClassesPage'
+import AdminCouponsPage    from './pages/admin/AdminCouponsPage'
+import AdminChatSupervisionPage from './pages/admin/AdminChatSupervisionPage'
 
 // Affiliate pages
 import AffiliateLoginPage from './pages/affiliate/auth/AffiliateLoginPage'
@@ -80,6 +95,8 @@ import TeacherDashboardPage from './pages/teacher/TeacherDashboardPage'
 import TeacherClassesPage  from './pages/teacher/TeacherClassesPage'
 import TeacherClassDetailPage from './pages/teacher/TeacherClassDetailPage'
 import TeacherSessionFormPage from './pages/teacher/TeacherSessionFormPage'
+import TeacherChatPage     from './pages/teacher/TeacherChatPage'
+import TeacherAnalyticsPage from './pages/teacher/TeacherAnalyticsPage'
 
 // Editor pages
 import EditorLoginPage     from './pages/editor/auth/EditorLoginPage'
@@ -109,6 +126,7 @@ export default function App() {
                         <Route path="/about" element={<AboutPage />} />
                         <Route path="/contact" element={<ContactPage />} />
                         <Route path="/faqs" element={<FaqsPage />} />
+                        <Route path="/programs/:productId" element={<ProductDetailPage />} />
                       </Route>
 
                       {/* ── Student Auth (no layout) ─────────────────────── */}
@@ -142,6 +160,19 @@ export default function App() {
                           {/* LMS routes */}
                           <Route path="/student/classes" element={<MyClassesPage />} />
                           <Route path="/student/classes/:classId/session" element={<LiveSessionPage />} />
+                          <Route path="/student/classes/:classId/attendance" element={<AttendancePage />} />
+                          <Route path="/student/classes/:classId/recordings" element={<RecordedSessionsPage />} />
+                          <Route path="/student/classes/:classId/chat" element={<StudentChatPage />} />
+                          <Route path="/student/profile" element={<StudentProfilePage />} />
+                          <Route path="/student/demo-expired" element={<DemoExpiredPage />} />
+                          <Route path="/student/lms-preview" element={<LmsFomoPreviewPage />} />
+                          <Route path="/student/checkout" element={<CheckoutPage />} />
+                          <Route path="/student/checkout/:productId" element={<CheckoutPage />} />
+                          <Route path="/student/payment-success" element={<PaymentSuccessPage />} />
+                          <Route path="/student/billing" element={<BillingPage />} />
+                          <Route path="/student/notifications" element={<NotificationPreferencesPage />} />
+                          <Route path="/student/programs" element={<StudentProgramsPage />} />
+                          <Route path="/student/programs/:productId" element={<ProductDetailPage />} />
                         </Route>
                       </Route>
 
@@ -164,6 +195,9 @@ export default function App() {
                           <Route path="/admin/teachers" element={<AdminTeachersPage />} />
                           <Route path="/admin/products" element={<AdminProductsPage />} />
                           <Route path="/admin/lms-sessions" element={<AdminLmsSessionsPage />} />
+                          <Route path="/admin/classes" element={<AdminClassesPage />} />
+                          <Route path="/admin/coupons" element={<AdminCouponsPage />} />
+                          <Route path="/admin/chat-supervision" element={<AdminChatSupervisionPage />} />
                         </Route>
                       </Route>
 
@@ -194,6 +228,8 @@ export default function App() {
                           <Route path="/teacher/classes/:classId" element={<TeacherClassDetailPage />} />
                           <Route path="/teacher/sessions/new" element={<TeacherSessionFormPage />} />
                           <Route path="/teacher/sessions/:sessionId/edit" element={<TeacherSessionFormPage />} />
+                          <Route path="/teacher/chat" element={<TeacherChatPage />} />
+                          <Route path="/teacher/analytics" element={<TeacherAnalyticsPage />} />
                         </Route>
                       </Route>
 

@@ -190,7 +190,7 @@ export default function MyClassesPage() {
             Browse our programs to get started.
           </p>
           <Link
-            to="/"
+            to="/student/programs"
             style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 16px', background: '#1a6fad', color: '#fff', borderRadius: 8, fontWeight: 600, fontSize: '0.87rem', textDecoration: 'none' }}
           >
             Browse Programs

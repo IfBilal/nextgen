@@ -1092,3 +1092,881 @@ frontend/src/layouts/AdminLayout.tsx         MODIFIED (3 new nav items)
 - In-app notification inbox
 - Admin/Editor chat supervision with live data
 - Teacher performance analytics (hidden telemetry)
+
+---
+---
+
+# LMS Frontend — Second Half Implementation Plan
+
+This document is the complete, step-by-step plan for the second half of the LMS frontend. It picks up exactly where the first half left off. Same rules apply — no backend, all data mocked via localStorage, every service function marked `// BACKEND SWAP`. Pages build on top of the infrastructure already created in the first half.
+
+---
+
+## Scope of Second Half
+
+| Area | What Gets Built |
+|---|---|
+| Student Portal | Profile, Attendance records, Recorded sessions library, Ask-question flow |
+| Chat System | Student ↔ Teacher chat UI, Teacher inbox, Editor/Admin live supervision |
+| Notifications | In-app notification enhancements, push notification opt-in, session alert banners |
+| Demo & FOMO | Demo countdown banner, Demo gate component, FOMO roadmap preview, Demo expired page |
+| Payments | Product detail page (public), Checkout page, Payment success, Installment management |
+| Admin Enhancements | Class creation/management, Student enrollment management, Coupon management, Recording library |
+| Teacher Enhancements | Recording upload management, Class analytics (hidden from students) |
+
+---
+
+## Phase 8 — Student Portal Enhancements
+
+### 8.1 StudentProfilePage
+
+**Route:** `/student/profile`
+**File:** `frontend/src/pages/student/StudentProfilePage.tsx`
+**Nav:** Add "Profile" item to StudentLayout NAV_ITEMS (UserCircle icon)
+
+**Sections:**
+
+**Profile Card (top):**
+- Avatar circle with initials (same as sidebar)
+- Full name (large)
+- Email (read-only)
+- Member since date (from mock auth data)
+- Current plan badge (from SubscriptionContext)
+- "Edit Profile" button — opens inline edit form for name and phone (no password change here)
+
+**Enrolled Classes Summary:**
+- Small cards for each enrolled class
+- Class name, product badge, teacher first name
+- "View Class →" link
+- If no classes: "You are not enrolled in any classes yet."
+
+**Demo Status Block (conditional — only shown if demo active):**
+- Demo expiry countdown chip
+- "Upgrade to Full Access" button → `/student/checkout` (or `/student/upgrade` until payment is built)
+
+---
+
+### 8.2 AttendancePage (per class)
+
+**Route:** `/student/classes/:classId/attendance`
+**File:** `frontend/src/pages/student/AttendancePage.tsx`
+**Access:** Linked from LiveSessionPage sidebar tab "Attendance"
+
+**Header:**
+- Class name + product badge
+- Overall attendance: large circle percentage indicator (e.g. 80%)
+- Sub-label: "8 of 10 sessions attended"
+
+**Session List:**
+- Table or card list of all completed sessions for this class
+- Columns: Date | Duration | Status
+- Status options:
+  - Green checkmark chip: "Attended"
+  - Red cross chip: "Missed"
+  - Grey chip: "Cancelled" (these don't count against attendance)
+- Mock data: randomise attended/missed per session (seeded by student+class ID so it stays consistent on re-render)
+
+**Important — Privacy Rule:**
+- No other students' attendance is visible
+- No absolute attendance count shown (only the student's own percentage)
+- Internal admin stats (exact counts, all-student view) are handled in the admin panel only — never shown here
+
+---
+
+### 8.3 RecordedSessionsPage (per class)
+
+**Route:** `/student/classes/:classId/recordings`
+**File:** `frontend/src/pages/student/RecordedSessionsPage.tsx`
+**Access:** New "Recordings" tab in LiveSessionPage layout
+
+**Full Access State:**
+- List of all completed sessions that have a `recordingUrl`
+- Each row: Session date | Duration | "Watch Recording" button (links to recordingUrl, opens in new tab)
+- Empty state if no recordings yet: "Recordings will appear here after each session ends."
+
+**Demo Access State (demo not yet expired, but limited):**
+- Only the most recent same-day recording is accessible
+- All older recordings show a locked card:
+  - Blurred thumbnail placeholder
+  - Lock icon overlay
+  - "Full access required — Enroll to unlock all recordings"
+  - Small "Upgrade" button
+
+**Demo Expired State:**
+- All recordings locked
+- Full-width banner: "Your demo has ended. Enroll to access all recorded sessions."
+
+---
+
+### 8.4 LiveSessionPage — Sidebar Tabs Update
+
+**File:** Update `frontend/src/pages/student/LiveSessionPage.tsx`
+
+The current sidebar shows only the Notice Board. Add two more tabs:
+
+**Tabs: Notice Board | Recordings | Attendance**
+- Tab state managed with `useState`
+- Notice Board: existing content
+- Recordings: links to `/student/classes/:classId/recordings` (or renders inline)
+- Attendance: links to `/student/classes/:classId/attendance` (or renders inline chip showing current %)
+
+---
+
+### 8.5 AskQuestionFlow
+
+**Component:** `frontend/src/components/lms/AskQuestionModal.tsx`
+**Triggered from:** LiveSessionPage main content area — "Ask a Question" button below the session state panel
+
+**Modal layout:**
+- Heading: "Ask [Teacher First Name] a Question"
+- Privacy note: "Your question will be visible to your teacher and platform supervisors."
+- Textarea: question text (required, max 500 chars, char counter shown)
+- Submit button: "Send Question"
+- On submit (mock): shows success state "Question sent ✓" and closes after 2 seconds
+- Backend swap: POST /api/v1/chat/messages (hooks into chat system)
+
+---
+
+## Phase 9 — Chat System
+
+The chat system enables private Student ↔ Teacher communication, with Admin and Editor able to observe all threads in read-only supervision mode.
+
+### 9.1 Data Model (mock additions to `data/lms.ts`)
+
+```
+ChatMessage
+  id: string
+  classId: string
+  studentId: string
+  senderRole: 'student' | 'teacher'
+  text: string
+  sentAt: string   // ISO datetime
+  read: boolean    // has the other party read it?
+
+localStorage key: nextgen.lms.chat-messages
+```
+
+Add `getChatMessages() / saveChatMessages()` helpers.
+Add seed data: 3–4 mock message threads between the seeded student and teacher.
+
+---
+
+### 9.2 StudentChatPage
+
+**Route:** `/student/classes/:classId/chat`
+**File:** `frontend/src/pages/student/StudentChatPage.tsx`
+**Style:** `frontend/src/styles/chat.css`
+**Nav:** "Chat" tab added to LiveSessionPage sidebar tabs (replaces or is added alongside Attendance)
+
+**Layout:**
+- Full-height chat thread panel
+- Header: "Chat with Dr. [TeacherFirstName]" + privacy badge "Supervised"
+- Message thread:
+  - Student messages: right-aligned, blue bubble
+  - Teacher messages: left-aligned, grey bubble
+  - Timestamp shown below each message
+  - "Read" / "Unread" indicator on student's own messages
+- Input bar at bottom: textarea (Enter to send, Shift+Enter for newline) + Send button
+- On send: appends message to localStorage, re-renders thread
+
+**Privacy notice (top of thread):**
+- Small amber bar: "All messages in this chat are visible to platform supervisors."
+
+---
+
+### 9.3 TeacherChatPage
+
+**Route:** `/teacher/classes/:classId/chat`
+**File:** `frontend/src/pages/teacher/TeacherChatPage.tsx`
+**Nav:** Add "Chat" nav item to TeacherLayout (MessageSquare icon)
+
+**Layout — two-panel:**
+
+**Left panel (student list):**
+- List of all students enrolled in this class
+- Student name (first name only — privacy)
+- Unread message count badge
+- "Last message" preview (truncated)
+- Click to open chat thread
+
+**Right panel (chat thread):**
+- Same bubble layout as StudentChatPage
+- Teacher messages: right-aligned, navy bubble
+- Student messages: left-aligned, grey bubble
+- Send message input at bottom
+- "No conversation selected" empty state
+
+**Header:**
+- Class name + student name once selected
+
+---
+
+### 9.4 EditorSupervisionPage — Live Update
+
+**File:** Update `frontend/src/pages/editor/EditorSupervisionPage.tsx`
+**Route:** `/editor/supervision` (already exists — replace shell with real content)
+
+**Layout — two-panel (same as TeacherChatPage but read-only):**
+
+**Left panel:**
+- Dropdown: filter by class
+- List of all active student-teacher threads across all classes
+- Each row: Student name | Class name | Unread count | Last message preview
+
+**Right panel:**
+- Read-only chat thread view (same bubble layout)
+- Top banner: "Supervision Mode — Read Only. You cannot send messages."
+- "Flag Conversation" button (mock — shows toast "Flagged for review")
+
+---
+
+### 9.5 AdminChatSupervisionPage
+
+**Route:** `/admin/chat-supervision`
+**File:** `frontend/src/pages/admin/AdminChatSupervisionPage.tsx`
+**Nav:** Add to AdminLayout — "Chat Supervision" (Eye icon) → `/admin/chat-supervision`
+
+Identical layout to EditorSupervisionPage but with additional "Delete Message" action per bubble (admin only). Delete is mock — removes from localStorage and re-renders.
+
+---
+
+## Phase 10 — Notifications
+
+### 10.1 NotificationBanner (shared component)
+
+**File:** `frontend/src/components/lms/SessionStartingBanner.tsx`
+
+Appears at the top of student pages (inside StudentLayout, above page content) when:
+- A session for any enrolled class starts within 60 minutes: amber banner "Your session starts in X minutes — [Class Name]"
+- A session is currently live: green pulsing banner (same as current live banner but shown globally, not just on MyClassesPage)
+
+Implemented as a context-aware component that reads from enrolled classes on mount.
+
+---
+
+### 10.2 NotificationPreferencesPage
+
+**Route:** `/student/notifications`
+**File:** `frontend/src/pages/student/NotificationPreferencesPage.tsx`
+**Nav:** Accessible from StudentProfilePage ("Notification Settings" link)
+
+**Preferences (mock — stored in localStorage):**
+
+- **Email notifications:** toggle (default: on)
+  - Sub-options: Session reminders (1h before), Session started, Session rescheduled, New notice posted
+- **Push notifications:** toggle with browser permission request on enable
+  - On toggle on: calls `Notification.requestPermission()` — if denied, shows info message explaining how to enable
+  - Sub-options: same as email
+- **WhatsApp:** informational only — "WhatsApp notifications are sent to the phone number on your profile. Contact support to update."
+
+On save: stores preferences to `localStorage` key `nextgen.student.notification-prefs.<userId>`
+
+---
+
+### 10.3 InboxPage — LMS Notification Feed
+
+**File:** Update existing `frontend/src/pages/student/InboxPage.tsx`
+
+Add a second tab alongside existing announcements: **"LMS Alerts"**
+
+LMS Alerts tab shows a feed of LMS-specific notifications:
+- "Session Starting in 30 min — Step 1 Intensive" (with timestamp and "View Class" button)
+- "Session Rescheduled — Step 1 Intensive moved to [new date]" (with change note)
+- "New Notice Posted — [Notice title]"
+- "Your demo access expires in 2 days" (amber chip)
+
+Each item: icon + message text + timestamp + action button. Read/unread state tracked in localStorage.
+
+---
+
+## Phase 11 — Demo & FOMO System
+
+### 11.1 DemoCountdownBanner (student)
+
+**File:** `frontend/src/components/lms/DemoCountdownBanner.tsx`
+
+A persistent banner shown at the top of all student LMS pages when `enrollment.demoExpiresAt` is set and not yet expired.
+
+**States:**
+
+- **More than 24h remaining:** amber banner
+  - "Demo Access — X days and Y hours remaining"
+  - "Upgrade to Full Access →" button
+
+- **Under 24h remaining:** red pulsing banner
+  - "Your demo expires in Xh Ym! Enroll now to keep access."
+  - "Enroll Now →" button (prominent)
+
+Banner is dismissible per session (re-appears on next page load). Dismissal stored in `sessionStorage`.
+
+---
+
+### 11.2 DemoGate (reusable component)
+
+**File:** `frontend/src/components/lms/DemoGate.tsx`
+
+A wrapper component placed around content that is restricted during demo.
+
+```
+<DemoGate reason="Recordings are available after full enrollment.">
+  <RecordedSessionCard ... />
+</DemoGate>
+```
+
+**Render logic:**
+- If student has full access → renders children normally
+- If student is in demo → renders a locked overlay card:
+  - Blurred/greyed background preview of child content
+  - Lock icon (lucide: `Lock`)
+  - Reason text
+  - "Upgrade" button
+
+Used in: RecordedSessionsPage (older recordings), full chat history, attendance stats beyond summary.
+
+---
+
+### 11.3 LmsFomoPreviewPage
+
+**Route:** `/student/lms-preview`
+**File:** `frontend/src/pages/student/LmsFomoPreviewPage.tsx`
+**Access:** Shown to demo students from their dashboard and from the demo countdown banner CTA
+
+**Purpose:** Convert demo students into paid students by showing them what they're missing.
+
+**Sections (top to bottom):**
+
+**Hero:**
+- "You're in demo mode — here's what you'll unlock when you enroll"
+- Demo expiry chip (red if < 24h)
+
+**What You'll Get — Feature Grid:**
+- 4 cards side-by-side:
+  1. All Recorded Sessions (lock icon, "Only today's available in demo")
+  2. Full Chat with Teacher (lock icon, "Ask unlimited questions")
+  3. Full Attendance History (lock icon, "Track your progress")
+  4. Priority Notifications (lock icon, "Never miss a session")
+
+**Session Roadmap (FOMO):**
+- Upcoming session cards for the class, showing:
+  - Sessions 1–3 of the program: ticked (already happened or in demo)
+  - Sessions 4–10: greyed-out, lock icon, "Available after enrollment"
+  - Topic labels per session (hardcoded mock: "Cardiology Basics", "Renal Physiology", etc.)
+- Visual impact: student sees how much they'd miss
+
+**Social Proof Strip:**
+- "X students enrolled this week" (mock number)
+- 3 short student quotes (hardcoded)
+
+**CTA Banner:**
+- Full-width: "Ready to unlock everything?" + "Enroll Now" button → `/student/checkout`
+
+---
+
+### 11.4 DemoExpiredPage
+
+**Route:** `/student/demo-expired`
+**File:** `frontend/src/pages/student/DemoExpiredPage.tsx`
+**Access:** StudentProtectedRoute redirects here when `demoExpiresAt` is set and past
+
+**Layout:**
+- Centered card
+- Large lock icon
+- "Your demo access has ended"
+- "You had access to: Today's recording, Countdown timer, Notice board"
+- "Enroll to get: All recordings, Teacher chat, Full attendance history, Session notifications"
+- Two buttons: "Enroll Now" (primary) and "Contact Support" (ghost)
+
+---
+
+## Phase 12 — Payment & Enrollment System
+
+### 12.1 ProductDetailPage (public)
+
+**Route:** `/programs/:productId`
+**File:** `frontend/src/pages/public/ProductDetailPage.tsx`
+**Access:** "Learn More" / "Enroll Now" from HomePage product cards
+
+**Sections:**
+
+**Hero:**
+- Product name + description
+- Teacher section: "Taught by Dr. [Name]" with bio excerpt
+- Key stats: X students enrolled, X sessions per week, X mins avg session
+
+**Pricing Section:**
+- Toggle: "Upfront" | "Installments"
+- Upfront card: full price, discount badge if applicable, "Save X%"
+- Installment card: $X/month × N months = $Y total
+- Coupon code input: text input + "Apply" button
+  - Valid code: shows discount applied, updates price displayed
+  - Invalid code: inline error
+- "Start Demo (Free)" button → `/student/register?productId=...`
+- "Enroll Now" button → `/student/checkout/:productId`
+
+**What's Included:**
+- Bullet list: Live sessions, Recorded library, Teacher chat, Notice board, Attendance tracking
+
+**Schedule Preview:**
+- Mock upcoming sessions for this product (3 cards with day/time/topic)
+
+---
+
+### 12.2 CheckoutPage
+
+**Route:** `/student/checkout/:productId`
+**File:** `frontend/src/pages/student/CheckoutPage.tsx`
+**Protected:** StudentProtectedRoute required
+
+**Layout — two-column:**
+
+**Left — Order Summary:**
+- Product name
+- Plan selected: Upfront ($X) or Installment ($X/month)
+- Coupon discount line (if applied, shown in green)
+- Subtotal → Total
+- Feature list (what they're getting)
+
+**Right — Payment Form:**
+- Plan toggle: Upfront | Installments
+- Installment details: "$X/month for N months — auto-charged on [day] of each month"
+- Card details section (Stripe Elements placeholder — real Stripe in second half backend)
+  - In mock: simple form fields (card number, expiry, CVC) that don't validate
+  - Submit triggers mock "Processing…" state then redirects to `/student/payment-success`
+- "Cancel — Go Back" ghost link
+
+---
+
+### 12.3 PaymentSuccessPage
+
+**Route:** `/student/payment-success`
+**File:** `frontend/src/pages/student/PaymentSuccessPage.tsx`
+
+**Layout (centered):**
+- Large green checkmark animation (CSS only)
+- "You're enrolled!"
+- Product name + class name
+- "Your first session is on [date] at [time]"
+- Two buttons: "Go to My Classes" (primary) + "View Receipt" (ghost, placeholder)
+
+---
+
+### 12.4 BillingPage (installment management)
+
+**Route:** `/student/billing`
+**File:** `frontend/src/pages/student/BillingPage.tsx`
+**Nav:** Add "Billing" item to StudentLayout (CreditCard icon) — only visible if student has an active installment plan
+
+**Sections:**
+
+**Current Plan:**
+- Plan name + product name
+- Payment method: card ending in XXXX (mock)
+- Next payment: date + amount
+- Status chip: Active / Paused / Cancelled
+
+**Payment History table:**
+- Date | Amount | Status (Paid / Failed / Upcoming)
+- "Download Receipt" placeholder button per row
+
+**Cancel Plan section:**
+- "Cancel Installment Plan" button (red, ghost)
+- Confirmation modal: "Are you sure? You will lose access at end of current billing period."
+- On confirm: mock cancels plan, shows "Cancellation scheduled" state
+
+---
+
+### 12.5 CouponManagementPage (admin)
+
+**Route:** `/admin/coupons`
+**File:** `frontend/src/pages/admin/AdminCouponsPage.tsx`
+**Nav:** Add "Coupons" nav item to AdminLayout (Tag icon)
+
+**Stats Row (3 KPI cards):**
+- Total Coupons | Active Coupons | Total Uses
+
+**Coupons Table:**
+- Code | Discount | Type (% or fixed) | Max Uses | Used Count | Expiry | Status | Actions
+
+**Actions per row:**
+- Active: "Deactivate" button
+- Expired/Inactive: "Activate" button + "Delete" button
+
+**"Create Coupon" button (top right):**
+- Modal with:
+  - Code (text, auto-uppercase)
+  - Discount type: toggle "Percentage" | "Fixed Amount"
+  - Discount value (number)
+  - Max uses (number, 0 = unlimited)
+  - Expiry date (date picker, optional)
+  - Product (dropdown — which product this applies to, or "All Products")
+  - Submit → calls `adminCreateCoupon()` (marked BACKEND SWAP)
+
+---
+
+## Phase 13 — Admin Class & Enrollment Management
+
+### 13.1 AdminClassesPage
+
+**Route:** `/admin/classes`
+**File:** `frontend/src/pages/admin/AdminClassesPage.tsx`
+**Nav:** Add "Classes" nav item to AdminLayout (BookOpen icon) → `/admin/classes`
+
+**Stats Row (3 KPI cards):**
+- Total Classes | Active Classes (with upcoming sessions) | Total Enrolled Students
+
+**Classes Table:**
+- Class Name | Product | Teacher | Enrolled Count | Next Session | Actions
+
+**Actions per row:**
+- "Manage Enrollments" → opens enrollment drawer/panel
+- "Edit Class" → opens edit modal (change name, teacher, default duration)
+- "View Sessions" → links to `/admin/lms-sessions?classId=...`
+
+**"Create Class" button (top right):**
+- Modal with:
+  - Class Name (required)
+  - Product (dropdown)
+  - Teacher (dropdown — approved teachers only)
+  - Default Duration in minutes
+  - Description (optional)
+  - Submit → calls `adminCreateClass()`
+
+---
+
+### 13.2 EnrollmentDrawer (within AdminClassesPage)
+
+A slide-in panel (right side) that opens when "Manage Enrollments" is clicked for a class.
+
+**Top section — Current Enrollments:**
+- List of enrolled students: name, enrolled date, demo_expires_at status chip (Full Access / Demo: X days / Expired)
+- "Remove" button per student (with confirmation)
+
+**Bottom section — Enroll New Student:**
+- Search input: search students by name or email
+- Results dropdown: click to select
+- Demo access toggle: "Grant demo access" with date picker for expiry, or "Full access"
+- "Enroll" button → calls `adminEnrollStudent(classId, studentId, demoExpiresAt)`
+
+---
+
+## Phase 14 — Teacher Analytics & Recording Management
+
+### 14.1 TeacherAnalyticsPage
+
+**Route:** `/teacher/analytics`
+**File:** `frontend/src/pages/teacher/TeacherAnalyticsPage.tsx`
+**Nav:** Add "Analytics" item to TeacherLayout (BarChart2 icon)
+
+**Important:** This data must NEVER be shown to students. It is strictly internal.
+
+**Stats Row (4 KPI cards):**
+- Total Sessions Completed | Avg Attendance Rate | Avg Session Duration | Total Students Taught
+
+**Per-Class Breakdown:**
+- Dropdown to select class
+- Attendance Rate over time: simple bar chart (CSS-only bars, no chart library)
+  - Each bar = one session, height = attendance %
+- Sessions table: Date | Scheduled Duration | Actual Duration | Students Attended | Attendance %
+- Empty state if no completed sessions yet
+
+**Student Engagement:**
+- Questions asked count per student (mock)
+- Most active students (top 3, first name only)
+- Privacy note: "Student names shown to teacher only. Not visible to other students."
+
+---
+
+### 14.2 Recording Management Tab (TeacherClassDetailPage update)
+
+**File:** Update `frontend/src/pages/teacher/TeacherClassDetailPage.tsx`
+Add a **"Recordings"** tab alongside Sessions | Students | Notice Board.
+
+**Recordings Tab:**
+- List of completed sessions
+- Each row: Date | Duration | Recording Status chip (Available / Pending / Not uploaded)
+- "Add Recording URL" button per row (for sessions without a recording)
+  - Opens inline input: paste recording URL (Zoom recording link, Google Drive, etc.)
+  - Submit → calls `updateSessionRecording(sessionId, url)`
+- "Remove Recording" for sessions that have one
+- Note: Recording URLs are visible to enrolled students (full access only)
+
+---
+
+## Phase 15 — Styles Summary
+
+New CSS files required for the second half:
+
+| File | Used By |
+|---|---|
+| `styles/chat.css` | StudentChatPage, TeacherChatPage, EditorSupervisionPage, AdminChatSupervisionPage |
+| `styles/demo.css` | DemoCountdownBanner, DemoGate, LmsFomoPreviewPage, DemoExpiredPage |
+| `styles/payment.css` | ProductDetailPage, CheckoutPage, PaymentSuccessPage, BillingPage |
+| `styles/admin/admin-classes.css` | AdminClassesPage, EnrollmentDrawer |
+| `styles/admin/admin-coupons.css` | AdminCouponsPage |
+
+All new files follow the same design token conventions used throughout the first half.
+
+---
+
+## New Routes to Register in App.tsx
+
+```
+Public:
+  /programs/:productId          → ProductDetailPage
+
+Student (protected):
+  /student/profile              → StudentProfilePage
+  /student/classes/:classId/attendance   → AttendancePage
+  /student/classes/:classId/recordings   → RecordedSessionsPage
+  /student/classes/:classId/chat         → StudentChatPage
+  /student/lms-preview          → LmsFomoPreviewPage
+  /student/demo-expired         → DemoExpiredPage
+  /student/checkout/:productId  → CheckoutPage
+  /student/payment-success      → PaymentSuccessPage
+  /student/billing              → BillingPage
+  /student/notifications        → NotificationPreferencesPage
+
+Teacher (protected):
+  /teacher/classes/:classId/chat  → TeacherChatPage
+  /teacher/analytics              → TeacherAnalyticsPage
+
+Admin (protected):
+  /admin/classes                → AdminClassesPage
+  /admin/coupons                → AdminCouponsPage
+  /admin/chat-supervision       → AdminChatSupervisionPage
+
+Editor (already registered):
+  /editor/supervision           → EditorSupervisionPage (update from shell to live)
+```
+
+---
+
+## New Service Functions to Add in `lmsApi.ts`
+
+All marked `// BACKEND SWAP`:
+
+```
+Chat:
+  getChatMessages(classId, studentId)         → ChatMessage[]
+  sendChatMessage(classId, text)              → ChatMessage
+  getAllChatThreads(classId)                  → ChatThread[] (teacher/editor/admin)
+  deleteChatMessage(messageId)               → void (admin only)
+
+Attendance:
+  getAttendanceForClass(classId)             → AttendanceRecord[]
+
+Recordings:
+  getRecordingsForClass(classId)             → RecordedSession[]
+  updateSessionRecording(sessionId, url)     → LmsSession
+
+Notifications:
+  getNotificationPrefs(studentId)            → NotificationPrefs
+  saveNotificationPrefs(prefs)               → void
+  getLmsNotifications(studentId)             → LmsNotification[]
+  markNotificationRead(id)                   → void
+
+Payments (mock Stripe):
+  getCoupons()                               → Coupon[]
+  adminCreateCoupon(payload)                 → Coupon
+  adminDeactivateCoupon(id)                  → void
+  validateCoupon(code, productId)            → { valid, discount }
+  submitCheckout(productId, plan, coupon)    → { success, enrollmentId }
+
+Admin — Classes & Enrollment:
+  adminGetClasses()                          → LmsClass[]
+  adminCreateClass(payload)                  → LmsClass
+  adminUpdateClass(id, payload)              → void
+  adminEnrollStudent(classId, studentId, demoExpiresAt?) → void
+  adminRemoveEnrollment(classId, studentId)  → void
+  adminGetEnrollmentsForClass(classId)       → Enrollment[]
+
+Teacher:
+  getTeacherAnalytics(teacherId)             → TeacherAnalytics
+```
+
+---
+
+## New Types to Add in `types/lms.ts`
+
+```
+ChatMessage
+  id: string
+  classId: string
+  studentId: string
+  senderRole: 'student' | 'teacher'
+  text: string
+  sentAt: string
+  read: boolean
+
+AttendanceRecord
+  sessionId: string
+  scheduledAt: string
+  durationMinutes: number
+  status: 'attended' | 'missed' | 'cancelled'
+
+RecordedSession
+  sessionId: string
+  scheduledAt: string
+  durationMinutes: number
+  recordingUrl: string | null
+  accessLevel: 'full' | 'demo_only' | 'locked'
+
+Coupon
+  id: string
+  code: string
+  discountType: 'percentage' | 'fixed'
+  discountValue: number
+  maxUses: number
+  usedCount: number
+  productId: string | null   // null = all products
+  expiresAt: string | null
+  isActive: boolean
+  createdAt: string
+
+NotificationPrefs
+  studentId: string
+  emailEnabled: boolean
+  pushEnabled: boolean
+  sessionReminder: boolean
+  sessionStarted: boolean
+  sessionRescheduled: boolean
+  noticePosted: boolean
+
+LmsNotification
+  id: string
+  type: 'session_starting' | 'session_live' | 'session_rescheduled' | 'notice_posted' | 'demo_expiring'
+  message: string
+  classId?: string
+  read: boolean
+  createdAt: string
+
+TeacherAnalytics
+  teacherId: string
+  totalSessionsCompleted: number
+  avgAttendanceRate: number
+  avgActualDuration: number
+  totalStudentsTaught: number
+  perSession: SessionAnalytics[]
+
+SessionAnalytics
+  sessionId: string
+  scheduledAt: string
+  scheduledDuration: number
+  actualDuration: number | null
+  attendanceCount: number | null
+  attendancePercent: number | null
+```
+
+---
+
+## Implementation Order
+
+Build in this sequence — earlier steps unblock later ones.
+
+```
+Step 1   Add new types to types/lms.ts
+Step 2   Add ChatMessage, AttendanceRecord, Coupon data + helpers to data/lms.ts
+Step 3   Add all new service stubs to lmsApi.ts (BACKEND SWAP)
+Step 4   StudentProfilePage             /student/profile
+Step 5   AttendancePage                 /student/classes/:classId/attendance
+Step 6   RecordedSessionsPage           /student/classes/:classId/recordings
+Step 7   DemoGate component             (used by recordings + other pages)
+Step 8   DemoCountdownBanner component  (shown on student LMS pages)
+Step 9   DemoExpiredPage                /student/demo-expired
+Step 10  LmsFomoPreviewPage             /student/lms-preview
+Step 11  LiveSessionPage sidebar tabs update (add Recordings, Attendance, Chat tabs)
+Step 12  AskQuestionModal component
+Step 13  chat.css styles
+Step 14  StudentChatPage                /student/classes/:classId/chat
+Step 15  TeacherChatPage                /teacher/classes/:classId/chat
+Step 16  EditorSupervisionPage update   (shell → live, /editor/supervision)
+Step 17  AdminChatSupervisionPage       /admin/chat-supervision
+Step 18  NotificationPreferencesPage    /student/notifications
+Step 19  SessionStartingBanner component
+Step 20  InboxPage LMS tab update
+Step 21  payment.css styles
+Step 22  ProductDetailPage              /programs/:productId
+Step 23  CheckoutPage                   /student/checkout/:productId
+Step 24  PaymentSuccessPage             /student/payment-success
+Step 25  BillingPage                    /student/billing
+Step 26  AdminCouponsPage               /admin/coupons
+Step 27  admin-classes.css styles
+Step 28  AdminClassesPage               /admin/classes
+Step 29  EnrollmentDrawer component     (within AdminClassesPage)
+Step 30  TeacherAnalyticsPage           /teacher/analytics
+Step 31  Recording Management tab       (update TeacherClassDetailPage)
+Step 32  App.tsx route additions        (all new routes)
+Step 33  AdminLayout update             (add Classes, Coupons, Chat Supervision nav items)
+Step 34  StudentLayout update           (add Profile, Billing nav items)
+Step 35  TeacherLayout update           (add Chat, Analytics nav items)
+```
+
+---
+
+## Files Created — Complete List
+
+```
+frontend/src/components/lms/
+  AskQuestionModal.tsx                        NEW
+  DemoCountdownBanner.tsx                     NEW
+  DemoGate.tsx                                NEW
+  SessionStartingBanner.tsx                   NEW
+
+frontend/src/pages/student/
+  StudentProfilePage.tsx                      NEW
+  AttendancePage.tsx                          NEW
+  RecordedSessionsPage.tsx                    NEW
+  StudentChatPage.tsx                         NEW
+  LmsFomoPreviewPage.tsx                      NEW
+  DemoExpiredPage.tsx                         NEW
+  CheckoutPage.tsx                            NEW
+  PaymentSuccessPage.tsx                      NEW
+  BillingPage.tsx                             NEW
+  NotificationPreferencesPage.tsx             NEW
+
+frontend/src/pages/teacher/
+  TeacherChatPage.tsx                         NEW
+  TeacherAnalyticsPage.tsx                    NEW
+
+frontend/src/pages/admin/
+  AdminClassesPage.tsx                        NEW
+  AdminCouponsPage.tsx                        NEW
+  AdminChatSupervisionPage.tsx                NEW
+
+frontend/src/pages/public/
+  ProductDetailPage.tsx                       NEW
+
+frontend/src/styles/
+  chat.css                                    NEW
+  demo.css                                    NEW
+  payment.css                                 NEW
+  admin/admin-classes.css                     NEW
+  admin/admin-coupons.css                     NEW
+
+frontend/src/pages/student/LiveSessionPage.tsx        MODIFIED (sidebar tabs)
+frontend/src/pages/editor/EditorSupervisionPage.tsx   MODIFIED (shell → live)
+frontend/src/pages/teacher/TeacherClassDetailPage.tsx MODIFIED (recordings tab)
+frontend/src/pages/admin/AdminLayout.tsx              MODIFIED (3 new nav items)
+frontend/src/layouts/StudentLayout.tsx                MODIFIED (Profile, Billing nav)
+frontend/src/layouts/TeacherLayout.tsx                MODIFIED (Chat, Analytics nav)
+frontend/src/types/lms.ts                             MODIFIED (new interfaces)
+frontend/src/data/lms.ts                              MODIFIED (new mock data)
+frontend/src/services/lmsApi.ts                       MODIFIED (new BACKEND SWAP stubs)
+frontend/src/App.tsx                                  MODIFIED (new routes)
+```
+
+**Total: 20 new files, 9 modified files**
+
+---
+
+## What Is NOT in Second Half (Third Phase / Out of Scope)
+
+- Stripe live integration (real card processing — backend wires this)
+- WhatsApp notification sending (backend/Twilio integration)
+- Email notification sending (backend/SendGrid or similar)
+- Zoom recording auto-fetch (backend webhook from Zoom)
+- Real-time chat (WebSocket / Supabase realtime — backend concern)
+- Video playback player (embedded player for recordings)
+- Student progress analytics beyond attendance (requires backend data)
+- Admin bulk enrollment (CSV upload)
+- Multi-teacher classes

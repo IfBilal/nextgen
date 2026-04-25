@@ -7,6 +7,8 @@ import {
   Menu,
   X,
   GraduationCap,
+  MessageSquare,
+  BarChart2,
 } from 'lucide-react'
 import { useTeacherAuth } from '../context/TeacherAuthContext'
 import './TeacherLayout.css'
@@ -14,6 +16,8 @@ import './TeacherLayout.css'
 const TEACHER_NAV_ITEMS = [
   { to: '/teacher/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/teacher/classes', label: 'My Classes', icon: BookOpen },
+  { to: '/teacher/chat', label: 'Student Chat', icon: MessageSquare },
+  { to: '/teacher/analytics', label: 'Analytics', icon: BarChart2 },
 ]
 
 export default function TeacherLayout() {

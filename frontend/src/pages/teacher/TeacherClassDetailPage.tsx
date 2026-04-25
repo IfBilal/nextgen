@@ -10,6 +10,8 @@ import {
   cancelSession,
   createNotice,
   deleteNotice,
+  updateSessionRecording,
+  removeSessionRecording,
 } from '../../services/lmsApi'
 import type { LmsSession, Notice, LmsClass } from '../../types/lms'
 import '../../styles/teacher.css'
@@ -25,10 +27,11 @@ import {
   Play,
   CheckCircle2,
   ChevronLeft,
+  Link2,
 } from 'lucide-react'
 
 type SessionFilter = 'all' | 'scheduled' | 'live' | 'completed' | 'cancelled'
-type Tab = 'sessions' | 'students' | 'notices'
+type Tab = 'sessions' | 'students' | 'notices' | 'recordings'
 
 const MOCK_STUDENTS = [
   { id: 's1', name: 'Student A', joined: '2026-01-15', attended: 8, total: 10 },
@@ -92,6 +95,11 @@ export default function TeacherClassDetailPage() {
 
   // Cancel confirm
   const [cancelConfirmId, setCancelConfirmId] = useState<string | null>(null)
+
+  // Recording management state
+  const [recordingInputId, setRecordingInputId] = useState<string | null>(null)
+  const [recordingUrl, setRecordingUrl] = useState('')
+  const [recordingSubmitting, setRecordingSubmitting] = useState(false)
 
   useEffect(() => {
     if (!classId || !teacher) return
@@ -232,13 +240,13 @@ export default function TeacherClassDetailPage() {
       {/* Tabs */}
       <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 14, padding: '0 16px 16px' }}>
         <div className="teacher-tabs" style={{ marginBottom: 0, paddingTop: 12 }}>
-          {(['sessions', 'students', 'notices'] as Tab[]).map(tab => (
+          {(['sessions', 'students', 'notices', 'recordings'] as Tab[]).map(tab => (
             <button
               key={tab}
               className={`teacher-tab ${activeTab === tab ? 'teacher-tab--active' : ''}`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab === 'sessions' ? 'Sessions' : tab === 'students' ? 'Students' : 'Notice Board'}
+              {tab === 'sessions' ? 'Sessions' : tab === 'students' ? 'Students' : tab === 'notices' ? 'Notice Board' : 'Recordings'}
             </button>
           ))}
         </div>
@@ -467,6 +475,97 @@ export default function TeacherClassDetailPage() {
           )}
         </div>
       </div>
+
+          {/* Recordings Tab */}
+          {activeTab === 'recordings' && (
+            <div>
+              <p style={{ fontSize: '0.8rem', color: '#55789c', margin: '0 0 12px' }}>
+                Add or remove recording URLs for completed sessions. URLs are visible to enrolled students.
+              </p>
+              {sessions.filter(s => s.status === 'completed').length === 0 ? (
+                <div className="teacher-empty-state"><Video size={28} /><p>No completed sessions yet.</p></div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {sessions.filter(s => s.status === 'completed').map(session => (
+                    <div key={session.id} style={{ background: '#f5f8fc', border: '1px solid #e8f1f8', borderRadius: 10, padding: '12px 14px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+                        <div>
+                          <div style={{ fontWeight: 600, color: '#0d2d5e', fontSize: '0.87rem' }}>
+                            {formatDateTime(session.scheduledAt)}
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: '#55789c', marginTop: 2 }}>
+                            {session.durationMinutes} min
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          {session.recordingUrl ? (
+                            <>
+                              <span style={{ fontSize: '0.72rem', padding: '2px 8px', background: '#dcfce7', color: '#15803d', borderRadius: 99, fontWeight: 700 }}>Available</span>
+                              <a href={session.recordingUrl} target="_blank" rel="noopener noreferrer" className="teacher-btn teacher-btn--secondary" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>
+                                <Video size={11} /> View
+                              </a>
+                              <button
+                                className="teacher-btn teacher-btn--ghost"
+                                style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                                onClick={async () => {
+                                  const updated = await removeSessionRecording(session.id)
+                                  setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
+                                  showToast('Recording removed')
+                                }}
+                              >
+                                <Trash2 size={11} /> Remove
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <span style={{ fontSize: '0.72rem', padding: '2px 8px', background: '#f1f5f9', color: '#6a86a7', borderRadius: 99, fontWeight: 700 }}>Not uploaded</span>
+                              <button
+                                className="teacher-btn teacher-btn--primary"
+                                style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                                onClick={() => { setRecordingInputId(session.id); setRecordingUrl('') }}
+                              >
+                                <Link2 size={11} /> Add URL
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      {recordingInputId === session.id && (
+                        <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
+                          <input
+                            className="teacher-form-input"
+                            placeholder="Paste recording URL (Zoom, Drive, etc.)"
+                            value={recordingUrl}
+                            onChange={e => setRecordingUrl(e.target.value)}
+                            style={{ flex: 1 }}
+                          />
+                          <button
+                            className="teacher-btn teacher-btn--primary"
+                            style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                            disabled={!recordingUrl.trim() || recordingSubmitting}
+                            onClick={async () => {
+                              setRecordingSubmitting(true)
+                              const updated = await updateSessionRecording(session.id, recordingUrl.trim())
+                              setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
+                              setRecordingInputId(null)
+                              setRecordingUrl('')
+                              setRecordingSubmitting(false)
+                              showToast('Recording URL saved ✓')
+                            }}
+                          >
+                            {recordingSubmitting ? 'Saving…' : 'Save'}
+                          </button>
+                          <button className="teacher-btn teacher-btn--ghost" style={{ padding: '6px 10px' }} onClick={() => setRecordingInputId(null)}>
+                            <X size={13} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
       {/* Notice Modal */}
       {showNoticeModal && (

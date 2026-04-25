@@ -1,0 +1,441 @@
+/* ─── Admin Classes Page ────────────────────────────────────── */
+
+.admin-classes-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-classes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.admin-classes-header h1 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0d2d5e;
+  margin: 0;
+}
+
+.admin-classes-header p {
+  font-size: 0.85rem;
+  color: #55789c;
+  margin: 4px 0 0;
+}
+
+.admin-classes-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 600px) {
+  .admin-classes-kpis {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-classes-kpi {
+  background: #fff;
+  border: 1px solid #d8e9f8;
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.admin-classes-kpi h4 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6a86a7;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 6px;
+}
+
+.admin-classes-kpi p {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #0d2d5e;
+  margin: 0;
+}
+
+.admin-classes-table-card {
+  background: #fff;
+  border: 1px solid #d8e9f8;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.admin-classes-table-card h3 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0d2d5e;
+  margin: 0 0 14px;
+}
+
+.admin-classes-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-classes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.admin-classes-table th {
+  text-align: left;
+  padding: 8px 12px;
+  color: #6a86a7;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e8f1f8;
+  white-space: nowrap;
+}
+
+.admin-classes-table td {
+  padding: 11px 12px;
+  color: #355a7f;
+  border-bottom: 1px solid #f0f7ff;
+  vertical-align: middle;
+}
+
+.admin-classes-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-classes-table tr:hover td {
+  background: #fafcff;
+}
+
+.admin-classes-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.admin-classes-btn {
+  padding: 5px 10px;
+  border-radius: 7px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  border: 1px solid #cde0f5;
+  background: #f0f7ff;
+  color: #1a6fad;
+  transition: background 0.15s;
+}
+
+.admin-classes-btn:hover {
+  background: #daeeff;
+}
+
+.admin-classes-btn--primary {
+  background: #1a6fad;
+  color: #fff;
+  border-color: transparent;
+}
+
+.admin-classes-btn--primary:hover {
+  background: #155d94;
+}
+
+/* ─── Enrollment Drawer ─────────────────────────────────────── */
+
+.enrollment-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 500;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.enrollment-drawer {
+  width: 420px;
+  max-width: 95vw;
+  background: #fff;
+  height: 100%;
+  overflow-y: auto;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+}
+
+.enrollment-drawer__header {
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid #e8f1f8;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.enrollment-drawer__header h2 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0d2d5e;
+  margin: 0;
+}
+
+.enrollment-drawer__header p {
+  font-size: 0.78rem;
+  color: #55789c;
+  margin: 3px 0 0;
+}
+
+.enrollment-drawer__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6a86a7;
+  padding: 2px;
+}
+
+.enrollment-drawer__body {
+  flex: 1;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.enrollment-section h3 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #6a86a7;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 10px;
+}
+
+.enrollment-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #f5f8fc;
+  border: 1px solid #e8f1f8;
+  border-radius: 9px;
+  margin-bottom: 7px;
+  gap: 10px;
+}
+
+.enrollment-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.enrollment-item__name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0d2d5e;
+}
+
+.enrollment-item__meta {
+  font-size: 0.73rem;
+  color: #6a86a7;
+}
+
+.enrollment-demo-chip {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+.enrollment-demo-chip--full {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.enrollment-demo-chip--active {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.enrollment-demo-chip--expired {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.enrollment-remove-btn {
+  background: none;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.enrollment-remove-btn:hover {
+  background: #fee2e2;
+}
+
+.enrollment-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.enrollment-add-form input,
+.enrollment-add-form select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #cde0f5;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #0d2d5e;
+  box-sizing: border-box;
+}
+
+.enrollment-add-form input:focus,
+.enrollment-add-form select:focus {
+  outline: none;
+  border-color: #1a6fad;
+}
+
+.enrollment-add-btn {
+  width: 100%;
+  padding: 10px;
+  background: #1a6fad;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  font-size: 0.87rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.enrollment-add-btn:hover {
+  background: #155d94;
+}
+
+.enrollment-add-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ─── Create Class Modal ────────────────────────────────────── */
+
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.admin-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 26px 26px 22px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+.admin-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.admin-modal__title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0d2d5e;
+  margin: 0;
+}
+
+.admin-modal__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6a86a7;
+  padding: 2px;
+}
+
+.admin-modal-field {
+  margin-bottom: 13px;
+}
+
+.admin-modal-field label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #355a7f;
+  margin-bottom: 5px;
+}
+
+.admin-modal-field input,
+.admin-modal-field select,
+.admin-modal-field textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #cde0f5;
+  border-radius: 8px;
+  font-size: 0.87rem;
+  color: #0d2d5e;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.admin-modal-field input:focus,
+.admin-modal-field select:focus,
+.admin-modal-field textarea:focus {
+  outline: none;
+  border-color: #1a6fad;
+}
+
+.admin-modal__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+.admin-modal__cancel {
+  padding: 9px 16px;
+  background: #fff;
+  border: 1px solid #d8e9f8;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #55789c;
+  cursor: pointer;
+}
+
+.admin-modal__submit {
+  padding: 9px 18px;
+  background: #1a6fad;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+}
+
+.admin-modal__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

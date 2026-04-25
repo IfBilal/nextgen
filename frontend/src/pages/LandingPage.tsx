@@ -84,10 +84,13 @@ export default function LandingPage() {
         </div>
 
         <div className="landing-topbar-actions">
+          <Link to="/teacher/login" className="landing-btn landing-btn--ghost" style={{ fontSize: '0.82rem', opacity: 0.75 }}>
+            Teacher Login
+          </Link>
           <Link to="/student/login" className="landing-btn landing-btn--ghost">
             Login
           </Link>
-          <Link to="/student/login" className="landing-btn landing-btn--primary">
+          <Link to="/student/register" className="landing-btn landing-btn--primary">
             Sign Up
           </Link>
         </div>
@@ -260,6 +263,28 @@ export default function LandingPage() {
                 <p className="landing-testimonial-result">{testimonial.result}</p>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section className="landing-section">
+          <div className="landing-section-head">
+            <h2>Live Class Programs</h2>
+            <p>Join expert-led cohorts with live sessions, recorded replays, and direct teacher chat.</p>
+          </div>
+          <div className="landing-programs-grid">
+            <article className="landing-program-card">
+              <div className="landing-program-card__tag">USMLE Step 1</div>
+              <h3>USMLE Step 1 Online Sessions</h3>
+              <p>Twice-weekly live sessions covering Biochemistry, Physiology, and Pathology. Small group format for maximum interaction.</p>
+              <div className="landing-program-card__meta">
+                <span><BookOpen size={13} /> 10+ sessions</span>
+                <span><CalendarDays size={13} /> Cohort-based</span>
+              </div>
+              <div className="landing-program-card__price">From <strong>$99/mo</strong></div>
+              <Link to="/student/login" className="landing-btn landing-btn--primary">
+                Enroll Now <ArrowRight size={15} />
+              </Link>
+            </article>
           </div>
         </section>
 

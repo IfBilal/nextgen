@@ -14,7 +14,10 @@ import {
   FileText,
   Megaphone,
   ChevronLeft,
+  MessageCircle,
 } from 'lucide-react'
+import AskQuestionModal from '../../components/lms/AskQuestionModal'
+import { useStudentAuth } from '../../context/StudentAuthContext'
 
 function formatFullDateTime(dateStr: string): string {
   return new Date(dateStr).toLocaleString([], {
@@ -51,14 +54,19 @@ function pad(n: number): string {
   return String(n).padStart(2, '0')
 }
 
+type SidebarTab = 'notices' | 'recordings' | 'attendance' | 'chat'
+
 export default function LiveSessionPage() {
   const { classId } = useParams<{ classId: string }>()
+  const { user } = useStudentAuth()
 
   const [cls, setCls] = useState<LmsClass | null>(null)
   const [sessions, setSessions] = useState<LmsSession[]>([])
   const [notices, setNotices] = useState<Notice[]>([])
   const [loading, setLoading] = useState(true)
   const [countdown, setCountdown] = useState<CountdownState | null>(null)
+  const [sidebarTab, setSidebarTab] = useState<SidebarTab>('notices')
+  const [showAskModal, setShowAskModal] = useState(false)
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -223,36 +231,121 @@ export default function LiveSessionPage() {
           )}
         </div>
 
-        {/* Sidebar: Notice Board */}
+        {/* Sidebar: Tabbed */}
         <aside className="lms-sidebar">
-          <h3 className="lms-sidebar__title">Notice Board</h3>
+          {/* Tab bar */}
+          <div style={{ display: 'flex', borderBottom: '1px solid #e8f1f8', marginBottom: 12 }}>
+            {([
+              { key: 'notices', icon: Megaphone, label: 'Notices' },
+              { key: 'recordings', icon: Video, label: 'Recordings' },
+              { key: 'attendance', icon: Calendar, label: 'Attendance' },
+              { key: 'chat', icon: MessageCircle, label: 'Chat' },
+            ] as { key: SidebarTab; icon: React.ElementType; label: string }[]).map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setSidebarTab(tab.key)}
+                style={{
+                  flex: 1, padding: '8px 2px', border: 'none', background: 'none', cursor: 'pointer',
+                  fontSize: '0.68rem', fontWeight: 600, color: sidebarTab === tab.key ? '#1a6fad' : '#6a86a7',
+                  borderBottom: `2px solid ${sidebarTab === tab.key ? '#1a6fad' : 'transparent'}`,
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+                  transition: 'color 0.15s',
+                }}
+              >
+                <tab.icon size={13} />
+                {tab.label}
+              </button>
+            ))}
+          </div>
 
-          {notices.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '1.5rem 1rem', color: '#9ca3af' }}>
-              <Megaphone size={24} style={{ opacity: 0.3, margin: '0 auto 6px', display: 'block' }} />
-              <p style={{ fontSize: '0.8rem', margin: 0 }}>No notices posted yet.</p>
+          {/* Notices tab */}
+          {sidebarTab === 'notices' && (
+            notices.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '1.5rem 1rem', color: '#9ca3af' }}>
+                <Megaphone size={24} style={{ opacity: 0.3, margin: '0 auto 6px', display: 'block' }} />
+                <p style={{ fontSize: '0.8rem', margin: 0 }}>No notices posted yet.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gap: 6 }}>
+                {notices.map(notice => (
+                  <div key={notice.id} className="lms-notice-item">
+                    <div className={`lms-notice-item__icon lms-notice-item__icon--${notice.type}`}>
+                      {notice.type === 'pdf' ? <FileText size={13} /> : <Megaphone size={13} />}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div className="lms-notice-item__title">{notice.title}</div>
+                      <div className="lms-notice-item__date">{formatDate(notice.createdAt)}</div>
+                      {notice.fileName && (
+                        <div className="lms-notice-item__filename">📎 {notice.fileName}</div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+
+          {/* Recordings tab */}
+          {sidebarTab === 'recordings' && (
+            <div style={{ padding: '4px 0' }}>
+              <p style={{ fontSize: '0.8rem', color: '#55789c', margin: '0 0 10px' }}>
+                Access recorded sessions for this class.
+              </p>
+              <Link
+                to={`/student/classes/${classId}/recordings`}
+                style={{ display: 'block', padding: '9px 12px', background: '#e8f3ff', border: '1px solid #cde0f5', borderRadius: 9, fontSize: '0.82rem', fontWeight: 700, color: '#1a6fad', textDecoration: 'none', textAlign: 'center' }}
+              >
+                View Recordings →
+              </Link>
             </div>
-          ) : (
-            <div style={{ display: 'grid', gap: 6 }}>
-              {notices.map(notice => (
-                <div key={notice.id} className="lms-notice-item">
-                  <div className={`lms-notice-item__icon lms-notice-item__icon--${notice.type}`}>
-                    {notice.type === 'pdf' ? <FileText size={13} /> : <Megaphone size={13} />}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div className="lms-notice-item__title">{notice.title}</div>
-                    <div className="lms-notice-item__date">{formatDate(notice.createdAt)}</div>
-                    {notice.fileName && (
-                      <div className="lms-notice-item__filename">
-                        📎 {notice.fileName}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+          )}
+
+          {/* Attendance tab */}
+          {sidebarTab === 'attendance' && (
+            <div style={{ padding: '4px 0' }}>
+              <p style={{ fontSize: '0.8rem', color: '#55789c', margin: '0 0 10px' }}>
+                Track your personal attendance for this class.
+              </p>
+              <Link
+                to={`/student/classes/${classId}/attendance`}
+                style={{ display: 'block', padding: '9px 12px', background: '#e8f3ff', border: '1px solid #cde0f5', borderRadius: 9, fontSize: '0.82rem', fontWeight: 700, color: '#1a6fad', textDecoration: 'none', textAlign: 'center' }}
+              >
+                View Attendance →
+              </Link>
+            </div>
+          )}
+
+          {/* Chat tab */}
+          {sidebarTab === 'chat' && (
+            <div style={{ padding: '4px 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <p style={{ fontSize: '0.8rem', color: '#55789c', margin: 0 }}>
+                Message your teacher privately.
+              </p>
+              <button
+                onClick={() => setShowAskModal(true)}
+                style={{ padding: '8px 12px', background: '#1a6fad', color: '#fff', border: 'none', borderRadius: 9, fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}
+              >
+                <MessageCircle size={13} /> Ask a Question
+              </button>
+              <Link
+                to={`/student/classes/${classId}/chat`}
+                style={{ display: 'block', padding: '8px 12px', background: '#f0f7ff', border: '1px solid #cde0f5', borderRadius: 9, fontSize: '0.82rem', fontWeight: 700, color: '#1a6fad', textDecoration: 'none', textAlign: 'center' }}
+              >
+                Open Full Chat →
+              </Link>
             </div>
           )}
         </aside>
+
+        {/* Ask Question Modal */}
+        {showAskModal && cls && user && (
+          <AskQuestionModal
+            classId={cls.id}
+            studentId={user.id}
+            teacherFirstName="Dr. Carter"
+            onClose={() => setShowAskModal(false)}
+          />
+        )}
       </div>
     </div>
   )

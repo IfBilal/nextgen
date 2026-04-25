@@ -1,22 +1,62 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Video, ShoppingBag, Clock, AlertTriangle } from 'lucide-react'
 import WelcomeBar from '../../components/student/dashboard/WelcomeBar'
 import DonutRing from '../../components/student/dashboard/DonutRing'
 import { studentDashboardData } from '../../data/dashboard'
+import { useSubscription } from '../../context/SubscriptionContext'
 import '../../components/student/dashboard/Dashboard.css'
 
 export default function DashboardPage() {
   const data = studentDashboardData
+  const { snapshot, planLabel } = useSubscription()
   const qbankPct = Math.round((data.questionsAnswered / data.totalQuestions) * 100)
+
+  const isDemo = snapshot?.isCurrentPlanTimeBound
+  const isExpired = snapshot?.isCurrentPlanExpired
+  const daysLeft = snapshot?.remainingDays ?? 0
 
   return (
     <div className="dashboard-container">
-      {/* Welcome Section */}
       <WelcomeBar data={data} />
 
-      {/* Main Stats Card - Simple like UWorld */}
+      {/* Demo / expiry banners */}
+      {isExpired && (
+        <div className="db-banner db-banner--red">
+          <AlertTriangle size={16} />
+          <span>Your {planLabel} has expired. Upgrade to continue accessing all features.</span>
+          <Link to="/student/demo-expired" className="db-banner__cta">View options →</Link>
+        </div>
+      )}
+      {isDemo && !isExpired && daysLeft <= 3 && (
+        <div className="db-banner db-banner--amber">
+          <Clock size={16} />
+          <span>{daysLeft} day{daysLeft !== 1 ? 's' : ''} left in your {planLabel}.</span>
+          <Link to="/student/lms-preview" className="db-banner__cta">See what's included →</Link>
+        </div>
+      )}
+
+      {/* Quick links to LMS */}
+      <div className="db-lms-strip">
+        <Link to="/student/programs" className="db-lms-card">
+          <ShoppingBag size={20} />
+          <div>
+            <strong>Browse Programs</strong>
+            <span>Enroll in a live class cohort</span>
+          </div>
+          <ArrowRight size={16} className="db-lms-card__arrow" />
+        </Link>
+        <Link to="/student/classes" className="db-lms-card">
+          <Video size={20} />
+          <div>
+            <strong>My Classes</strong>
+            <span>Sessions, recordings & chat</span>
+          </div>
+          <ArrowRight size={16} className="db-lms-card__arrow" />
+        </Link>
+      </div>
+
+      {/* Main Stats Card */}
       <div className="stats-card">
-        {/* Header */}
         <div className="stats-header">
           <div>
             <h2 className="stats-title">Statistics</h2>
@@ -27,25 +67,12 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        {/* Donut Charts */}
         <div className="donuts-section">
-          <DonutRing
-            value={data.overallScore}
-            label="Correct"
-            color="#27AE60"
-            size={180}
-          />
-          <DonutRing
-            value={qbankPct}
-            label="Used"
-            color="#1A6FAD"
-            size={180}
-          />
+          <DonutRing value={data.overallScore} label="Correct" color="#27AE60" size={180} />
+          <DonutRing value={qbankPct} label="Used" color="#1A6FAD" size={180} />
         </div>
 
-        {/* Stats Tables */}
         <div className="stats-tables">
-          {/* Left Column */}
           <div className="stats-table">
             <h3 className="stats-table-title">Your Score</h3>
             <div className="stats-row">
@@ -78,7 +105,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Right Column */}
           <div className="stats-table">
             <h3 className="stats-table-title">QBank Usage</h3>
             <div className="stats-row">

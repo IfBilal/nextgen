@@ -13,10 +13,16 @@ import {
   getTeachers, saveTeachers, getTeacherPassword, setTeacherPassword,
   getEditors, saveEditors, getEditorPassword, setEditorPassword,
   getProducts, saveProducts,
-  getClasses,
+  getClasses, saveClasses,
   getSessions, saveSessions,
   getNotices, saveNotices,
   getDemoOverrides, saveDemoOverrides,
+  getChatMessages, saveChatMessages,
+  getCoupons, saveCoupons,
+  getLmsNotifications, saveLmsNotifications,
+  getEnrollments, saveEnrollments,
+  getNotificationPrefs as _getNotificationPrefs,
+  saveNotificationPrefs as _saveNotificationPrefs,
 } from '../data/lms'
 
 import type {
@@ -24,6 +30,9 @@ import type {
   RegisterTeacherPayload, CreateEditorPayload, CreateProductPayload,
   CreateSessionPayload, UpdateSessionPayload, CreateNoticePayload,
   SessionWithClass, ClassWithProduct,
+  ChatMessage, AttendanceRecord, RecordedSession, Coupon,
+  NotificationPrefs, LmsNotification, TeacherAnalytics, SessionAnalytics,
+  CreateCouponPayload, CreateClassPayload, EnrollStudentPayload, StudentEnrollment,
 } from '../types/lms'
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
@@ -435,10 +444,40 @@ export async function adminSetDemoOverride(
 
 // ─── Student ──────────────────────────────────────────────────────────────────
 
-export async function studentGetEnrolledClasses(_studentId: string): Promise<ClassWithProduct[]> {
-  // BACKEND SWAP: GET /api/v1/student/classes
-  // Mock: return all classes (real backend filters by enrollment)
+export interface ProgramListing {
+  product: Product
+  teacherName: string
+  teacherId: string
+  classId: string
+  sessionCount: number
+  enrolledCount: number
+}
+
+export async function getAvailablePrograms(): Promise<ProgramListing[]> {
+  // BACKEND SWAP: GET /api/v1/programs
+  const products = getProducts().filter(p => p.isActive)
   const classes = getClasses()
+  const teachers = getTeachers()
+  const sessions = getSessions()
+
+  return products.map(product => {
+    const cls = classes.find(c => c.productId === product.id)
+    const teacher = cls ? teachers.find(t => t.id === cls.teacherId) : undefined
+    const sessionCount = cls ? sessions.filter(s => s.classId === cls.id && s.status !== 'cancelled').length : 0
+    return {
+      product,
+      teacherName: teacher?.name ?? 'TBA',
+      teacherId: teacher?.id ?? '',
+      classId: cls?.id ?? '',
+      sessionCount,
+      enrolledCount: cls?.enrolledStudentIds.length ?? 0,
+    }
+  })
+}
+
+export async function studentGetEnrolledClasses(studentId: string): Promise<ClassWithProduct[]> {
+  // BACKEND SWAP: GET /api/v1/student/classes
+  const classes = getClasses().filter(c => c.enrolledStudentIds.includes(studentId))
   const products = getProducts()
   const sessions = getSessions()
   const teachers = getTeachers()
@@ -498,4 +537,368 @@ export async function getAllClassesWithProducts(): Promise<ClassWithProduct[]> {
       nextSession: upcoming[0],
     }
   })
+}
+
+// ─── Chat ─────────────────────────────────────────────────────────────────────
+
+export async function getChatMessagesForClass(classId: string, studentId: string): Promise<ChatMessage[]> {
+  // BACKEND SWAP: GET /api/v1/chat/messages?classId=&studentId=
+  const messages = getChatMessages()
+  return messages
+    .filter(m => m.classId === classId && m.studentId === studentId)
+    .sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime())
+}
+
+export async function getAllChatThreads(classId: string): Promise<ChatMessage[]> {
+  // BACKEND SWAP: GET /api/v1/chat/threads?classId= (teacher/editor/admin view)
+  const messages = getChatMessages()
+  return messages
+    .filter(m => m.classId === classId)
+    .sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime())
+}
+
+export async function sendChatMessage(
+  classId: string,
+  studentId: string,
+  senderRole: 'student' | 'teacher',
+  text: string,
+): Promise<ChatMessage> {
+  // BACKEND SWAP: POST /api/v1/chat/messages
+  const messages = getChatMessages()
+  const newMsg: ChatMessage = {
+    id: `msg-${Date.now()}`,
+    classId,
+    studentId,
+    senderRole,
+    text: text.trim(),
+    sentAt: new Date().toISOString(),
+    read: false,
+  }
+  saveChatMessages([...messages, newMsg])
+  return newMsg
+}
+
+export async function markChatMessageRead(messageId: string): Promise<void> {
+  // BACKEND SWAP: PATCH /api/v1/chat/messages/:id/read
+  const messages = getChatMessages()
+  const idx = messages.findIndex(m => m.id === messageId)
+  if (idx !== -1) {
+    messages[idx] = { ...messages[idx], read: true }
+    saveChatMessages(messages)
+  }
+}
+
+export async function deleteChatMessage(messageId: string): Promise<void> {
+  // BACKEND SWAP: DELETE /api/v1/chat/messages/:id (admin only)
+  const messages = getChatMessages()
+  saveChatMessages(messages.filter(m => m.id !== messageId))
+}
+
+// ─── Attendance ───────────────────────────────────────────────────────────────
+
+export async function getAttendanceForClass(classId: string, studentId: string): Promise<AttendanceRecord[]> {
+  // BACKEND SWAP: GET /api/v1/student/classes/:classId/attendance
+  // Mock: deterministic random based on student+session id
+  const sessions = getSessions()
+  const completed = sessions.filter(s => s.classId === classId && s.status === 'completed')
+
+  return completed.map(s => {
+    const seed = (studentId + s.id).split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
+    const status: AttendanceRecord['status'] = seed % 5 === 0 ? 'missed' : 'attended'
+    return {
+      sessionId: s.id,
+      classId: s.classId,
+      scheduledAt: s.scheduledAt,
+      durationMinutes: s.durationMinutes,
+      status,
+    }
+  }).sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime())
+}
+
+// ─── Recordings ───────────────────────────────────────────────────────────────
+
+export async function getRecordingsForClass(classId: string): Promise<RecordedSession[]> {
+  // BACKEND SWAP: GET /api/v1/student/classes/:classId/recordings
+  const sessions = getSessions()
+  return sessions
+    .filter(s => s.classId === classId && s.status === 'completed')
+    .map((s, idx) => ({
+      sessionId: s.id,
+      classId: s.classId,
+      scheduledAt: s.scheduledAt,
+      durationMinutes: s.durationMinutes,
+      recordingUrl: s.recordingUrl ?? null,
+      accessLevel: idx === 0 ? ('full' as const) : ('full' as const),
+    }))
+    .sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime())
+}
+
+export async function updateSessionRecording(sessionId: string, url: string): Promise<LmsSession> {
+  // BACKEND SWAP: PATCH /api/v1/teacher/sessions/:id/recording
+  const sessions = getSessions()
+  const idx = sessions.findIndex(s => s.id === sessionId)
+  if (idx === -1) throw new Error('Session not found.')
+  sessions[idx] = { ...sessions[idx], recordingUrl: url }
+  saveSessions(sessions)
+  return sessions[idx]
+}
+
+export async function removeSessionRecording(sessionId: string): Promise<LmsSession> {
+  // BACKEND SWAP: DELETE /api/v1/teacher/sessions/:id/recording
+  const sessions = getSessions()
+  const idx = sessions.findIndex(s => s.id === sessionId)
+  if (idx === -1) throw new Error('Session not found.')
+  const updated = { ...sessions[idx] }
+  delete updated.recordingUrl
+  sessions[idx] = updated
+  saveSessions(sessions)
+  return sessions[idx]
+}
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+
+export async function getStudentNotificationPrefs(studentId: string): Promise<NotificationPrefs> {
+  // BACKEND SWAP: GET /api/v1/student/notification-prefs
+  return _getNotificationPrefs(studentId)
+}
+
+export async function updateStudentNotificationPrefs(prefs: NotificationPrefs): Promise<void> {
+  // BACKEND SWAP: PATCH /api/v1/student/notification-prefs
+  _saveNotificationPrefs(prefs)
+}
+
+export async function getStudentLmsNotifications(_studentId: string): Promise<LmsNotification[]> {
+  // BACKEND SWAP: GET /api/v1/student/notifications
+  return getLmsNotifications()
+}
+
+export async function markLmsNotificationRead(id: string): Promise<void> {
+  // BACKEND SWAP: PATCH /api/v1/student/notifications/:id/read
+  const notifications = getLmsNotifications()
+  const idx = notifications.findIndex(n => n.id === id)
+  if (idx !== -1) {
+    notifications[idx] = { ...notifications[idx], read: true }
+    saveLmsNotifications(notifications)
+  }
+}
+
+// ─── Coupons / Payments ───────────────────────────────────────────────────────
+
+export async function getAllCoupons(): Promise<Coupon[]> {
+  // BACKEND SWAP: GET /api/v1/admin/coupons
+  return getCoupons()
+}
+
+export async function adminCreateCoupon(payload: CreateCouponPayload): Promise<Coupon> {
+  // BACKEND SWAP: POST /api/v1/admin/coupons
+  const coupons = getCoupons()
+  const existing = coupons.find(c => c.code.toLowerCase() === payload.code.toLowerCase())
+  if (existing) throw new Error('Coupon code already exists.')
+
+  const newCoupon: Coupon = {
+    id: `coupon-${Date.now()}`,
+    code: payload.code.toUpperCase().trim(),
+    discountType: payload.discountType,
+    discountValue: payload.discountValue,
+    maxUses: payload.maxUses,
+    usedCount: 0,
+    productId: payload.productId,
+    expiresAt: payload.expiresAt,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+  }
+  saveCoupons([...coupons, newCoupon])
+  return newCoupon
+}
+
+export async function adminToggleCoupon(id: string, isActive: boolean): Promise<Coupon> {
+  // BACKEND SWAP: PATCH /api/v1/admin/coupons/:id
+  const coupons = getCoupons()
+  const idx = coupons.findIndex(c => c.id === id)
+  if (idx === -1) throw new Error('Coupon not found.')
+  coupons[idx] = { ...coupons[idx], isActive }
+  saveCoupons(coupons)
+  return coupons[idx]
+}
+
+export async function adminDeleteCoupon(id: string): Promise<void> {
+  // BACKEND SWAP: DELETE /api/v1/admin/coupons/:id
+  saveCoupons(getCoupons().filter(c => c.id !== id))
+}
+
+export async function validateCoupon(
+  code: string,
+  productId: string,
+): Promise<{ valid: boolean; discount: number; type: 'percentage' | 'fixed'; message?: string }> {
+  // BACKEND SWAP: POST /api/v1/coupons/validate
+  const coupons = getCoupons()
+  const coupon = coupons.find(c => c.code.toUpperCase() === code.toUpperCase().trim())
+
+  if (!coupon) return { valid: false, discount: 0, type: 'percentage', message: 'Invalid coupon code.' }
+  if (!coupon.isActive) return { valid: false, discount: 0, type: 'percentage', message: 'This coupon is no longer active.' }
+  if (coupon.expiresAt && new Date(coupon.expiresAt) < new Date()) return { valid: false, discount: 0, type: 'percentage', message: 'This coupon has expired.' }
+  if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses) return { valid: false, discount: 0, type: 'percentage', message: 'This coupon has reached its usage limit.' }
+  if (coupon.productId && coupon.productId !== productId) return { valid: false, discount: 0, type: 'percentage', message: 'This coupon does not apply to this product.' }
+
+  return { valid: true, discount: coupon.discountValue, type: coupon.discountType }
+}
+
+export async function submitCheckout(
+  productId: string,
+  _plan: 'upfront' | 'installment',
+  _couponCode?: string,
+  studentId?: string,
+): Promise<{ success: boolean; enrollmentId: string }> {
+  // BACKEND SWAP: POST /api/v1/payments/checkout (Stripe + enrollment creation)
+  await new Promise(r => setTimeout(r, 1500))
+
+  if (studentId) {
+    const classes = getClasses()
+    const cls = classes.find(c => c.productId === productId)
+    if (cls && !cls.enrolledStudentIds.includes(studentId)) {
+      const idx = classes.indexOf(cls)
+      classes[idx] = { ...cls, enrolledStudentIds: [...cls.enrolledStudentIds, studentId] }
+      saveClasses(classes)
+    }
+  }
+
+  return { success: true, enrollmentId: `enroll-${Date.now()}` }
+}
+
+// ─── Admin — Classes & Enrollment ────────────────────────────────────────────
+
+export async function adminGetClasses(): Promise<LmsClass[]> {
+  // BACKEND SWAP: GET /api/v1/admin/classes
+  return getClasses()
+}
+
+export async function adminCreateClass(payload: CreateClassPayload): Promise<LmsClass> {
+  // BACKEND SWAP: POST /api/v1/admin/classes
+  const classes = getClasses()
+  const products = getProducts()
+
+  const newClass: LmsClass = {
+    id: `class-${Date.now()}`,
+    productId: payload.productId,
+    name: payload.name.trim(),
+    description: payload.description?.trim() ?? '',
+    teacherId: payload.teacherId,
+    defaultDurationMinutes: payload.defaultDurationMinutes,
+    enrolledStudentIds: [],
+  }
+
+  saveClasses([...classes, newClass])
+
+  const pidx = products.findIndex(p => p.id === payload.productId)
+  if (pidx !== -1) {
+    products[pidx] = { ...products[pidx], classIds: [...products[pidx].classIds, newClass.id] }
+    saveProducts(products)
+  }
+
+  const teachers = getTeachers()
+  const tidx = teachers.findIndex(t => t.id === payload.teacherId)
+  if (tidx !== -1) {
+    teachers[tidx] = { ...teachers[tidx], assignedClassIds: [...teachers[tidx].assignedClassIds, newClass.id] }
+    saveTeachers(teachers)
+  }
+
+  return newClass
+}
+
+export async function adminUpdateClass(id: string, payload: Partial<CreateClassPayload>): Promise<LmsClass> {
+  // BACKEND SWAP: PATCH /api/v1/admin/classes/:id
+  const classes = getClasses()
+  const idx = classes.findIndex(c => c.id === id)
+  if (idx === -1) throw new Error('Class not found.')
+  classes[idx] = { ...classes[idx], ...payload }
+  saveClasses(classes)
+  return classes[idx]
+}
+
+export async function adminGetEnrollmentsForClass(classId: string): Promise<StudentEnrollment[]> {
+  // BACKEND SWAP: GET /api/v1/admin/classes/:classId/enrollments
+  return getEnrollments().filter(e => e.classId === classId)
+}
+
+export async function adminEnrollStudent(payload: EnrollStudentPayload): Promise<void> {
+  // BACKEND SWAP: POST /api/v1/admin/classes/:classId/enroll
+  const enrollments = getEnrollments()
+  const existing = enrollments.find(e => e.classId === payload.classId && e.studentId === payload.studentId)
+  if (existing) throw new Error('Student is already enrolled in this class.')
+
+  const newEnrollment: StudentEnrollment = {
+    studentId: payload.studentId,
+    classId: payload.classId,
+    enrolledAt: new Date().toISOString(),
+    demoExpiresAt: payload.demoExpiresAt ?? undefined,
+  }
+  saveEnrollments([...enrollments, newEnrollment])
+
+  const classes = getClasses()
+  const cidx = classes.findIndex(c => c.id === payload.classId)
+  if (cidx !== -1 && !classes[cidx].enrolledStudentIds.includes(payload.studentId)) {
+    classes[cidx] = { ...classes[cidx], enrolledStudentIds: [...classes[cidx].enrolledStudentIds, payload.studentId] }
+    saveClasses(classes)
+  }
+}
+
+export async function adminRemoveEnrollment(classId: string, studentId: string): Promise<void> {
+  // BACKEND SWAP: DELETE /api/v1/admin/classes/:classId/enrollments/:studentId
+  saveEnrollments(getEnrollments().filter(e => !(e.classId === classId && e.studentId === studentId)))
+
+  const classes = getClasses()
+  const cidx = classes.findIndex(c => c.id === classId)
+  if (cidx !== -1) {
+    classes[cidx] = { ...classes[cidx], enrolledStudentIds: classes[cidx].enrolledStudentIds.filter(id => id !== studentId) }
+    saveClasses(classes)
+  }
+}
+
+// ─── Teacher Analytics ────────────────────────────────────────────────────────
+
+export async function getTeacherAnalytics(teacherId: string): Promise<TeacherAnalytics> {
+  // BACKEND SWAP: GET /api/v1/teacher/analytics
+  const classes = getClasses().filter(c => c.teacherId === teacherId)
+  const sessions = getSessions()
+
+  const perSession: SessionAnalytics[] = []
+
+  for (const cls of classes) {
+    const completed = sessions.filter(s => s.classId === cls.id && s.status === 'completed')
+    for (const s of completed) {
+      const attendanceCount = s.attendanceCount ?? null
+      const attendancePercent =
+        attendanceCount !== null && cls.enrolledStudentIds.length > 0
+          ? Math.round((attendanceCount / cls.enrolledStudentIds.length) * 100)
+          : null
+      perSession.push({
+        sessionId: s.id,
+        scheduledAt: s.scheduledAt,
+        scheduledDuration: s.durationMinutes,
+        actualDuration: s.actualDurationMinutes ?? null,
+        attendanceCount,
+        attendancePercent,
+      })
+    }
+  }
+
+  const totalStudents = new Set(classes.flatMap(c => c.enrolledStudentIds)).size
+  const attendanceRates = perSession.filter(s => s.attendancePercent !== null).map(s => s.attendancePercent!)
+  const avgAttendanceRate = attendanceRates.length > 0
+    ? Math.round(attendanceRates.reduce((a, b) => a + b, 0) / attendanceRates.length)
+    : 0
+
+  const durations = perSession.filter(s => s.actualDuration !== null).map(s => s.actualDuration!)
+  const avgActualDuration = durations.length > 0
+    ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length)
+    : 0
+
+  return {
+    teacherId,
+    totalSessionsCompleted: perSession.length,
+    avgAttendanceRate,
+    avgActualDuration,
+    totalStudentsTaught: totalStudents,
+    perSession: perSession.sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime()),
+  }
 }

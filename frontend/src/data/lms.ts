@@ -14,6 +14,11 @@ import type {
   LmsSession,
   Notice,
   DemoOverride,
+  ChatMessage,
+  Coupon,
+  LmsNotification,
+  NotificationPrefs,
+  StudentEnrollment,
 } from '../types/lms'
 
 // ─── Storage keys ────────────────────────────────────────────────────────────
@@ -28,6 +33,10 @@ const KEYS = {
   demoOverrides: 'nextgen.lms.demo-overrides',
   teacherPasswords: 'nextgen.lms.teacher-passwords',
   editorPasswords: 'nextgen.lms.editor-passwords',
+  chatMessages: 'nextgen.lms.chat-messages',
+  coupons: 'nextgen.lms.coupons',
+  lmsNotifications: 'nextgen.lms.notifications',
+  enrollments: 'nextgen.lms.enrollments',
 }
 
 // Passwords stored separately (never in the main records, mirrors real auth separation)
@@ -310,4 +319,172 @@ export function getDemoOverrides(): DemoOverride[] {
 
 export function saveDemoOverrides(overrides: DemoOverride[]) {
   save(KEYS.demoOverrides, overrides)
+}
+
+// ─── Chat Messages ────────────────────────────────────────────────────────────
+
+function seedChatMessages(): ChatMessage[] {
+  return [
+    {
+      id: 'msg-001',
+      classId: 'class-001',
+      studentId: 'student-mock-001',
+      senderRole: 'student',
+      text: "Hi Dr. Carter! I had a question about the enzyme kinetics from last session. Could you clarify the difference between competitive and non-competitive inhibition?",
+      sentAt: '2026-04-22T10:05:00Z',
+      read: true,
+    },
+    {
+      id: 'msg-002',
+      classId: 'class-001',
+      studentId: 'student-mock-001',
+      senderRole: 'teacher',
+      text: "Great question! Competitive inhibition increases apparent Km but Vmax stays the same — adding more substrate overcomes it. Non-competitive inhibition decreases Vmax but doesn't change Km. Competitive inhibitors compete for the active site; non-competitive ones bind elsewhere.",
+      sentAt: '2026-04-22T10:12:00Z',
+      read: true,
+    },
+    {
+      id: 'msg-003',
+      classId: 'class-001',
+      studentId: 'student-mock-001',
+      senderRole: 'student',
+      text: "That makes sense! So for USMLE: competitive = same Vmax, higher Km. Non-competitive = lower Vmax, same Km?",
+      sentAt: '2026-04-22T10:18:00Z',
+      read: true,
+    },
+    {
+      id: 'msg-004',
+      classId: 'class-001',
+      studentId: 'student-mock-001',
+      senderRole: 'teacher',
+      text: "Exactly! That's the high-yield way to remember it. Uncompetitive inhibition (less common on Step 1) decreases BOTH Vmax and Km. I'll include this in tomorrow's session summary.",
+      sentAt: '2026-04-22T10:20:00Z',
+      read: false,
+    },
+  ]
+}
+
+export function getChatMessages(): ChatMessage[] {
+  return load(KEYS.chatMessages, seedChatMessages)
+}
+
+export function saveChatMessages(messages: ChatMessage[]) {
+  save(KEYS.chatMessages, messages)
+}
+
+// ─── Coupons ──────────────────────────────────────────────────────────────────
+
+function seedCoupons(): Coupon[] {
+  return [
+    {
+      id: 'coupon-001',
+      code: 'STEP1SAVE20',
+      discountType: 'percentage',
+      discountValue: 20,
+      maxUses: 100,
+      usedCount: 23,
+      productId: null,
+      expiresAt: '2026-12-31T23:59:59Z',
+      isActive: true,
+      createdAt: '2026-01-01T00:00:00Z',
+    },
+    {
+      id: 'coupon-002',
+      code: 'WELCOME50',
+      discountType: 'fixed',
+      discountValue: 50,
+      maxUses: 50,
+      usedCount: 50,
+      productId: 'product-001',
+      expiresAt: '2026-03-31T23:59:59Z',
+      isActive: false,
+      createdAt: '2026-01-15T00:00:00Z',
+    },
+  ]
+}
+
+export function getCoupons(): Coupon[] {
+  return load(KEYS.coupons, seedCoupons)
+}
+
+export function saveCoupons(coupons: Coupon[]) {
+  save(KEYS.coupons, coupons)
+}
+
+// ─── LMS Notifications ────────────────────────────────────────────────────────
+
+function seedLmsNotifications(): LmsNotification[] {
+  return [
+    {
+      id: 'lmsn-001',
+      type: 'session_starting',
+      message: 'Your session starts in 30 min — Step 1 Intensive Cohort',
+      classId: 'class-001',
+      read: false,
+      createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+    },
+    {
+      id: 'lmsn-002',
+      type: 'notice_posted',
+      message: 'New notice posted — Week 1 Study Guide',
+      classId: 'class-001',
+      read: true,
+      createdAt: '2026-01-12T09:05:00Z',
+    },
+    {
+      id: 'lmsn-003',
+      type: 'demo_expiring',
+      message: 'Your demo access expires in 2 days — enroll to keep access',
+      read: false,
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    },
+  ]
+}
+
+export function getLmsNotifications(): LmsNotification[] {
+  return load(KEYS.lmsNotifications, seedLmsNotifications)
+}
+
+export function saveLmsNotifications(notifications: LmsNotification[]) {
+  save(KEYS.lmsNotifications, notifications)
+}
+
+// ─── Enrollments ──────────────────────────────────────────────────────────────
+
+function seedEnrollments(): StudentEnrollment[] {
+  return [
+    { studentId: 'student-mock-001', classId: 'class-001', enrolledAt: '2026-01-15T00:00:00Z' },
+    { studentId: 'student-mock-002', classId: 'class-001', enrolledAt: '2026-01-17T00:00:00Z', demoExpiresAt: '2026-05-01T00:00:00Z' },
+    { studentId: 'student-mock-003', classId: 'class-001', enrolledAt: '2026-01-20T00:00:00Z', demoExpiresAt: '2026-04-25T00:00:00Z' },
+  ]
+}
+
+export function getEnrollments(): StudentEnrollment[] {
+  return load(KEYS.enrollments, seedEnrollments)
+}
+
+export function saveEnrollments(enrollments: StudentEnrollment[]) {
+  save(KEYS.enrollments, enrollments)
+}
+
+// ─── Notification Prefs ───────────────────────────────────────────────────────
+
+export function getNotificationPrefs(studentId: string): NotificationPrefs {
+  try {
+    const raw = localStorage.getItem(`nextgen.lms.notification-prefs.${studentId}`)
+    if (raw) return JSON.parse(raw)
+  } catch { /* ignore */ }
+  return {
+    studentId,
+    emailEnabled: true,
+    pushEnabled: false,
+    sessionReminder: true,
+    sessionStarted: true,
+    sessionRescheduled: true,
+    noticePosted: true,
+  }
+}
+
+export function saveNotificationPrefs(prefs: NotificationPrefs) {
+  localStorage.setItem(`nextgen.lms.notification-prefs.${prefs.studentId}`, JSON.stringify(prefs))
 }
