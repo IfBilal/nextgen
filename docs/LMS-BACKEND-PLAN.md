@@ -46,7 +46,7 @@ The LMS system revolves around **Products → Classes → Sessions**. A product 
 ### Student
 - Enrolled in classes by admin (payment flow is second half)
 - Sees their enrolled classes with countdown timers to next session
-- Joins live sessions via Zoom link (link only shown when session is `live`)
+- Joins live sessions via embedded Zoom Meeting SDK (rendered inside the app, no new tab; SDK token only issued when session is `live`)
 - Reads class notice board
 
 ---
@@ -122,8 +122,11 @@ CREATE TABLE IF NOT EXISTS lms_sessions (
     CONSTRAINT session_duration_min CHECK (duration_minutes >= 15),
   status                  TEXT NOT NULL DEFAULT 'scheduled'
     CONSTRAINT session_status_values CHECK (status IN ('scheduled', 'live', 'completed', 'cancelled')),
-  meeting_link            TEXT NOT NULL DEFAULT '',  -- populated by Zoom API on creation
-  recording_url           TEXT,                      -- populated after session ends
+  zoom_meeting_id         TEXT NOT NULL DEFAULT '',  -- Zoom numeric meeting ID, used to match recording.completed webhook
+  zoom_start_url          TEXT NOT NULL DEFAULT '',  -- host start URL (teacher only, never sent to students)
+  recording_url           TEXT,                      -- Supabase Storage public URL, auto-populated by recording.completed webhook
+  recording_status        TEXT NOT NULL DEFAULT 'none'
+    CONSTRAINT recording_status_values CHECK (recording_status IN ('none', 'processing', 'ready', 'failed')),
   attendance_count        INTEGER,                   -- populated when session ends
   actual_duration_minutes INTEGER,                   -- computed from started_at/ended_at
   change_note             TEXT,                      -- required if any field edited after creation
@@ -588,52 +591,94 @@ authRouter.post('/auth/editor/login', async (req, res, next) => {
 
 ### `backend/src/lib/zoom.ts`
 
-Handles Zoom meeting creation. In first half, uses a placeholder. When Zoom OAuth credentials are available, swap the placeholder with the real API call (documented below).
+Handles all Zoom operations: creating meetings with cloud recording enabled, generating Meeting SDK signatures for embedded sessions, and exposing the webhook handler for auto-uploading recordings.
 
 ```typescript
-// ZOOM API SWAP: Replace generateMeetingLink() body with the real Zoom API call.
-// Zoom docs: https://developers.zoom.us/docs/api/rest/reference/zoom-api/methods/#operation/meetingCreate
-// Auth: Server-to-Server OAuth app (Account Credentials grant)
-//   1. Create a Server-to-Server OAuth app in Zoom Marketplace
-//   2. Get Account ID, Client ID, Client Secret
-//   3. Exchange for access token: POST https://zoom.us/oauth/token?grant_type=account_credentials&account_id=...
-//   4. Use token in Authorization: Bearer <token>
+import crypto from 'crypto'
 
-export async function generateZoomMeetingLink(
+// ─── Server-to-Server OAuth token (cached for 1-hour TTL) ────────────────────
+let _tokenCache: { token: string; expiresAt: number } | null = null
+
+async function getZoomAccessToken(): Promise<string> {
+  if (_tokenCache && Date.now() < _tokenCache.expiresAt) return _tokenCache.token
+  const res = await fetch(
+    `https://zoom.us/oauth/token?grant_type=account_credentials&account_id=${process.env.ZOOM_ACCOUNT_ID}`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${Buffer.from(
+          `${process.env.ZOOM_CLIENT_ID}:${process.env.ZOOM_CLIENT_SECRET}`
+        ).toString('base64')}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    }
+  )
+  const { access_token, expires_in } = await res.json()
+  _tokenCache = { token: access_token, expiresAt: Date.now() + (expires_in - 60) * 1000 }
+  return access_token
+}
+
+// ─── Create meeting (called when teacher creates a session) ──────────────────
+// Returns zoom_meeting_id (numeric string) and zoom_start_url (host link).
+// Cloud recording is always enabled — no teacher action needed.
+export async function createZoomMeeting(
   topic: string,
   scheduledAt: string,
   durationMinutes: number
-): Promise<string> {
+): Promise<{ meetingId: string; startUrl: string }> {
   // ── PLACEHOLDER (first half — no Zoom credentials needed yet) ────────────
-  const id = Math.floor(Math.random() * 9_000_000_000) + 1_000_000_000
-  return `https://zoom.us/j/${id}`
+  const id = String(Math.floor(Math.random() * 9_000_000_000) + 1_000_000_000)
+  return { meetingId: id, startUrl: `https://zoom.us/s/${id}` }
 
   // ── REAL IMPLEMENTATION (swap in when Zoom app is set up) ────────────────
-  // const tokenRes = await fetch(
-  //   `https://zoom.us/oauth/token?grant_type=account_credentials&account_id=${process.env.ZOOM_ACCOUNT_ID}`,
-  //   {
-  //     method: 'POST',
-  //     headers: {
-  //       Authorization: `Basic ${Buffer.from(`${process.env.ZOOM_CLIENT_ID}:${process.env.ZOOM_CLIENT_SECRET}`).toString('base64')}`,
-  //       'Content-Type': 'application/x-www-form-urlencoded',
-  //     },
-  //   }
-  // )
-  // const { access_token } = await tokenRes.json()
-  //
-  // const meetingRes = await fetch('https://api.zoom.us/v2/users/me/meetings', {
+  // const token = await getZoomAccessToken()
+  // const res = await fetch('https://api.zoom.us/v2/users/me/meetings', {
   //   method: 'POST',
-  //   headers: { Authorization: `Bearer ${access_token}`, 'Content-Type': 'application/json' },
+  //   headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
   //   body: JSON.stringify({
   //     topic,
-  //     type: 2,                          // scheduled meeting
-  //     start_time: scheduledAt,          // ISO 8601
+  //     type: 2,               // scheduled
+  //     start_time: scheduledAt,
   //     duration: durationMinutes,
-  //     settings: { join_before_host: false, waiting_room: true },
+  //     settings: {
+  //       join_before_host: false,
+  //       waiting_room: true,
+  //       mute_upon_entry: true,
+  //       auto_recording: 'cloud',  // KEY: system records automatically, teacher does nothing
+  //     },
   //   }),
   // })
-  // const meeting = await meetingRes.json()
-  // return meeting.join_url
+  // const meeting = await res.json()
+  // return { meetingId: String(meeting.id), startUrl: meeting.start_url }
+}
+
+// ─── Generate Meeting SDK signature (called per join request) ─────────────────
+// Used by the frontend to initialise the embedded Zoom Meeting SDK component.
+// sdkKey + sdkSecret come from a separate "Meeting SDK" app in Zoom Marketplace
+// (not the Server-to-Server OAuth app).
+export function generateSdkSignature(meetingNumber: string, role: 0 | 1): string {
+  // role 0 = attendee (student), role 1 = host (teacher)
+  const iat = Math.round(Date.now() / 1000) - 30
+  const exp = iat + 60 * 60 * 2 // 2-hour validity
+
+  const payload = {
+    sdkKey: process.env.ZOOM_SDK_KEY!,
+    mn: meetingNumber,
+    role,
+    iat,
+    exp,
+    appKey: process.env.ZOOM_SDK_KEY!,
+    tokenExp: exp,
+  }
+
+  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url')
+  const body   = Buffer.from(JSON.stringify(payload)).toString('base64url')
+  const sig    = crypto
+    .createHmac('sha256', process.env.ZOOM_SDK_SECRET!)
+    .update(`${header}.${body}`)
+    .digest('base64url')
+
+  return `${header}.${body}.${sig}`
 }
 ```
 
@@ -650,7 +695,7 @@ import { z } from 'zod'
 import { HttpError } from '../lib/httpError.js'
 import { authenticateRequest, requireRole } from '../middleware/authenticate.js'
 import { supabaseServiceClient } from '../lib/supabase.js'
-import { generateZoomMeetingLink } from '../lib/zoom.js'
+import { createZoomMeeting, generateSdkSignature } from '../lib/zoom.js'
 
 export const lmsAdminRouter = Router()
 
@@ -996,7 +1041,7 @@ lmsAdminRouter.get('/admin/sessions', authenticateRequest, requireRole('admin'),
         scheduledAt: s.scheduled_at,
         durationMinutes: s.duration_minutes,
         status: s.status,
-        meetingLink: s.meeting_link,
+        sdkMeetingNumber: s.status === 'live' ? s.zoom_meeting_id : null,  // only expose when live
         attendanceCount: s.attendance_count,
         actualDurationMinutes: s.actual_duration_minutes,
         changeNote: s.change_note,
@@ -1142,7 +1187,7 @@ import { z } from 'zod'
 import { HttpError } from '../lib/httpError.js'
 import { authenticateRequest, requireRole } from '../middleware/authenticate.js'
 import { supabaseServiceClient } from '../lib/supabase.js'
-import { generateZoomMeetingLink } from '../lib/zoom.js'
+import { createZoomMeeting, generateSdkSignature } from '../lib/zoom.js'
 
 export const lmsTeacherRouter = Router()
 
@@ -1178,7 +1223,7 @@ lmsTeacherRouter.get('/teacher/classes', authenticateRequest, requireRole('teach
       // Get next session per class
       const { data: sessions } = await supabaseServiceClient
         .from('lms_sessions')
-        .select('id, class_id, scheduled_at, duration_minutes, status, meeting_link')
+        .select('id, class_id, scheduled_at, duration_minutes, status, zoom_meeting_id, recording_url, recording_status')
         .in('class_id', classIds)
         .in('status', ['scheduled', 'live'])
         .order('scheduled_at', { ascending: true })
@@ -1258,8 +1303,8 @@ lmsTeacherRouter.post('/teacher/sessions', authenticateRequest, requireRole('tea
 
       if (!cls) throw new HttpError(403, 'FORBIDDEN', 'This class does not belong to you.')
 
-      // Generate Zoom meeting link
-      const meetingLink = await generateZoomMeetingLink(cls.name, parsed.scheduledAt, parsed.durationMinutes)
+      // Create Zoom meeting with cloud recording enabled
+      const { meetingId, startUrl } = await createZoomMeeting(cls.name, parsed.scheduledAt, parsed.durationMinutes)
 
       const { data, error } = await supabaseServiceClient
         .from('lms_sessions')
@@ -1267,7 +1312,8 @@ lmsTeacherRouter.post('/teacher/sessions', authenticateRequest, requireRole('tea
           class_id: parsed.classId,
           scheduled_at: parsed.scheduledAt,
           duration_minutes: parsed.durationMinutes,
-          meeting_link: meetingLink,
+          zoom_meeting_id: meetingId,
+          zoom_start_url: startUrl,
           status: 'scheduled',
         })
         .select()
@@ -1759,7 +1805,7 @@ lmsStudentRouter.get('/student/classes', authenticateRequest, requireRole('stude
       // Get next session per class
       const { data: sessions } = await supabaseServiceClient
         .from('lms_sessions')
-        .select('id, class_id, scheduled_at, duration_minutes, status, meeting_link')
+        .select('id, class_id, scheduled_at, duration_minutes, status, zoom_meeting_id, recording_url, recording_status')
         .in('class_id', classIds)
         .in('status', ['scheduled', 'live'])
         .order('scheduled_at', { ascending: true })
@@ -1866,17 +1912,17 @@ lmsStudentRouter.get('/student/classes/:classId/sessions', authenticateRequest, 
 
       const { data, error } = await supabaseServiceClient
         .from('lms_sessions')
-        .select('id, class_id, scheduled_at, duration_minutes, status, meeting_link')
+        .select('id, class_id, scheduled_at, duration_minutes, status, zoom_meeting_id, recording_url, recording_status')
         .eq('class_id', req.params.classId)
         .neq('status', 'cancelled')
         .order('scheduled_at', { ascending: false })
 
       if (error) throw new HttpError(500, 'FETCH_FAILED', error.message)
 
-      // Privacy: only expose meeting_link when session is live
+      // Privacy: only expose meeting number when live — students use it to fetch SDK token
       const sessions = (data ?? []).map(s => ({
         ...s,
-        meetingLink: s.status === 'live' ? s.meeting_link : null,
+        sdkMeetingNumber: s.status === 'live' ? s.zoom_meeting_id : null,
       }))
 
       return res.status(200).json({ sessions })
@@ -2139,7 +2185,7 @@ Partial update. Any subset of the create fields. Response 200.
       "scheduledAt": "2026-04-25T10:00:00Z",
       "durationMinutes": 90,
       "status": "scheduled",
-      "meetingLink": "https://zoom.us/j/1234567890",
+      "sdkMeetingNumber": "1234567890",  // null when not live; use GET /sessions/:id/sdk-token to join
       "attendanceCount": null,
       "actualDurationMinutes": null,
       "changeNote": null,
@@ -2239,7 +2285,7 @@ Requires teacher token.
       "scheduled_at": "2026-04-25T10:00:00Z",
       "duration_minutes": 90,
       "status": "scheduled",
-      "meeting_link": "https://zoom.us/j/...",
+      "zoom_meeting_id": "1234567890",  // only used server-side for SDK token generation
       "attendance_count": null,
       "actual_duration_minutes": null,
       "change_note": null
@@ -2332,7 +2378,7 @@ Requires student token.
       "productName": "USMLE Online Sessions",
       "teacherName": "Dr. James Carter",
       "defaultDurationMinutes": 90,
-      "nextSession": { "id": "uuid", "scheduledAt": "...", "status": "live", "meetingLink": "https://zoom.us/j/..." },
+      "nextSession": { "id": "uuid", "scheduledAt": "...", "status": "live", "sdkMeetingNumber": "1234567890" },
       "enrolledAt": "2026-04-01T00:00:00Z",
       "demoExpiresAt": null
     }
@@ -2344,7 +2390,7 @@ Requires student token.
 Returns single class detail. 403 if not enrolled.
 
 #### `GET /api/v1/student/classes/:classId/sessions`
-`meetingLink` is `null` unless `status === 'live'` — meeting link is only revealed when the session is actually live.
+`sdkMeetingNumber` is `null` unless `status === 'live'` — only revealed when live. Frontend calls `GET /sessions/:id/sdk-token` to get the signed SDK token needed to join the embedded meeting.
 
 #### `GET /api/v1/student/classes/:classId/notices`
 403 if not enrolled.
@@ -2358,69 +2404,145 @@ No auth. Returns active products for the homepage.
 
 ---
 
-## 8. Zoom API Integration
+## 8. Zoom Integration — Embedded SDK + Auto-Recording
 
-Meeting links are generated server-side when a session is created. The `generateZoomMeetingLink()` function in `backend/src/lib/zoom.ts` is a placeholder in the first half. When Zoom credentials are ready:
+Meetings are **embedded directly inside the app** using the Zoom Meeting SDK. Students and teachers never leave the platform. When a session ends, Zoom automatically uploads the recording to its cloud, fires a webhook, and the backend downloads the MP4 and stores it in Supabase Storage — no teacher action required.
 
-### Setup Steps (Zoom Marketplace)
-1. Go to [marketplace.zoom.us](https://marketplace.zoom.us) → Build App → **Server-to-Server OAuth**
-2. Note the **Account ID**, **Client ID**, **Client Secret**
-3. Add these to `.env`:
-   ```
-   ZOOM_ACCOUNT_ID=your_account_id
-   ZOOM_CLIENT_ID=your_client_id
-   ZOOM_CLIENT_SECRET=your_client_secret
-   ```
-4. Grant scopes: `meeting:write:admin`
+---
 
-### Token Flow
-The Server-to-Server OAuth grant does not require user interaction. The backend exchanges credentials for an access token on each API call (or caches it until it expires — 1 hour TTL):
+### 8.1 Zoom Marketplace Apps Required
 
-```typescript
-async function getZoomAccessToken(): Promise<string> {
-  const res = await fetch(
-    `https://zoom.us/oauth/token?grant_type=account_credentials&account_id=${process.env.ZOOM_ACCOUNT_ID}`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Basic ${Buffer.from(
-          `${process.env.ZOOM_CLIENT_ID}:${process.env.ZOOM_CLIENT_SECRET}`
-        ).toString('base64')}`,
-      },
-    }
-  )
-  const { access_token } = await res.json()
-  return access_token
-}
+Two separate Zoom apps are needed (both free to create):
+
+| App Type | Purpose | Credentials |
+|---|---|---|
+| **Server-to-Server OAuth** | Create meetings via REST API | `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID`, `ZOOM_CLIENT_SECRET` |
+| **Meeting SDK** | Sign tokens for embedded SDK | `ZOOM_SDK_KEY`, `ZOOM_SDK_SECRET` |
+
+Add to `.env`:
+```
+ZOOM_ACCOUNT_ID=your_account_id
+ZOOM_CLIENT_ID=your_client_id
+ZOOM_CLIENT_SECRET=your_client_secret
+ZOOM_SDK_KEY=your_sdk_key
+ZOOM_SDK_SECRET=your_sdk_secret
+ZOOM_WEBHOOK_SECRET_TOKEN=your_webhook_token   # from Event Subscriptions in Zoom Marketplace
 ```
 
-### Meeting Creation
-Called inside `POST /api/v1/teacher/sessions` when a session is created:
+Required scopes on Server-to-Server OAuth app: `meeting:write:admin`, `recording:read:admin`
 
-```typescript
-async function generateZoomMeetingLink(topic: string, scheduledAt: string, durationMinutes: number): Promise<string> {
-  const token = await getZoomAccessToken()
-  const res = await fetch('https://api.zoom.us/v2/users/me/meetings', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      topic,
-      type: 2,                    // scheduled meeting
-      start_time: scheduledAt,    // ISO 8601 format
-      duration: durationMinutes,
-      settings: {
-        join_before_host: false,
-        waiting_room: true,
-        mute_upon_entry: true,
-      },
-    }),
-  })
-  const meeting = await res.json()
-  return meeting.join_url          // store this in lms_sessions.meeting_link
-}
+---
+
+### 8.2 Meeting Creation (session created by teacher)
+
+`createZoomMeeting()` in `zoom.ts` is called inside `POST /api/v1/teacher/sessions`. It creates the meeting with `auto_recording: 'cloud'` — the Zoom account itself records, the teacher does nothing.
+
+The response stores two values in `lms_sessions`:
+- `zoom_meeting_id` — numeric Zoom meeting ID used to match the `recording.completed` webhook
+- `zoom_start_url` — host-only start link returned to the teacher's client
+
+---
+
+### 8.3 Embedded Session (Meeting SDK)
+
+Instead of a `join_url` that opens a new tab, the frontend renders the Zoom Meeting SDK component inside a `<div id="meetingSDKElement">`. The SDK needs a short-lived signed JWT per participant.
+
+**New endpoint: `GET /api/v1/sessions/:sessionId/sdk-token`**
+
+Auth: student or teacher JWT.
+
+Logic:
+1. Look up `lms_sessions.zoom_meeting_id` for `sessionId`
+2. Enforce: session must be `live` for students (teachers can get it while `scheduled` to start the host flow)
+3. Call `generateSdkSignature(meetingId, role)` — `role = 1` for teacher/host, `role = 0` for student/attendee
+4. Return: `{ signature, meetingNumber, sdkKey, userName, userEmail }`
+
+The frontend passes these directly to the Meeting SDK `ZoomMtg.init()` call — no Zoom URL ever touches the browser address bar.
+
+---
+
+### 8.4 Auto-Recording Pipeline
+
+**Flow (fully automatic — zero teacher action):**
+
+```
+Teacher ends session (PATCH /teacher/sessions/:sessionId/end)
+  → Zoom cloud recording starts processing (~2-5 min)
+  → Zoom fires POST to /api/v1/webhooks/zoom  (recording.completed event)
+  → Backend verifies HMAC signature using ZOOM_WEBHOOK_SECRET_TOKEN
+  → Backend sets lms_sessions.recording_status = 'processing'
+  → Backend downloads MP4 from Zoom CDN (download_url in webhook payload)
+  → Backend uploads MP4 to Supabase Storage bucket: lms-recordings/{sessionId}.mp4
+  → Backend sets lms_sessions.recording_url = Supabase Storage public URL
+  → Backend sets lms_sessions.recording_status = 'ready'
+  → Students see the recording appear automatically in their Recordings tab
 ```
 
-> **Important:** The `join_url` is stored in `lms_sessions.meeting_link`. Students only receive it when `status === 'live'` (enforced in `GET /student/classes/:classId/sessions`).
+**New endpoint: `POST /api/v1/webhooks/zoom`** (no auth middleware — verified by HMAC)
+
+```typescript
+// backend/src/routes/zoomWebhook.ts
+router.post('/api/v1/webhooks/zoom', async (req, res) => {
+  // 1. Verify Zoom webhook signature
+  const msg = `v0:${req.headers['x-zm-request-timestamp']}:${JSON.stringify(req.body)}`
+  const hash = crypto.createHmac('sha256', process.env.ZOOM_WEBHOOK_SECRET_TOKEN!).update(msg).digest('hex')
+  if (`v0=${hash}` !== req.headers['x-zm-signature']) return res.status(401).end()
+
+  // 2. Handle URL validation challenge (Zoom sends this once on webhook setup)
+  if (req.body.event === 'endpoint.url_validation') {
+    const hashForValidate = crypto.createHmac('sha256', process.env.ZOOM_WEBHOOK_SECRET_TOKEN!).update(req.body.payload.plainToken).digest('hex')
+    return res.json({ plainToken: req.body.payload.plainToken, encryptedToken: hashForValidate })
+  }
+
+  // 3. Handle recording completed
+  if (req.body.event === 'recording.completed') {
+    const meetingId = String(req.body.payload.object.id)
+    const mp4File   = req.body.payload.object.recording_files.find((f: any) => f.file_type === 'MP4')
+    if (!mp4File) return res.status(200).end()
+
+    // Find the session by zoom_meeting_id
+    const { data: session } = await supabase
+      .from('lms_sessions')
+      .select('id')
+      .eq('zoom_meeting_id', meetingId)
+      .single()
+    if (!session) return res.status(200).end()
+
+    // Mark as processing immediately so UI shows feedback
+    await supabase.from('lms_sessions').update({ recording_status: 'processing' }).eq('id', session.id)
+
+    // Download MP4 from Zoom CDN (requires access token for authenticated download)
+    const token = await getZoomAccessToken()
+    const mp4Res = await fetch(`${mp4File.download_url}?access_token=${token}`)
+    const buffer = Buffer.from(await mp4Res.arrayBuffer())
+
+    // Upload to Supabase Storage
+    const path = `recordings/${session.id}.mp4`
+    await supabase.storage.from('lms-recordings').upload(path, buffer, { contentType: 'video/mp4', upsert: true })
+    const { data: { publicUrl } } = supabase.storage.from('lms-recordings').getPublicUrl(path)
+
+    // Save URL and mark ready
+    await supabase.from('lms_sessions').update({
+      recording_url: publicUrl,
+      recording_status: 'ready',
+    }).eq('id', session.id)
+  }
+
+  res.status(200).end()
+})
+```
+
+> **Supabase Storage setup:** Create a bucket named `lms-recordings` with public read access. Set a lifecycle rule to delete files older than 90 days if storage cost is a concern.
+
+---
+
+### 8.5 Student Recording Access
+
+Students see recordings via the existing `GET /api/v1/student/classes/:classId/sessions` endpoint — it already returns `recordingUrl`. The frontend filters for `status = 'completed'` AND `recordingUrl != null`. No new endpoint needed.
+
+The recording is a direct MP4 URL in Supabase Storage — the frontend renders it with an HTML5 `<video>` player inside the app. No new tab, no external link.
+
+> **Important:** `recording_status` is also returned so the frontend can show a "Processing..." state between when the session ends and when the recording is ready (typically 2-5 minutes).
 
 ---
 
@@ -2569,7 +2691,7 @@ Follow this exact sequence to avoid dependency issues.
 ```
 Step 1   Run SQL migration 004_lms.sql in Supabase SQL Editor
 Step 2   Update backend/src/config/env.ts — add 'teacher', 'editor' to ROLE_TYPES
-Step 3   Create backend/src/lib/zoom.ts — generateZoomMeetingLink() placeholder
+Step 3   Create backend/src/lib/zoom.ts — createZoomMeeting() + generateSdkSignature() placeholders
 Step 4   Update backend/src/routes/auth.ts — add teacher register/login, editor login
 Step 5   Create backend/src/routes/lmsPublic.ts — GET /products (no auth)
 Step 6   Create backend/src/routes/lmsAdmin.ts — all admin endpoints
@@ -2584,7 +2706,7 @@ Step 14  Update EditorAuthContext.tsx — same
 Step 15  Update all frontend pages — pass accessToken from context to service functions
 Step 16  Delete frontend/src/data/lms.ts — no longer needed
 Step 17  End-to-end test — full flows (see Section 12)
-Step 18  (Optional) Wire up real Zoom API — replace placeholder in zoom.ts
+Step 18  Wire up real Zoom API — replace placeholder in zoom.ts + register recording.completed webhook in Zoom Marketplace
 ```
 
 ---
@@ -2632,7 +2754,7 @@ Step 18  (Optional) Wire up real Zoom API — replace placeholder in zoom.ts
 ### Teacher
 - [ ] `GET /teacher/classes` returns only classes assigned to the authenticated teacher
 - [ ] Teacher cannot fetch sessions for another teacher's class (403)
-- [ ] Create session → Zoom link auto-generated, stored in `lms_sessions.meeting_link`
+- [ ] Create session → Zoom meeting created with cloud recording, `zoom_meeting_id` + `zoom_start_url` stored
 - [ ] Edit session → `changeNote` is required — validation error if missing
 - [ ] Start session → status flips to `live`, `started_at` set
 - [ ] End session → status flips to `completed`, `actual_duration_minutes` computed
@@ -2649,7 +2771,9 @@ Step 18  (Optional) Wire up real Zoom API — replace placeholder in zoom.ts
 ### Student
 - [ ] `GET /student/classes` returns only enrolled classes
 - [ ] Student accessing a class they are not enrolled in → 403
-- [ ] Sessions list: `meetingLink` is `null` for `scheduled` sessions, populated for `live` sessions
+- [ ] Sessions list: `sdkMeetingNumber` is `null` for `scheduled` sessions, populated for `live` sessions
+- [ ] `GET /api/v1/sessions/:sessionId/sdk-token` returns SDK signature for embedded meeting
+- [ ] `POST /api/v1/webhooks/zoom` handles `recording.completed` → auto-uploads MP4 to Supabase Storage
 - [ ] Demo access: student with expired `demo_expires_at` should be gated (second half — access control enforcement)
 
 ### Public
@@ -2694,7 +2818,7 @@ The second half adds the payment/enrollment pipeline, chat, attendance, notifica
 | `getStudentLmsNotifications()` — hardcoded seed | `lms_notifications` table |
 | `getStudentNotificationPrefs()` — per-key localStorage | `lms_notification_prefs` table |
 | `getAllCoupons()`, `validateCoupon()` — localStorage | `lms_coupons` table |
-| `getRecordingsForClass()` — reads `recording_url` from session | Already stored in `lms_sessions.recording_url` — just needs real endpoint |
+| `getRecordingsForClass()` — reads `recording_url` from session | Auto-populated by `recording.completed` webhook — already in `lms_sessions.recording_url` |
 | `getTeacherAnalytics()` — computed from localStorage sessions | SQL aggregation on real tables |
 | `adminGetClasses()`, `adminCreateClass()` — localStorage | `lms_classes` table — partly done in first half, enrollment management is new |
 | `adminGetEnrollmentsForClass()`, `adminEnrollStudent()` — localStorage | `lms_enrollments` table |
@@ -2713,7 +2837,7 @@ The second half adds the payment/enrollment pipeline, chat, attendance, notifica
 
 **Teacher:**
 - Respond to student chat messages per class
-- Upload/remove recording URL on completed sessions
+- View recording status per session (auto-populated by Zoom webhook — no upload needed)
 - View analytics (sessions, attendance rates, duration)
 - See attendance per session (how many students attended)
 
@@ -2766,7 +2890,7 @@ CREATE TABLE IF NOT EXISTS lms_attendance_records (
   student_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   status     TEXT NOT NULL
     CONSTRAINT attendance_status_values CHECK (status IN ('attended', 'missed', 'cancelled')),
-  joined_at  TIMESTAMPTZ,  -- populated if student joined Zoom (future Zoom webhook)
+  joined_at  TIMESTAMPTZ,  -- populated by participant.joined Zoom webhook (future)
   left_at    TIMESTAMPTZ,  -- populated when student leaves
   CONSTRAINT attendance_unique UNIQUE (session_id, student_id)
 );
@@ -3566,29 +3690,31 @@ ORDER BY student_id, created_at DESC
 
 ---
 
-#### `PATCH /api/v1/teacher/sessions/:sessionId/recording`
+#### `GET /api/v1/sessions/:sessionId/sdk-token`
 
-**Auth:** Teacher JWT
+**Auth:** Student or Teacher JWT
 
-**Purpose:** Teacher adds or updates a recording URL on a completed session.
+**Purpose:** Returns a signed Zoom Meeting SDK token so the frontend can initialise the embedded meeting component. This replaces the old `meetingLink` (external URL) approach entirely.
 
-**Request body:** `{ "recordingUrl": "https://vimeo.com/..." }`
+**Logic:**
+1. Look up `lms_sessions.zoom_meeting_id` for `sessionId`
+2. For students: enforce `status = 'live'` (can only join once the teacher has checked in)
+3. For teachers: allow `status IN ('scheduled', 'live')` so they can start the host flow
+4. Call `generateSdkSignature(meetingId, role)` — `role = 1` for teacher, `role = 0` for student
+5. Return SDK init params
 
-**Validation:** Session must belong to teacher's class AND have `status = 'completed'`.
+**Response `200`:**
+```json
+{
+  "signature":     "eyJ...",
+  "meetingNumber": "1234567890",
+  "sdkKey":        "abc123",
+  "userName":      "Dr. Ahmed",
+  "userEmail":     "teacher@example.com"
+}
+```
 
-**Response `200`:** `{ "message": "Recording URL saved." }`
-
----
-
-#### `DELETE /api/v1/teacher/sessions/:sessionId/recording`
-
-**Auth:** Teacher JWT
-
-**Purpose:** Teacher removes a recording URL.
-
-**Logic:** Sets `recording_url = NULL` on the session row.
-
-**Response `200`:** `{ "message": "Recording URL removed." }`
+> **Note:** Recordings are fully automated via the `recording.completed` webhook (see Section 8). Teachers have no recording endpoints — the system handles it.
 
 ---
 
@@ -4016,9 +4142,10 @@ Every service function in `frontend/src/services/lmsApi.ts` has a `// BACKEND SW
 | `getAllChatThreads()` | lmsApi.ts | `GET /api/v1/teacher/classes/:classId/chat` | teacher |
 | `sendChatMessage()` (teacher) | lmsApi.ts | `POST /api/v1/teacher/classes/:classId/chat/:studentId` | teacher |
 | `getAttendanceForClass()` | lmsApi.ts | `GET /api/v1/student/classes/:classId/attendance` | student |
-| `getRecordingsForClass()` | lmsApi.ts | `GET /api/v1/student/classes/:classId/sessions` (filter completed + has recording_url) | student |
-| `updateSessionRecording()` | lmsApi.ts | `PATCH /api/v1/teacher/sessions/:sessionId/recording` | teacher |
-| `removeSessionRecording()` | lmsApi.ts | `DELETE /api/v1/teacher/sessions/:sessionId/recording` | teacher |
+| `getRecordingsForClass()` | lmsApi.ts | `GET /api/v1/student/classes/:classId/sessions` (filter `status=completed` + `recordingUrl != null`) | student |
+| `getSessionSdkToken(sessionId)` | lmsApi.ts | `GET /api/v1/sessions/:sessionId/sdk-token` | student or teacher |
+| ~~`updateSessionRecording()`~~ | removed | Auto-populated by `recording.completed` webhook — teacher does nothing | — |
+| ~~`removeSessionRecording()`~~ | removed | Recordings are system-managed, not teacher-managed | — |
 | `getStudentNotificationPrefs()` | lmsApi.ts | `GET /api/v1/student/notification-prefs` | student |
 | `updateStudentNotificationPrefs()` | lmsApi.ts | `PATCH /api/v1/student/notification-prefs` | student |
 | `getStudentLmsNotifications()` | lmsApi.ts | `GET /api/v1/student/notifications` | student |
@@ -4151,7 +4278,8 @@ Follow this exact order. Each step builds on the previous.
 - Test: teacher submits attendance for a completed session → student sees their rate
 
 **Step 9 — Recordings**
-- Add recording PATCH/DELETE to `lmsTeacher.ts`
+- Add `GET /sessions/:sessionId/sdk-token` route to `lmsTeacher.ts` + `lmsStudent.ts`
+- Add `POST /webhooks/zoom` route in new file `zoomWebhook.ts` (registered before auth middleware)
 - Test: teacher adds URL → student can see it on recordings page
 
 **Step 10 — Notifications & preferences**

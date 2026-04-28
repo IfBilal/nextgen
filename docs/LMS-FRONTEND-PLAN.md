@@ -90,8 +90,9 @@ LmsSession
   scheduledAt: string        // ISO datetime
   durationMinutes: number
   status: 'scheduled' | 'live' | 'completed' | 'cancelled'
-  meetingLink: string
-  recordingUrl?: string
+  sdkMeetingNumber: string | null  // Zoom meeting ID — only populated when status = 'live'; used to fetch SDK token for embedded meeting
+  recordingUrl?: string            // Supabase Storage URL — auto-populated by Zoom webhook when recording is ready
+  recordingStatus: 'none' | 'processing' | 'ready' | 'failed'
   attendanceCount?: number
   actualDurationMinutes?: number
   changeNote?: string        // required when edited after creation
@@ -227,7 +228,7 @@ studentGetUpcomingSession(classId)     → LmsSession (next scheduled or live)
 
 **Shared:**
 ```
-validateMeetingLink(classId)           → returns mock Zoom URL string
+getSessionSdkToken(sessionId)          → { signature, meetingNumber, sdkKey, userName, userEmail }
 ```
 
 ---
@@ -389,7 +390,7 @@ Student LMS (existing StudentProtectedRoute + StudentLayout):
 **How It Works Section**
 - 3 numbered steps:
   1. Sign Up → create account
-  2. Join Live Sessions → attend classes via Zoom
+  2. Join Live Sessions → attend classes embedded directly in the platform
   3. Track Progress → view attendance, recordings, roadmap
 
 **Why Choose Us Section**
@@ -440,7 +441,7 @@ Sections:
 - 4 categories as separate labeled sections, each with accordion items:
   - General (5 questions): What is NextGen? / Who are the teachers? / etc.
   - Payments (4 questions): What payment methods? / Can I cancel installments? / etc.
-  - Sessions (4 questions): How do I join a live session? / Are sessions recorded? / etc.
+  - Sessions (4 questions): How do I join a live session (meeting opens inside the platform)? / Are sessions recorded automatically? / etc.
   - Demo (3 questions): How long is the demo? / What can I access in demo? / etc.
 - Accordion: click to expand/collapse, only one open at a time per section
 
@@ -581,7 +582,7 @@ Sessions table:
 Actions per row:
 - `scheduled`: Edit (pencil icon) | Cancel (X icon)
 - `live`: "End Session" button (red) — flips to completed
-- `completed`: View Recording (placeholder link)
+- `completed`: Recording status badge — "Processing..." | "Ready" (with inline video player) | "None"
 
 "Schedule New Session" button opens the **Session Form Modal** (see 3.4)
 
@@ -625,7 +626,7 @@ Used for both creating and editing sessions.
 - Date (date picker, no past dates allowed)
 - Start Time (time picker)
 - Duration in minutes (number input, default populated from class.defaultDurationMinutes)
-- Meeting Link (text input, auto-populated with `validateMeetingLink()` result, editable)
+- Meeting setup: no link input needed — Zoom meeting is created automatically on session save. Show read-only status: "Zoom meeting will be created automatically"
 - Notes (optional textarea)
 
 **If editing existing session (any field changed):**
@@ -667,7 +668,7 @@ The "Check In" / "Start Session" button on TeacherDashboardPage and ClassDetailP
 1. Confirmation: "End Session? This will stop the live session."
 2. Calls `teacherEndSession(sessionId)`
 3. Status flips to `'completed'`, actualDurationMinutes computed from start time
-4. Toast: "Session ended and saved to recording library."
+4. Toast: "Session ended. Recording is processing and will appear automatically in student recordings."
 
 ---
 
@@ -906,23 +907,33 @@ Each class card:
 - Class name + teacher name (first name only)
 - Status: "Live Now" (green pulse) | "Scheduled for [datetime]" | "No upcoming session"
 
-**Main content area — Zoom placeholder:**
+**Main content area — Embedded Meeting:**
 
 If session status === `'live'`:
-- Large iframe placeholder area (dark background, aspect ratio 16:9)
-- Center: Zoom logo icon + "Live Session in Progress"
-- "Join via Zoom" button (primary blue, links to session.meetingLink)
-- Note: "Zoom meeting will open in a new window"
+- `<div id="meetingSDKElement">` fills the main content area (dark background, 16:9 aspect ratio)
+- On mount, call `getSessionSdkToken(session.id)` → receives `{ signature, meetingNumber, sdkKey, userName, userEmail }`
+- Pass params directly to `ZoomMtg.init()` + `ZoomMtg.join()` — Zoom meeting renders embedded, student never leaves the page
+- While SDK token is loading: spinner with "Joining session..."
+- If SDK token fetch fails: error card "Could not connect to session. Please refresh."
 
 If session status === `'scheduled'`:
 - Countdown timer (large, prominent): days/hours/minutes/seconds until session starts
 - "Session starts [date] at [time]"
 - "Add to Calendar" button (placeholder, no action)
-- Zoom icon placeholder with "Meeting link will be available when session starts"
+- Placeholder graphic: "Meeting will appear here when session starts"
+
+If session status === `'completed'` with `recordingStatus === 'processing'`:
+- Info card: "Session ended. Recording is being processed — check back in a few minutes."
+- Auto-refreshes every 30 seconds until `recordingStatus === 'ready'`
+
+If session status === `'completed'` with `recordingStatus === 'ready'`:
+- Redirect user to Recordings tab automatically
 
 If no upcoming session:
 - "No upcoming session scheduled. Check back later."
 - Link back to My Classes
+
+> **SDK setup note:** Install `@zoom/meetingsdk` npm package. Initialise once per page mount — do not re-initialise. Clean up with `ZoomMtg.leaveMeeting({})` on component unmount.
 
 **Sidebar (right panel, collapsible on mobile):**
 
@@ -1180,9 +1191,11 @@ This document is the complete, step-by-step plan for the second half of the LMS 
 **Access:** New "Recordings" tab in LiveSessionPage layout
 
 **Full Access State:**
-- List of all completed sessions that have a `recordingUrl`
-- Each row: Session date | Duration | "Watch Recording" button (links to recordingUrl, opens in new tab)
-- Empty state if no recordings yet: "Recordings will appear here after each session ends."
+- List of all completed sessions that have `recordingStatus === 'ready'`
+- Sessions with `recordingStatus === 'processing'` show a row: Session date | Duration | "Processing..." badge (auto-refresh every 30s)
+- Clicking a ready session expands an inline HTML5 `<video>` player pointing to `recordingUrl` (Supabase Storage MP4) — no new tab
+- Player controls: play/pause, seek, volume, fullscreen. No download button.
+- Empty state if no recordings yet: "Recordings will appear here automatically after each session ends."
 
 **Demo Access State (demo not yet expired, but limited):**
 - Only the most recent same-day recording is accessible
@@ -1684,9 +1697,10 @@ Add a **"Recordings"** tab alongside Sessions | Students | Notice Board.
 **Recordings Tab:**
 - List of completed sessions
 - Each row: Date | Duration | Recording Status chip (Available / Pending / Not uploaded)
-- "Add Recording URL" button per row (for sessions without a recording)
-  - Opens inline input: paste recording URL (Zoom recording link, Google Drive, etc.)
-  - Submit → calls `updateSessionRecording(sessionId, url)`
+- Recording status badge per row: "None" | "Processing" | "Ready"
+  - "Ready" rows show a "Preview" link (opens inline video player in modal)
+  - No manual URL entry — recordings are auto-populated by Zoom webhook
+  - Recording status shown read-only: "None" | "Processing..." | "Ready" (auto-populated by Zoom webhook)
 - "Remove Recording" for sessions that have one
 - Note: Recording URLs are visible to enrolled students (full access only)
 
@@ -1757,7 +1771,7 @@ Attendance:
 
 Recordings:
   getRecordingsForClass(classId)             → RecordedSession[]
-  updateSessionRecording(sessionId, url)     → LmsSession
+  // updateSessionRecording removed — recordings are auto-managed by Zoom webhook
 
 Notifications:
   getNotificationPrefs(studentId)            → NotificationPrefs
@@ -1809,6 +1823,7 @@ RecordedSession
   scheduledAt: string
   durationMinutes: number
   recordingUrl: string | null
+  recordingStatus: 'none' | 'processing' | 'ready' | 'failed'
   accessLevel: 'full' | 'demo_only' | 'locked'
 
 Coupon
@@ -1964,7 +1979,7 @@ frontend/src/App.tsx                                  MODIFIED (new routes)
 - Stripe live integration (real card processing — backend wires this)
 - WhatsApp notification sending (backend/Twilio integration)
 - Email notification sending (backend/SendGrid or similar)
-- Zoom recording auto-fetch (backend webhook from Zoom)
+- Zoom participant webhooks for auto-attendance (participant.joined / participant.left events)
 - Real-time chat (WebSocket / Supabase realtime — backend concern)
 - Video playback player (embedded player for recordings)
 - Student progress analytics beyond attendance (requires backend data)
