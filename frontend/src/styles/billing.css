@@ -43,7 +43,7 @@
 }
 
 .billing-referral-input:focus {
-  border-color: #5ba4cf;
+  border-color: #60a5fa;
   background: #fff;
 }
 
@@ -52,7 +52,7 @@
 
 .billing-referral-apply-btn {
   padding: 0.55rem 1.1rem;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -104,7 +104,7 @@
 }
 
 .billing-current-banner {
-  border: 1px solid #d6e7fa;
+  border: 1px solid #dbeafe;
   background: #f3f9ff;
   color: #0f4e83;
   border-radius: 12px;
@@ -145,14 +145,14 @@
 
 .billing-plan-card.popular {
   border-color: #6fa9e6;
-  box-shadow: 0 8px 20px rgba(26, 111, 173, 0.15);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
 }
 
 .billing-popular-badge {
   position: absolute;
   top: -10px;
   right: 12px;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   font-size: 11px;
   font-weight: 700;
@@ -167,7 +167,7 @@
 .billing-plan-price {
   font-size: 24px;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .billing-feature-list {
@@ -200,7 +200,7 @@
 }
 
 .billing-primary-btn {
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
 }
 
@@ -221,7 +221,7 @@
 }
 
 .billing-lock-card {
-  border: 1px solid #d6e7fa;
+  border: 1px solid #dbeafe;
   border-radius: 14px;
   background: #fff;
   padding: 18px;
@@ -235,7 +235,7 @@
   height: 34px;
   border-radius: 50%;
   background: #e9f3ff;
-  color: #1a6fad;
+  color: #2563eb;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -244,12 +244,12 @@
 
 .billing-lock-card__body h2 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .billing-lock-card__body p {
   margin: 6px 0 0;
-  color: #55789c;
+  color: #4a5b8a;
 }
 
 .billing-lock-card__actions {
@@ -267,7 +267,7 @@
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  border: 1px solid #d6e7fa;
+  border: 1px solid #dbeafe;
   background: #f6fbff;
   border-radius: 12px;
   padding: 10px 12px;
@@ -338,8 +338,8 @@
 }
 
 .billing-feature-toggle.enabled {
-  background: #1a6fad;
-  border-color: #1a6fad;
+  background: #2563eb;
+  border-color: #2563eb;
   color: #fff;
 }
 
@@ -399,8 +399,8 @@
 }
 
 .billing-preset-btn.active {
-  background: #1a6fad;
-  border-color: #1a6fad;
+  background: #2563eb;
+  border-color: #2563eb;
   color: #fff;
 }
 

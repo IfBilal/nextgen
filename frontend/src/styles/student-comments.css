@@ -6,7 +6,7 @@
 
 .student-comments-header h1 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -35,7 +35,7 @@
 
 .student-comment-form h3 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1rem;
 }
 
@@ -56,7 +56,7 @@
 
 .student-comment-notice {
   margin: 0;
-  color: #1a6fad;
+  color: #2563eb;
   font-size: 0.82rem;
   font-weight: 700;
 }
@@ -85,7 +85,7 @@
 }
 
 .student-comment-item strong {
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 0.92rem;
 }
 

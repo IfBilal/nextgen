@@ -79,7 +79,7 @@
 .video-card { padding: 0; overflow: hidden; cursor: pointer; transition: transform 0.2s; }
 .video-card:hover { transform: translateY(-4px); border-color: var(--color-primary); }
 .video-card:focus-visible {
-  outline: 3px solid rgba(26, 111, 173, 0.35);
+  outline: 3px solid rgba(37, 99, 235, 0.35);
   outline-offset: 2px;
   border-color: var(--color-primary);
 }
@@ -183,7 +183,7 @@
 }
 .pdf-card { display: flex; flex-direction: column; padding: 0; overflow: hidden;}
 .pdf-card:focus-visible {
-  outline: 3px solid rgba(26, 111, 173, 0.35);
+  outline: 3px solid rgba(37, 99, 235, 0.35);
   outline-offset: 2px;
   border-color: var(--color-primary);
 }

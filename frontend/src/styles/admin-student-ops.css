@@ -6,7 +6,7 @@
 
 .admin-students-header h1 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1.55rem;
 }
 
@@ -37,7 +37,7 @@
 
 .admin-students-kpi p {
   margin: 0.4rem 0 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1.45rem;
   font-weight: 800;
 }
@@ -96,7 +96,7 @@
 .admin-students-table-card h3,
 .admin-students-detail-card h3 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .admin-students-table-card > p {
@@ -130,12 +130,12 @@
 
 .admin-students-table th {
   color: #5a7a9d;
-  background: #f7fbff;
+  background: #f7faff;
 }
 
 .admin-students-table td strong {
   display: block;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .admin-students-table td span {
@@ -202,7 +202,7 @@
 }
 
 .admin-students-meta span {
-  background: #f7fbff;
+  background: #f7faff;
   border: 1px solid #e3edf8;
   border-radius: 10px;
   padding: 0.45rem 0.55rem;
@@ -233,7 +233,7 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #1a6fad, #52a5df);
+  background: linear-gradient(90deg, #2563eb, #60a5fa);
 }
 
 .admin-students-actions h4,
@@ -241,7 +241,7 @@
 .admin-students-interventions h4,
 .admin-students-activity h4 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 0.9rem;
   display: flex;
   align-items: center;
@@ -260,7 +260,7 @@
   border: 1px solid #c7ddf2;
   border-radius: 9px;
   background: #eff7ff;
-  color: #1a6fad;
+  color: #2563eb;
   font-weight: 700;
   font-size: 0.78rem;
   padding: 0.45rem 0.65rem;
@@ -271,7 +271,7 @@
 
 .admin-students-notice {
   margin: 0.5rem 0 0;
-  color: #1a6fad;
+  color: #2563eb;
   font-size: 0.78rem;
   font-weight: 700;
 }

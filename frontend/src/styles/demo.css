@@ -115,7 +115,7 @@
 
 .demo-gate__cta {
   padding: 7px 16px;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -149,7 +149,7 @@
   max-width: 500px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 4px 24px rgba(13, 45, 94, 0.06);
+  box-shadow: 0 4px 24px rgba(30, 27, 75, 0.06);
 }
 
 .demo-expired-card__icon {
@@ -161,13 +161,13 @@
 .demo-expired-card h1 {
   font-size: 1.4rem;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0 0 8px;
 }
 
 .demo-expired-card__sub {
   font-size: 0.87rem;
-  color: #55789c;
+  color: #4a5b8a;
   margin: 0 0 24px;
 }
 
@@ -193,7 +193,7 @@
 
 .demo-expired-feature--locked {
   background: #e8f1f8;
-  color: #1a6fad;
+  color: #2563eb;
 }
 
 .demo-expired-card__actions {
@@ -205,7 +205,7 @@
 
 .demo-btn-primary {
   padding: 11px 24px;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -225,7 +225,7 @@
 .demo-btn-ghost {
   padding: 11px 24px;
   background: #fff;
-  color: #55789c;
+  color: #4a5b8a;
   border: 1px solid #cde0f5;
   border-radius: 10px;
   font-size: 0.9rem;
@@ -250,7 +250,7 @@
 }
 
 .fomo-hero {
-  background: linear-gradient(135deg, #0d2d5e 0%, #1a6fad 100%);
+  background: linear-gradient(135deg, #0f1f6a 0%, #2563eb 55%, #7c3aed 100%);
   border-radius: 16px;
   padding: 32px 28px;
   color: #fff;
@@ -334,13 +334,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1a6fad;
+  color: #2563eb;
 }
 
 .fomo-feature-card h3 {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
 }
 
@@ -360,7 +360,7 @@
 .fomo-roadmap-section h2 {
   font-size: 1rem;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0 0 16px;
 }
 
@@ -437,12 +437,12 @@
 .fomo-social-stat {
   font-size: 0.87rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
   white-space: nowrap;
 }
 
 .fomo-social-stat span {
-  color: #1a6fad;
+  color: #2563eb;
 }
 
 .fomo-quotes {
@@ -454,14 +454,14 @@
 
 .fomo-quote {
   font-size: 0.75rem;
-  color: #55789c;
+  color: #4a5b8a;
   font-style: italic;
   flex: 1;
   min-width: 120px;
 }
 
 .fomo-cta-banner {
-  background: linear-gradient(135deg, #0d2d5e 0%, #1a6fad 100%);
+  background: linear-gradient(135deg, #0f1f6a 0%, #2563eb 55%, #7c3aed 100%);
   border-radius: 14px;
   padding: 28px 24px;
   display: flex;
@@ -481,7 +481,7 @@
 .fomo-cta-btn {
   padding: 12px 28px;
   background: #fff;
-  color: #0d2d5e;
+  color: #0f1f6a;
   border: none;
   border-radius: 10px;
   font-size: 0.95rem;

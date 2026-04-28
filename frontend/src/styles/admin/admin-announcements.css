@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .admin-announcements-header p {
@@ -39,7 +39,7 @@
 
 .admin-announcements-kpi p {
   margin: 0.35rem 0 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1.1rem;
   font-weight: 700;
 }
@@ -58,7 +58,7 @@
 .admin-announcements-form-card h3,
 .admin-announcements-history-card h3 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .admin-announcements-form {
@@ -83,7 +83,7 @@
   border-radius: 10px;
   padding: 0.65rem 0.75rem;
   font: inherit;
-  color: #0d2d5e;
+  color: #0f1f6a;
   background: #f8fbff;
 }
 
@@ -99,7 +99,7 @@
   gap: 0.45rem;
   border: none;
   border-radius: 999px;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   font-weight: 700;
   padding: 0.62rem 0.95rem;
@@ -107,7 +107,7 @@
 
 .admin-announcements-notice {
   margin: 0.75rem 0 0;
-  color: #1a6fad;
+  color: #2563eb;
   font-size: 0.86rem;
   font-weight: 600;
 }
@@ -136,7 +136,7 @@
 }
 
 .admin-announcement-item strong {
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .admin-announcement-item header span,

@@ -6,7 +6,7 @@
 
 .admin-overview-header h1 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1.6rem;
 }
 
@@ -38,7 +38,7 @@
 .admin-kpi-value {
   margin: 0.45rem 0 0;
   font-size: 1.65rem;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-weight: 800;
 }
 
@@ -59,7 +59,7 @@
 
 .admin-panel h3 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1rem;
 }
 

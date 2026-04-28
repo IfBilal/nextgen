@@ -241,7 +241,7 @@
 .auth-input:focus {
   border-color: var(--color-primary);
   background: var(--color-white);
-  box-shadow: 0 0 0 3px rgba(26,111,173,0.1);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
 }
 
 .auth-input--password {
@@ -295,12 +295,12 @@
 .auth-btn--primary {
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
   color: var(--color-white);
-  box-shadow: 0 4px 16px rgba(26,111,173,0.35);
+  box-shadow: 0 4px 16px rgba(37,99,235,0.35);
 }
 
 .auth-btn--primary:hover:not(:disabled) {
   background: linear-gradient(135deg, var(--color-navy), var(--color-primary));
-  box-shadow: 0 6px 24px rgba(26,111,173,0.45);
+  box-shadow: 0 6px 24px rgba(37,99,235,0.45);
   transform: translateY(-1px);
 }
 
@@ -311,11 +311,11 @@
 .auth-btn--navy {
   background: linear-gradient(135deg, var(--color-navy), var(--color-navy-mid));
   color: var(--color-white);
-  box-shadow: 0 4px 16px rgba(13,45,94,0.35);
+  box-shadow: 0 4px 16px rgba(30,27,75,0.35);
 }
 
 .auth-btn--navy:hover:not(:disabled) {
-  box-shadow: 0 6px 24px rgba(13,45,94,0.45);
+  box-shadow: 0 6px 24px rgba(30,27,75,0.45);
   transform: translateY(-1px);
 }
 
@@ -423,7 +423,7 @@
 .auth-input--dark:focus {
   border-color: var(--color-primary-light);
   background: rgba(255,255,255,0.12);
-  box-shadow: 0 0 0 3px rgba(91,164,207,0.2);
+  box-shadow: 0 0 0 3px rgba(96,165,250,0.2);
 }
 
 .auth-label--dark {

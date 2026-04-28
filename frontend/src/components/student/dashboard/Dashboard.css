@@ -46,7 +46,7 @@
 
 .welcome-plan-chip {
   border: 1px solid #c7ddf3;
-  background: #edf6ff;
+  background: #eff6ff;
   color: #1a5f9a;
 }
 
@@ -390,19 +390,19 @@
   border-radius: 12px;
   background: #fff;
   text-decoration: none;
-  color: #0d2d5e;
+  color: #0f1f6a;
   transition: box-shadow 0.15s, border-color 0.15s;
 }
 
 .db-lms-card:hover {
-  border-color: #1a6fad;
-  box-shadow: 0 2px 12px rgba(26,111,173,0.1);
+  border-color: #2563eb;
+  box-shadow: 0 2px 12px rgba(37,99,235,0.1);
   text-decoration: none;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .db-lms-card svg:first-child {
-  color: #1a6fad;
+  color: #2563eb;
   flex-shrink: 0;
 }
 

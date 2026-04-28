@@ -25,7 +25,7 @@
   height: 40px;
   border-radius: 10px;
   background: #eaf5ff;
-  color: #1a6fad;
+  color: #2563eb;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,8 +33,8 @@
 }
 
 .admin-affiliates-kpi__icon--green { background: #e8f8f0; color: #16a34a; }
-.admin-affiliates-kpi__icon--blue  { background: #eaf5ff; color: #1a6fad; }
-.admin-affiliates-kpi__icon--navy  { background: #e8ecf5; color: #0d2d5e; }
+.admin-affiliates-kpi__icon--blue  { background: #eaf5ff; color: #2563eb; }
+.admin-affiliates-kpi__icon--navy  { background: #e8ecf5; color: #0f1f6a; }
 
 .admin-affiliates-kpi__label {
   margin: 0;
@@ -47,7 +47,7 @@
   margin: 0.2rem 0 0;
   font-size: 1.3rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 /* Table section */
@@ -72,7 +72,7 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.55rem 1.1rem;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   border-radius: 8px;
   font-weight: 600;
@@ -150,7 +150,7 @@
 
 .admin-affiliates-modal__header h3 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1.1rem;
 }
 
@@ -169,7 +169,7 @@
 
 .admin-affiliates-modal__close:hover {
   background: #e8f0fa;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .admin-affiliates-form-error {
@@ -211,7 +211,7 @@
 }
 
 .admin-affiliates-form__field input:focus {
-  border-color: #5ba4cf;
+  border-color: #60a5fa;
   background: #fff;
 }
 
@@ -242,7 +242,7 @@
   padding: 0.55rem 1.25rem;
   border-radius: 8px;
   border: none;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   font-weight: 600;
   cursor: pointer;

@@ -11,7 +11,7 @@
 
 .affiliate-sidebar {
   width: 260px;
-  background: #0d2d5e;
+  background: #0f1f6a;
   color: #dcecff;
   display: flex;
   flex-direction: column;
@@ -114,7 +114,7 @@
 
 .affiliate-sidebar__link--active {
   color: #fff;
-  background: #1a6fad;
+  background: #2563eb;
 }
 
 .affiliate-sidebar__bottom {
@@ -137,7 +137,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   display: flex;
   align-items: center;
@@ -203,7 +203,7 @@
 .affiliate-topbar__menu {
   display: none;
   background: #f1f7ff;
-  color: #0d2d5e;
+  color: #0f1f6a;
   border-radius: 8px;
   width: 34px;
   height: 34px;
@@ -220,7 +220,7 @@
 }
 
 .affiliate-topbar__title {
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-weight: 700;
   font-size: 0.96rem;
 }
@@ -236,7 +236,7 @@
   gap: 0.35rem;
   font-size: 0.75rem;
   background: #eaf5ff;
-  color: #1a6fad;
+  color: #2563eb;
   padding: 0.36rem 0.65rem;
   border-radius: 999px;
   font-weight: 700;

@@ -40,7 +40,7 @@
 }
 
 .public-nav__brand-text strong {
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 0.95rem;
   font-weight: 800;
   line-height: 1.1;
@@ -69,13 +69,13 @@
 }
 
 .public-nav__link:hover {
-  color: #0d2d5e;
+  color: #0f1f6a;
   background: #f1f7ff;
   text-decoration: none;
 }
 
 .public-nav__link--active {
-  color: #1a6fad;
+  color: #2563eb;
   background: #e8f3ff;
   font-weight: 600;
 }
@@ -104,7 +104,7 @@
 .public-nav__btn--outline {
   background: transparent;
   border: 1.5px solid #cde0f5;
-  color: #1a6fad;
+  color: #2563eb;
 }
 
 .public-nav__btn--outline:hover {
@@ -113,7 +113,7 @@
 }
 
 .public-nav__btn--primary {
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
 }
 
@@ -126,7 +126,7 @@
   display: none;
   background: #f1f7ff;
   border: none;
-  color: #0d2d5e;
+  color: #0f1f6a;
   border-radius: 8px;
   width: 36px;
   height: 36px;
@@ -142,7 +142,7 @@
 
 /* ─── Footer ──────────────────────────────────────────────── */
 .public-footer {
-  background: #0d2d5e;
+  background: #0f1f6a;
   color: #9fc1e4;
   padding: 2.5rem 2rem 1.5rem;
 }

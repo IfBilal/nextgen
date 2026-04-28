@@ -14,7 +14,7 @@
 
 .affiliate-page-header h1 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1.45rem;
 }
 
@@ -54,7 +54,7 @@
   justify-content: center;
   flex-shrink: 0;
   background: #eaf5ff;
-  color: #1a6fad;
+  color: #2563eb;
 }
 
 .affiliate-kpi-icon--green {
@@ -64,12 +64,12 @@
 
 .affiliate-kpi-icon--blue {
   background: #eaf5ff;
-  color: #1a6fad;
+  color: #2563eb;
 }
 
 .affiliate-kpi-icon--navy {
   background: #e8ecf5;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .affiliate-kpi-icon--teal {
@@ -88,7 +88,7 @@
   margin: 0.2rem 0 0;
   font-size: 1.35rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .affiliate-kpi-sub {
@@ -107,7 +107,7 @@
 
 .affiliate-card h3 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1rem;
   font-weight: 700;
 }
@@ -168,7 +168,7 @@
 }
 
 .affiliate-table tbody tr:hover td {
-  background: #f7fbff;
+  background: #f7faff;
 }
 
 /* Badges */
@@ -177,7 +177,7 @@
   padding: 0.22rem 0.55rem;
   border-radius: 999px;
   background: #eaf5ff;
-  color: #1a6fad;
+  color: #2563eb;
   font-size: 0.74rem;
   font-weight: 600;
   text-transform: capitalize;
@@ -225,7 +225,7 @@
 
 .affiliate-student-name {
   font-weight: 600;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .affiliate-student-email {
@@ -269,7 +269,7 @@
 }
 
 .affiliate-search:focus {
-  border-color: #5ba4cf;
+  border-color: #60a5fa;
   background: #fff;
 }
 
@@ -291,14 +291,14 @@
 }
 
 .affiliate-filter-tab:hover {
-  border-color: #5ba4cf;
-  color: #1a6fad;
+  border-color: #60a5fa;
+  color: #2563eb;
 }
 
 .affiliate-filter-tab--active {
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
-  border-color: #1a6fad;
+  border-color: #2563eb;
 }
 
 /* Stat chips (referrals header) */
@@ -332,9 +332,9 @@
   gap: 0.45rem;
   padding: 0.55rem 1rem;
   border-radius: 8px;
-  border: 1.5px solid #5ba4cf;
+  border: 1.5px solid #60a5fa;
   background: #eaf5ff;
-  color: #1a6fad;
+  color: #2563eb;
   font-weight: 700;
   font-size: 0.88rem;
   cursor: pointer;
@@ -343,7 +343,7 @@
 }
 
 .affiliate-copy-btn:hover {
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
 }
 
@@ -372,7 +372,7 @@
 .affiliate-overview-stat__value {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .affiliate-overview-stat__value--active { color: #16a34a; }

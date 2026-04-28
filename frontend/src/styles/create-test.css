@@ -200,7 +200,7 @@ input:checked + .slider:before { transform: translateX(20px); background-color: 
 .taxonomy-select:focus {
   border-color: var(--color-primary);
   outline: none;
-  box-shadow: 0 0 0 2px rgba(26, 111, 173, 0.15);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
 .subject-chips {

@@ -41,7 +41,7 @@
 .editor-kpi-card__value {
   font-size: 1.6rem;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin-top: 4px;
   line-height: 1.1;
 }
@@ -52,7 +52,7 @@
 
 .editor-kpi-card__sub {
   font-size: 0.78rem;
-  color: #55789c;
+  color: #4a5b8a;
   margin-top: 2px;
 }
 
@@ -62,7 +62,7 @@
   height: 36px;
   border-radius: 10px;
   background: #e8f3ff;
-  color: #1a6fad;
+  color: #2563eb;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,7 +87,7 @@
 .editor-section__title {
   font-size: 0.92rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
 }
 
@@ -182,7 +182,7 @@
 }
 
 .editor-btn--primary {
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
 }
 
@@ -201,8 +201,8 @@
 }
 
 .editor-btn--secondary {
-  background: #f0f7ff;
-  color: #1a6fad;
+  background: #f7faff;
+  color: #2563eb;
   border: 1px solid #cde0f5;
 }
 
@@ -279,12 +279,12 @@
 }
 
 .editor-chat-class-item:hover {
-  background: #f0f7ff;
+  background: #f7faff;
 }
 
 .editor-chat-class-item--active {
   background: #e8f3ff;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-weight: 600;
 }
 
@@ -347,7 +347,7 @@
 
 .editor-chat-message__avatar--student {
   background: #e8f3ff;
-  color: #1a6fad;
+  color: #2563eb;
 }
 
 .editor-chat-message__avatar--teacher {
@@ -372,7 +372,7 @@
 
 .editor-chat-message__text {
   font-size: 0.85rem;
-  color: #0d2d5e;
+  color: #0f1f6a;
   line-height: 1.5;
 }
 
@@ -405,7 +405,7 @@
   border-radius: 10px;
   padding: 8px 12px;
   font-size: 0.9rem;
-  color: #0d2d5e;
+  color: #0f1f6a;
   background: #f8fbff;
   outline: none;
   width: 100%;
@@ -417,8 +417,8 @@
 .editor-form-input:focus,
 .editor-form-textarea:focus,
 .editor-form-select:focus {
-  border-color: #1a6fad;
-  box-shadow: 0 0 0 3px rgba(26, 111, 173, 0.1);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
   background: #fff;
 }
 
@@ -465,7 +465,7 @@
 .editor-modal__title {
   font-size: 1rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
 }
 
@@ -482,14 +482,14 @@
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
-  background: #0d2d5e;
+  background: #0f1f6a;
   color: #fff;
   padding: 10px 16px;
   border-radius: 10px;
   font-size: 0.87rem;
   font-weight: 600;
   z-index: 600;
-  box-shadow: 0 4px 16px rgba(13, 45, 94, 0.25);
+  box-shadow: 0 4px 16px rgba(30, 27, 75, 0.25);
   animation: editor-toast-in 0.2s ease;
 }
 
@@ -519,9 +519,9 @@
 }
 
 .editor-filter-btn--active {
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
-  border-color: #1a6fad;
+  border-color: #2563eb;
 }
 
 .editor-empty-state {

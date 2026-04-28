@@ -7,7 +7,7 @@
 
 .admin-metrics-header h1 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1.55rem;
 }
 
@@ -46,7 +46,7 @@
 .admin-metrics-taxonomy h3,
 .admin-metrics-ai-insight h3 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 0.95rem;
 }
 
@@ -145,7 +145,7 @@
 .admin-metrics-kpi .value,
 .admin-financials-kpi .value {
   margin: 0.42rem 0 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1.32rem;
   font-weight: 800;
 }
@@ -179,7 +179,7 @@
 
 .admin-metrics-panel h3 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1rem;
 }
 
@@ -246,7 +246,7 @@
 
 .admin-metrics-table th {
   color: #5a7a9d;
-  background: #f7fbff;
+  background: #f7faff;
 }
 
 .admin-financials-invoices {
@@ -275,7 +275,7 @@
 
 .admin-financials-status.refunded {
   background: #eef6ff;
-  color: #1a6fad;
+  color: #2563eb;
 }
 
 @media (max-width: 1280px) {

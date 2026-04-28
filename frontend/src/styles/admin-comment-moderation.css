@@ -6,7 +6,7 @@
 
 .admin-comments-header h1 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1.5rem;
 }
 
@@ -37,7 +37,7 @@
 
 .admin-comments-kpi p {
   margin: 0.4rem 0 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1.4rem;
   font-weight: 800;
 }
@@ -95,7 +95,7 @@
 .admin-comments-queue-card h3,
 .admin-comments-detail-card h3 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1rem;
   display: flex;
   align-items: center;
@@ -138,7 +138,7 @@
 }
 
 .admin-comment-item header strong {
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 0.88rem;
 }
 
@@ -215,7 +215,7 @@
 }
 
 .admin-comments-detail-meta span {
-  background: #f7fbff;
+  background: #f7faff;
   border: 1px solid #e3edf8;
   border-radius: 9px;
   padding: 0.42rem 0.5rem;
@@ -227,7 +227,7 @@
 .admin-comments-actions h4,
 .admin-comments-history h4 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 0.9rem;
   display: flex;
   align-items: center;
@@ -256,7 +256,7 @@
   border: 1px solid #c7ddf2;
   border-radius: 9px;
   background: #eff7ff;
-  color: #1a6fad;
+  color: #2563eb;
   font-weight: 700;
   font-size: 0.78rem;
   padding: 0.45rem 0.62rem;
@@ -267,7 +267,7 @@
 
 .admin-comments-notice {
   margin: 0.5rem 0 0;
-  color: #1a6fad;
+  color: #2563eb;
   font-size: 0.78rem;
   font-weight: 700;
 }

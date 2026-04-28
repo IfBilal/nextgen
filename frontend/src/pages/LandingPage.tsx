@@ -7,14 +7,16 @@ import {
   CalendarDays,
   CheckCircle2,
   CirclePlay,
+  ClipboardList,
+  GraduationCap,
+  LineChart,
   PlayCircle,
   Quote,
-  Sparkles,
   ShieldCheck,
-  Star,
   Stethoscope,
   Target,
   TrendingUp,
+  Users,
 } from 'lucide-react'
 import { DEFAULT_DEMO_VIDEO_URL } from '../data/contentVault'
 import { LANDING_FEATURES, LANDING_STATS, LANDING_TESTIMONIALS } from '../data/landing'
@@ -130,49 +132,10 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <article className="landing-hero-panel landing-reveal landing-reveal--right">
-            <div className="landing-hero-panel-glow" />
-
-            <div className="landing-panel-badge">
-              <Sparkles size={14} /> New cohort onboarding flow
-            </div>
-
-            <h3>Clear prep, better execution</h3>
-
-            <div className="landing-panel-metrics">
-              <div className="landing-panel-metric-card">
-                <TrendingUp size={16} />
-                <div>
-                  <strong>+18%</strong>
-                  <span>Average score lift</span>
-                </div>
-              </div>
-              <div className="landing-panel-metric-card">
-                <CalendarDays size={16} />
-                <div>
-                  <strong>12 weeks</strong>
-                  <span>Structured roadmap cycle</span>
-                </div>
-              </div>
-            </div>
-
-            <ul>
-              <li>Clear day-by-day study direction</li>
-              <li>Fast visibility into weak zones</li>
-              <li>One place for tests, review, and content</li>
-            </ul>
-
-            <div className="landing-panel-rating">
-              <div>
-                <Star size={14} />
-                <Star size={14} />
-                <Star size={14} />
-                <Star size={14} />
-                <Star size={14} />
-              </div>
-              <p>Rated by medical learners across cohorts</p>
-            </div>
-          </article>
+          <div className="landing-hero-dashboard landing-reveal landing-reveal--right">
+            <div className="landing-hero-dashboard__glow" />
+            <img src="/dashboard.png" alt="NextGen Student Dashboard" className="landing-hero-dashboard__img" />
+          </div>
         </section>
 
         <section className="landing-trust-strip">
@@ -214,6 +177,68 @@ export default function LandingPage() {
                 </article>
               )
             })}
+          </div>
+        </section>
+
+        {/* ── How NextGen Works ── */}
+        <section className="landing-section landing-how-section">
+          <div className="landing-section-head">
+            <span className="landing-section-eyebrow">Simple. Smart. Effective.</span>
+            <h2>How <span className="landing-section-highlight">NextGen USMLE</span> Works</h2>
+            <p>Four focused steps from signup to score improvement.</p>
+          </div>
+
+          <div className="landing-how-steps">
+            <div className="landing-how-step">
+              <div className="landing-how-step__icon">
+                <ClipboardList size={26} />
+              </div>
+              <div className="landing-how-step__label">Step 1</div>
+              <h3 className="landing-how-step__title">Tell Us About You</h3>
+              <p className="landing-how-step__desc">Share your exam date, target score, and weak subjects so we can build your plan.</p>
+            </div>
+
+            <div className="landing-how-connector" aria-hidden="true">
+              <span /><span /><span />
+              <ArrowRight size={18} />
+            </div>
+
+            <div className="landing-how-step">
+              <div className="landing-how-step__icon">
+                <Target size={26} />
+              </div>
+              <div className="landing-how-step__label">Step 2</div>
+              <h3 className="landing-how-step__title">Get Your Roadmap</h3>
+              <p className="landing-how-step__desc">Receive a personalized study plan designed for your timeline and goals.</p>
+            </div>
+
+            <div className="landing-how-connector" aria-hidden="true">
+              <span /><span /><span />
+              <ArrowRight size={18} />
+            </div>
+
+            <div className="landing-how-step">
+              <div className="landing-how-step__icon">
+                <GraduationCap size={26} />
+              </div>
+              <div className="landing-how-step__label">Step 3</div>
+              <h3 className="landing-how-step__title">Practice & Learn</h3>
+              <p className="landing-how-step__desc">Take tests, attend live classes, and study with high-yield content every day.</p>
+            </div>
+
+            <div className="landing-how-connector" aria-hidden="true">
+              <span /><span /><span />
+              <ArrowRight size={18} />
+            </div>
+
+            <div className="landing-how-step">
+              <div className="landing-how-step__icon">
+                <LineChart size={26} />
+              </div>
+              <div className="landing-how-step__label">Step 4</div>
+              <h3 className="landing-how-step__title">Analyze & Improve</h3>
+              <p className="landing-how-step__desc">Track your progress and improve weak areas consistently with smart analytics.</p>
+            </div>
           </div>
         </section>
 
@@ -285,6 +310,49 @@ export default function LandingPage() {
                 Enroll Now <ArrowRight size={15} />
               </Link>
             </article>
+          </div>
+        </section>
+
+        {/* ── About Us ── */}
+        <section className="landing-section landing-about-section">
+          <div className="landing-about-inner">
+            <div className="landing-about-text">
+              <span className="landing-section-eyebrow">Who We Are</span>
+              <h2>Built by medical educators,<br />for future doctors</h2>
+              <p>
+                NextGen USMLE was founded by a team of physicians and educators who experienced firsthand how fragmented and stressful board exam prep can be. We built this platform to replace scattered resources with one smart, structured system.
+              </p>
+              <p>
+                From personalized roadmaps to live expert sessions, everything here is designed around one goal: helping you pass with confidence.
+              </p>
+              <div className="landing-about-stats">
+                <div>
+                  <strong>2,400+</strong>
+                  <span>Students prepared</span>
+                </div>
+                <div>
+                  <strong>4.8/5</strong>
+                  <span>Average rating</span>
+                </div>
+                <div>
+                  <strong>98%</strong>
+                  <span>Pass rate</span>
+                </div>
+              </div>
+            </div>
+            <div className="landing-about-values">
+              {[
+                { icon: Target, title: 'Precision', desc: 'Every feature is built around the exact demands of USMLE prep — nothing generic.' },
+                { icon: Users, title: 'Community', desc: 'Study partners, live sessions, and peer leaderboards keep you accountable.' },
+                { icon: ShieldCheck, title: 'Trust', desc: 'Trusted by learners from Harvard, Johns Hopkins, Stanford, and more.' },
+              ].map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="landing-about-value-card">
+                  <div className="landing-about-value-card__icon"><Icon size={20} /></div>
+                  <h4>{title}</h4>
+                  <p>{desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 

@@ -9,7 +9,7 @@
 
 .editor-sidebar {
   width: 260px;
-  background: #0d2d5e;
+  background: #0f1f6a;
   color: #dcecff;
   display: flex;
   flex-direction: column;
@@ -74,7 +74,7 @@
 }
 
 .editor-sidebar__link:hover { color: #fff; background: rgba(255,255,255,0.08); text-decoration: none; }
-.editor-sidebar__link--active { color: #fff; background: #1a6fad; }
+.editor-sidebar__link--active { color: #fff; background: #2563eb; }
 
 .editor-sidebar__bottom { margin-top: auto; display: flex; flex-direction: column; gap: 0.8rem; }
 
@@ -142,7 +142,7 @@
 .editor-topbar__menu {
   display: none;
   background: #f1f7ff;
-  color: #0d2d5e;
+  color: #0f1f6a;
   border-radius: 8px;
   width: 34px; height: 34px;
   align-items: center; justify-content: center;
@@ -150,7 +150,7 @@
 }
 
 .editor-topbar__meta { display: flex; flex-direction: column; min-width: 0; }
-.editor-topbar__title { color: #0d2d5e; font-weight: 700; font-size: 0.96rem; }
+.editor-topbar__title { color: #0f1f6a; font-weight: 700; font-size: 0.96rem; }
 .editor-topbar__subtitle { color: #6a86a7; font-size: 0.78rem; }
 
 .editor-topbar__badge {

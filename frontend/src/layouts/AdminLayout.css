@@ -11,7 +11,7 @@
 
 .admin-sidebar {
   width: 280px;
-  background: #0d2d5e;
+  background: #0f1f6a;
   color: #dcecff;
   display: flex;
   flex-direction: column;
@@ -89,7 +89,7 @@
 
 .admin-sidebar__link--active {
   color: #fff;
-  background: #1a6fad;
+  background: #2563eb;
 }
 
 .admin-sidebar__bottom {
@@ -112,7 +112,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   display: flex;
   align-items: center;
@@ -174,7 +174,7 @@
 .admin-topbar__menu {
   display: none;
   background: #f1f7ff;
-  color: #0d2d5e;
+  color: #0f1f6a;
   border-radius: 8px;
   width: 34px;
   height: 34px;
@@ -189,7 +189,7 @@
 }
 
 .admin-topbar__title {
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-weight: 700;
   font-size: 0.96rem;
   white-space: nowrap;
@@ -208,7 +208,7 @@
   gap: 0.35rem;
   font-size: 0.75rem;
   background: #eaf5ff;
-  color: #1a6fad;
+  color: #2563eb;
   padding: 0.36rem 0.58rem;
   border-radius: 999px;
   font-weight: 700;
@@ -227,7 +227,7 @@
 
 .admin-shell-page__header h1 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1.45rem;
 }
 
@@ -252,7 +252,7 @@
 
 .admin-shell-card h3 {
   margin: 0;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-size: 1rem;
 }
 
@@ -269,7 +269,7 @@
   padding: 0.28rem 0.55rem;
   border-radius: 999px;
   background: #eef6ff;
-  color: #1a6fad;
+  color: #2563eb;
   font-size: 0.74rem;
   font-weight: 700;
   margin-top: 0.75rem;

@@ -17,13 +17,13 @@
 .admin-coupons-header h1 {
   font-size: 1.2rem;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
 }
 
 .admin-coupons-header p {
   font-size: 0.85rem;
-  color: #55789c;
+  color: #4a5b8a;
   margin: 4px 0 0;
 }
 
@@ -58,7 +58,7 @@
 .admin-coupons-kpi p {
   font-size: 1.5rem;
   font-weight: 900;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
 }
 
@@ -72,7 +72,7 @@
 .admin-coupons-table-card h3 {
   font-size: 0.95rem;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0 0 14px;
 }
 
@@ -101,7 +101,7 @@
 .admin-coupons-table td {
   padding: 11px 12px;
   color: #355a7f;
-  border-bottom: 1px solid #f0f7ff;
+  border-bottom: 1px solid #f7faff;
   vertical-align: middle;
 }
 
@@ -121,7 +121,7 @@
   border: 1px solid #d8e9f8;
   border-radius: 6px;
   padding: 2px 7px;
-  color: #0d2d5e;
+  color: #0f1f6a;
   letter-spacing: 0.04em;
 }
 
@@ -165,8 +165,8 @@
   align-items: center;
   gap: 3px;
   border: 1px solid #cde0f5;
-  background: #f0f7ff;
-  color: #1a6fad;
+  background: #f7faff;
+  color: #2563eb;
   white-space: nowrap;
 }
 
@@ -203,12 +203,12 @@
   font-weight: 600;
   cursor: pointer;
   background: none;
-  color: #55789c;
+  color: #4a5b8a;
   transition: all 0.15s;
 }
 
 .coupon-type-toggle__btn--active {
   background: #fff;
-  color: #0d2d5e;
+  color: #0f1f6a;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }

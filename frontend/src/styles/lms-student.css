@@ -58,7 +58,7 @@
 
 .lms-class-card:hover {
   border-color: #8ec4e8;
-  box-shadow: 0 2px 12px rgba(26, 111, 173, 0.08);
+  box-shadow: 0 2px 12px rgba(37, 99, 235, 0.08);
 }
 
 .lms-class-card--live {
@@ -76,7 +76,7 @@
 .lms-class-card__name {
   font-size: 1rem;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
   line-height: 1.3;
 }
@@ -85,7 +85,7 @@
   font-size: 0.72rem;
   font-weight: 700;
   background: #e8f3ff;
-  color: #1a6fad;
+  color: #2563eb;
   padding: 3px 8px;
   border-radius: 999px;
   display: inline-block;
@@ -95,7 +95,7 @@
 
 .lms-class-card__teacher {
   font-size: 0.83rem;
-  color: #55789c;
+  color: #4a5b8a;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -177,8 +177,8 @@
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
-  background: #f0f7ff;
-  color: #1a6fad;
+  background: #f7faff;
+  color: #2563eb;
   border: 1px solid #cde0f5;
   border-radius: 8px;
   font-weight: 600;
@@ -237,7 +237,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(26, 111, 173, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(37, 99, 235, 0.15) 0%, transparent 70%);
 }
 
 .lms-zoom-frame__label {
@@ -274,7 +274,7 @@
 .lms-countdown-large__time {
   font-size: clamp(2rem, 6vw, 3.5rem);
   font-weight: 900;
-  color: #0d2d5e;
+  color: #0f1f6a;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
@@ -305,7 +305,7 @@
 .lms-sidebar__title {
   font-size: 0.87rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
 }
 
@@ -332,7 +332,7 @@
 
 .lms-notice-item__icon--announcement {
   background: #e8f3ff;
-  color: #1a6fad;
+  color: #2563eb;
 }
 
 .lms-notice-item__icon--pdf {
@@ -343,7 +343,7 @@
 .lms-notice-item__title {
   font-size: 0.83rem;
   font-weight: 600;
-  color: #0d2d5e;
+  color: #0f1f6a;
   line-height: 1.3;
 }
 
@@ -355,7 +355,7 @@
 
 .lms-notice-item__filename {
   font-size: 0.72rem;
-  color: #1a6fad;
+  color: #2563eb;
   margin-top: 2px;
 }
 

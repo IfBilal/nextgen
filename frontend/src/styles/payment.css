@@ -12,7 +12,7 @@
 }
 
 .product-hero {
-  background: linear-gradient(135deg, #0d2d5e 0%, #1a6fad 100%);
+  background: linear-gradient(135deg, #0f1f6a 0%, #2563eb 55%, #7c3aed 100%);
   border-radius: 18px;
   padding: 36px 32px;
   color: #fff;
@@ -56,7 +56,7 @@
 .product-pricing-card h2 {
   font-size: 1.05rem;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0 0 16px;
 }
 
@@ -78,13 +78,13 @@
   font-weight: 600;
   cursor: pointer;
   background: none;
-  color: #55789c;
+  color: #4a5b8a;
   transition: all 0.15s;
 }
 
 .pricing-toggle__btn--active {
   background: #fff;
-  color: #0d2d5e;
+  color: #0f1f6a;
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
@@ -99,7 +99,7 @@
 .pricing-option-card__price {
   font-size: 1.6rem;
   font-weight: 900;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
 }
 
@@ -111,7 +111,7 @@
 
 .pricing-option-card__note {
   font-size: 0.78rem;
-  color: #55789c;
+  color: #4a5b8a;
   margin: 4px 0 0;
 }
 
@@ -129,12 +129,12 @@
   font-size: 0.87rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .coupon-input:focus {
   outline: none;
-  border-color: #1a6fad;
+  border-color: #2563eb;
 }
 
 .coupon-apply-btn {
@@ -144,7 +144,7 @@
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #1a6fad;
+  color: #2563eb;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -178,7 +178,7 @@
 .product-enroll-btn {
   flex: 1;
   padding: 13px 24px;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   border: none;
   border-radius: 11px;
@@ -200,7 +200,7 @@
 .product-demo-btn {
   padding: 13px 24px;
   background: #fff;
-  color: #1a6fad;
+  color: #2563eb;
   border: 1px solid #cde0f5;
   border-radius: 11px;
   font-size: 0.95rem;
@@ -215,7 +215,7 @@
 }
 
 .product-demo-btn:hover {
-  background: #f0f7ff;
+  background: #f7faff;
 }
 
 /* ─── Checkout Page ──────────────────────────────────────────── */
@@ -237,7 +237,7 @@
 .checkout-page h1 {
   font-size: 1.2rem;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0 0 20px;
   grid-column: 1 / -1;
 }
@@ -252,7 +252,7 @@
 .checkout-summary h2 {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0 0 14px;
 }
 
@@ -262,14 +262,14 @@
   font-size: 0.85rem;
   color: #355a7f;
   padding: 7px 0;
-  border-bottom: 1px solid #f0f7ff;
+  border-bottom: 1px solid #f7faff;
 }
 
 .checkout-line:last-of-type {
   border-bottom: none;
   font-weight: 700;
   font-size: 0.95rem;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .checkout-line--discount {
@@ -301,7 +301,7 @@
 .checkout-form-card h2 {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0 0 16px;
 }
 
@@ -323,13 +323,13 @@
   border: 1px solid #cde0f5;
   border-radius: 8px;
   font-size: 0.87rem;
-  color: #0d2d5e;
+  color: #0f1f6a;
   box-sizing: border-box;
 }
 
 .checkout-form-input:focus {
   outline: none;
-  border-color: #1a6fad;
+  border-color: #2563eb;
 }
 
 .checkout-form-row {
@@ -341,7 +341,7 @@
 .checkout-submit-btn {
   width: 100%;
   padding: 13px;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -392,7 +392,7 @@
   max-width: 460px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 4px 24px rgba(13, 45, 94, 0.06);
+  box-shadow: 0 4px 24px rgba(30, 27, 75, 0.06);
 }
 
 .payment-success-check {
@@ -418,13 +418,13 @@
 .payment-success-card h1 {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0 0 6px;
 }
 
 .payment-success-card p {
   font-size: 0.87rem;
-  color: #55789c;
+  color: #4a5b8a;
   margin: 0 0 4px;
 }
 
@@ -454,7 +454,7 @@
 .billing-plan-card h2 {
   font-size: 1rem;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0 0 16px;
 }
 
@@ -491,7 +491,7 @@
 .billing-meta-item p {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
 }
 
@@ -540,7 +540,7 @@
 .billing-history-table td {
   padding: 10px 12px;
   color: #355a7f;
-  border-bottom: 1px solid #f0f7ff;
+  border-bottom: 1px solid #f7faff;
 }
 
 .billing-history-table tr:last-child td {

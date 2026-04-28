@@ -209,7 +209,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-4) var(--space-6);
-  background: rgba(26, 111, 173, 0.05);
+  background: rgba(37, 99, 235, 0.05);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -309,7 +309,7 @@
   font-weight: 700;
   font-size: var(--text-lg);
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(26, 111, 173, 0.3);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
   transition: all 0.2s;
 }
 .btn-next:hover {

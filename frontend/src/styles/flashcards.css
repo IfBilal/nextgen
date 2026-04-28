@@ -11,7 +11,7 @@
 }
 
 .glass {
-  background: linear-gradient(150deg, color-mix(in oklab, var(--surface) 92%, #1f3f7a 8%), var(--surface));
+  background: linear-gradient(150deg, color-mix(in oklab, var(--surface) 92%, #1D3A9A 8%), var(--surface));
   border: 1px solid color-mix(in oklab, var(--line) 80%, #5d7aa6 20%);
   box-shadow: 0 8px 26px rgba(14, 41, 99, 0.18);
   backdrop-filter: blur(6px);
@@ -322,7 +322,7 @@
   border-radius: 16px;
   border: 1px solid color-mix(in oklab, var(--line) 75%, #3d7dff 25%);
   padding: 18px;
-  background: linear-gradient(165deg, color-mix(in oklab, var(--surface) 90%, #274a87 10%), var(--surface));
+  background: linear-gradient(165deg, color-mix(in oklab, var(--surface) 90%, #1E40AF 10%), var(--surface));
   display: grid;
   align-content: start;
   gap: 12px;

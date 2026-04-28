@@ -41,7 +41,7 @@
 .admin-teachers-kpi-card__value {
   font-size: 1.6rem;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin-top: 4px;
   line-height: 1.1;
 }
@@ -52,7 +52,7 @@
 
 .admin-teachers-kpi-card__sub {
   font-size: 0.78rem;
-  color: #55789c;
+  color: #4a5b8a;
   margin-top: 2px;
 }
 
@@ -62,7 +62,7 @@
   height: 36px;
   border-radius: 10px;
   background: #e8f3ff;
-  color: #1a6fad;
+  color: #2563eb;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,7 +87,7 @@
 .admin-teachers-section__title {
   font-size: 0.92rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
 }
 
@@ -172,8 +172,8 @@
 }
 
 .admin-teachers-tab--active {
-  color: #1a6fad;
-  border-bottom-color: #1a6fad;
+  color: #2563eb;
+  border-bottom-color: #2563eb;
 }
 
 /* Empty state */
@@ -208,7 +208,7 @@
 .admin-teachers-modal__title {
   font-size: 1rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
 }
 
@@ -217,14 +217,14 @@
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
-  background: #0d2d5e;
+  background: #0f1f6a;
   color: #fff;
   padding: 10px 16px;
   border-radius: 10px;
   font-size: 0.87rem;
   font-weight: 600;
   z-index: 600;
-  box-shadow: 0 4px 16px rgba(13, 45, 94, 0.25);
+  box-shadow: 0 4px 16px rgba(30, 27, 75, 0.25);
 }
 
 /* Responsive */

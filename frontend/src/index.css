@@ -3,27 +3,34 @@
 /* ─── Design Tokens ─────────────────────────────────────────── */
 :root {
   /* Colors */
-  --color-primary:       #1A6FAD;
-  --color-primary-light: #5BA4CF;
-  --color-primary-lighter: #BFD9F2;
-  --color-primary-surface: #E8F4FD;
-  --color-navy:          #0D2D5E;
-  --color-navy-mid:      #1a3f6f;
-  --color-navy-light:    #2a5298;
+  --color-primary:         #2563EB;
+  --color-primary-dark:    #1D4ED8;
+  --color-primary-light:   #60A5FA;
+  --color-primary-lighter: #BFDBFE;
+  --color-primary-surface: #EFF6FF;
+  --color-navy:            #0F1F6A;
+  --color-navy-mid:        #1A3580;
+  --color-navy-light:      #2B52C8;
+  --color-violet:          #7C3AED;
 
   --color-white:         #FFFFFF;
-  --color-surface:       #F7FAFD;
-  --color-border:        #D6E8F5;
-  --color-border-light:  #EBF4FB;
+  --color-surface:       #F7FAFF;
+  --color-border:        #DBEAFE;
+  --color-border-light:  #EFF6FF;
 
-  --color-text-primary:  #0D2D5E;
-  --color-text-secondary:#4A6A8A;
-  --color-text-muted:    #8AACC8;
+  --color-text-primary:  #0F1F6A;
+  --color-text-secondary:#4A5B8A;
+  --color-text-muted:    #8A9CC8;
   --color-text-white:    #FFFFFF;
 
   --color-success:       #27AE60;
   --color-error:         #E74C3C;
   --color-warning:       #F39C12;
+
+  /* Gradients — blue dominant, violet at the end for the purple touch */
+  --gradient-primary:  linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+  --gradient-hero:     linear-gradient(140deg, #0F1F6A 0%, #1D4ED8 55%, #7C3AED 100%);
+  --gradient-surface:  linear-gradient(135deg, #EFF6FF 0%, #F5F7FF 100%);
 
   /* Typography */
   --font-heading: 'Plus Jakarta Sans', sans-serif;
@@ -58,10 +65,10 @@
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-sm:   0 1px 3px rgba(13,45,94,0.08), 0 1px 2px rgba(13,45,94,0.04);
-  --shadow-md:   0 4px 16px rgba(13,45,94,0.10), 0 2px 6px rgba(13,45,94,0.06);
-  --shadow-lg:   0 8px 32px rgba(13,45,94,0.14), 0 4px 12px rgba(13,45,94,0.08);
-  --shadow-xl:   0 20px 60px rgba(13,45,94,0.18);
+  --shadow-sm:   0 1px 3px rgba(30,27,75,0.08), 0 1px 2px rgba(30,27,75,0.04);
+  --shadow-md:   0 4px 16px rgba(30,27,75,0.10), 0 2px 6px rgba(30,27,75,0.06);
+  --shadow-lg:   0 8px 32px rgba(30,27,75,0.14), 0 4px 12px rgba(30,27,75,0.08);
+  --shadow-xl:   0 20px 60px rgba(30,27,75,0.18);
 
   /* Transitions */
   --transition-fast: 150ms ease;
@@ -169,6 +176,6 @@ input, textarea, select {
 }
 
 .spinner--dark {
-  border-color: rgba(13,45,94,0.2);
+  border-color: rgba(30,27,75,0.2);
   border-top-color: var(--color-navy);
 }

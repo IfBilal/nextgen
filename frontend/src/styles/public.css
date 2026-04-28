@@ -1,7 +1,7 @@
 /* ─── Public Website Shared Styles ─────────────────────────────────────────── */
 
 .public-hero {
-  background: linear-gradient(140deg, #0d2d5e 0%, #1a6fad 60%, #2a8fd4 100%);
+  background: linear-gradient(140deg, #0f1f6a 0%, #2563eb 60%, #7c3aed 100%);
   color: #fff;
   padding: 5rem 2rem 4rem;
   text-align: center;
@@ -82,7 +82,7 @@
 
 .public-hero__btn--primary {
   background: #fff;
-  color: #0d2d5e;
+  color: #0f1f6a;
   box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
 
@@ -90,7 +90,7 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 28px rgba(0,0,0,0.28);
   text-decoration: none;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .public-hero__btn--outline {
@@ -128,7 +128,7 @@
   display: inline-block;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #1a6fad;
+  color: #2563eb;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 0.5rem;
@@ -137,12 +137,12 @@
 .public-section__title {
   font-size: clamp(1.5rem, 3vw, 2.1rem);
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0 0 0.6rem;
 }
 
 .public-section__desc {
-  color: #55789c;
+  color: #4a5b8a;
   font-size: 0.97rem;
   max-width: 540px;
   margin: 0 auto;
@@ -172,7 +172,7 @@
 
 .public-card--hover:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 28px rgba(26,111,173,0.12);
+  box-shadow: 0 12px 28px rgba(37,99,235,0.12);
 }
 
 /* ─── Products ────────────────────────────────────────────── */
@@ -187,7 +187,7 @@
 }
 
 .public-product-card:hover {
-  box-shadow: 0 8px 24px rgba(26,111,173,0.12);
+  box-shadow: 0 8px 24px rgba(37,99,235,0.12);
 }
 
 .public-product-card__badge {
@@ -198,7 +198,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #1a6fad;
+  color: #2563eb;
   background: #e8f3ff;
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
@@ -207,12 +207,12 @@
 .public-product-card__name {
   font-size: 1.2rem;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
 }
 
 .public-product-card__desc {
-  color: #55789c;
+  color: #4a5b8a;
   font-size: 0.88rem;
   line-height: 1.65;
   margin: 0;
@@ -243,7 +243,7 @@
 .public-product-card__price-value {
   font-size: 1.3rem;
   font-weight: 800;
-  color: #0d2d5e;
+  color: #0f1f6a;
 }
 
 .public-product-card__price-value span {
@@ -279,7 +279,7 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.7rem 1.25rem;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   border-radius: 10px;
   font-weight: 700;
@@ -312,7 +312,7 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   display: flex;
   align-items: center;
@@ -325,13 +325,13 @@
 .public-step__title {
   font-size: 1rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0 0 0.4rem;
 }
 
 .public-step__desc {
   font-size: 0.87rem;
-  color: #55789c;
+  color: #4a5b8a;
   line-height: 1.6;
   margin: 0;
 }
@@ -352,7 +352,7 @@
   height: 44px;
   border-radius: 12px;
   background: #e8f3ff;
-  color: #1a6fad;
+  color: #2563eb;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -361,13 +361,13 @@
 .public-feature-card__title {
   font-size: 0.97rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
 }
 
 .public-feature-card__desc {
   font-size: 0.85rem;
-  color: #55789c;
+  color: #4a5b8a;
   line-height: 1.6;
   margin: 0;
 }
@@ -398,7 +398,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   display: flex;
   align-items: center;
@@ -411,7 +411,7 @@
 .public-testimonial__name {
   font-size: 0.88rem;
   font-weight: 700;
-  color: #0d2d5e;
+  color: #0f1f6a;
   margin: 0;
 }
 
@@ -423,7 +423,7 @@
 
 /* ─── CTA Banner ──────────────────────────────────────────── */
 .public-cta-banner {
-  background: linear-gradient(135deg, #0d2d5e 0%, #1a6fad 100%);
+  background: linear-gradient(135deg, #0f1f6a 0%, #2563eb 55%, #7c3aed 100%);
   padding: 3.5rem 2rem;
   text-align: center;
   color: #fff;
@@ -443,7 +443,7 @@
 
 /* ─── About / Contact / FAQs ──────────────────────────────── */
 .public-page-hero {
-  background: linear-gradient(140deg, #0d2d5e 0%, #1a6fad 100%);
+  background: linear-gradient(140deg, #0f1f6a 0%, #2563eb 60%, #7c3aed 100%);
   padding: 3.5rem 2rem;
   text-align: center;
 }
@@ -493,7 +493,7 @@
   border-radius: 10px;
   padding: 0.65rem 0.9rem;
   font-size: 0.9rem;
-  color: #0d2d5e;
+  color: #0f1f6a;
   background: #f8fbff;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -504,8 +504,8 @@
 
 .public-form-input:focus,
 .public-form-textarea:focus {
-  border-color: #1a6fad;
-  box-shadow: 0 0 0 3px rgba(26,111,173,0.1);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
   background: #fff;
 }
 
@@ -516,7 +516,7 @@
 
 .public-form-submit {
   padding: 0.75rem 1.5rem;
-  background: #1a6fad;
+  background: #2563eb;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -552,7 +552,7 @@
   height: 36px;
   border-radius: 10px;
   background: #e8f3ff;
-  color: #1a6fad;
+  color: #2563eb;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -570,7 +570,7 @@
 
 .public-contact-info-card__value {
   font-size: 0.9rem;
-  color: #0d2d5e;
+  color: #0f1f6a;
   font-weight: 600;
 }
 
@@ -582,7 +582,7 @@
 .public-faq-category h3 {
   font-size: 1rem;
   font-weight: 700;
-  color: #1a6fad;
+  color: #2563eb;
   margin: 0 0 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -610,7 +610,7 @@
   text-align: left;
   font-size: 0.93rem;
   font-weight: 600;
-  color: #0d2d5e;
+  color: #0f1f6a;
   transition: background 0.15s;
 }
 
@@ -629,7 +629,7 @@
 .public-faq-item__body {
   padding: 0 1.25rem 1rem;
   font-size: 0.88rem;
-  color: #55789c;
+  color: #4a5b8a;
   line-height: 1.7;
 }
 
