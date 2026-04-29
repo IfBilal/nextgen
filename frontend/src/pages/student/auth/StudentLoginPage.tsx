@@ -70,8 +70,8 @@ export default function StudentLoginPage() {
       <div className="auth-right">
         <div className="auth-form-card animate-fadeIn">
           <div className="auth-form-header">
-            <h2 className="auth-form-title">Welcome back 👋</h2>
-            <p className="auth-form-subtitle">Sign in to continue your USMLE Step 1 journey</p>
+            <h2 className="auth-form-title">Sign In</h2>
+            <p className="auth-form-subtitle">Sign in to continue your USMLE Step 1 preparation</p>
           </div>
 
           {error && <div className="auth-error">{error}</div>}

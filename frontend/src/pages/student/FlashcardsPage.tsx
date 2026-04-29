@@ -4,7 +4,6 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  PartyPopper,
   Gauge,
   Shuffle,
   Sparkles,
@@ -143,9 +142,9 @@ export default function FlashcardsPage() {
         {isSessionCompleted ? (
           <div className="flashcards-complete-banner" role="status" aria-live="polite">
             <strong>
-              <PartyPopper size={16} /> All cards completed 🎉
+              All cards completed
             </strong>
-            <p>Amazing consistency today. You can shuffle through cards to quickly reinforce recall.</p>
+            <p>Session complete. You can shuffle through cards to reinforce recall.</p>
           </div>
         ) : null}
       </section>

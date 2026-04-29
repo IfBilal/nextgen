@@ -1,4 +1,5 @@
-import { getGreeting, getDaysUntilExam, type StudentDashboardData } from '../../../data/dashboard'
+import { CalendarDays } from 'lucide-react'
+import { getDaysUntilExam, type StudentDashboardData } from '../../../data/dashboard'
 import { useSubscription } from '../../../context/SubscriptionContext'
 
 interface Props {
@@ -6,7 +7,6 @@ interface Props {
 }
 
 export default function WelcomeBar({ data }: Props) {
-  const greeting = getGreeting()
   const daysLeft = getDaysUntilExam(data.examDate)
   const { planLabel, snapshot } = useSubscription()
 
@@ -19,8 +19,8 @@ export default function WelcomeBar({ data }: Props) {
   return (
     <div className="welcome-bar">
       <div className="welcome-left">
-        <h1 className="welcome-greeting">{greeting}, {data.name} 👋</h1>
-        <p className="welcome-subtitle">Here's your performance overview</p>
+        <h1 className="welcome-greeting">Welcome, {data.name}</h1>
+        <p className="welcome-subtitle">Your performance overview</p>
         <div className="welcome-plan-row">
           <span className="welcome-plan-chip">Current Plan: {planLabel}</span>
           {demoStatus ? <span className="welcome-demo-chip">{demoStatus}</span> : null}
@@ -28,7 +28,7 @@ export default function WelcomeBar({ data }: Props) {
       </div>
       <div className="welcome-right">
         <div className="exam-badge">
-          <span className="exam-icon">📅</span>
+          <CalendarDays size={20} className="exam-icon" />
           <div className="exam-info">
             <span className="exam-name">USMLE Step 1</span>
             <span className="exam-days">{daysLeft} days away</span>

@@ -36,7 +36,7 @@ export default function AiTutorPage() {
     {
       id: 'm1',
       role: 'assistant',
-      text: 'Hi! I am your Tutor. Ask me anything about your current USMLE roadmap topics.',
+      text: 'Hello. I am your Tutor. You may ask me anything about your current USMLE roadmap topics.',
     },
   ])
   const [query, setQuery] = useState('')
