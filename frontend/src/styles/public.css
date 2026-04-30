@@ -1,7 +1,7 @@
 /* ─── Public Website Shared Styles ─────────────────────────────────────────── */
 
 .public-hero {
-  background: linear-gradient(140deg, #0f1f6a 0%, #2563eb 60%, #7c3aed 100%);
+  background: linear-gradient(140deg, #1E1B4B 0%, #4F46E5 60%, #7c3aed 100%);
   color: #fff;
   padding: 5rem 2rem 4rem;
   text-align: center;
@@ -82,7 +82,7 @@
 
 .public-hero__btn--primary {
   background: #fff;
-  color: #0f1f6a;
+  color: #1E1B4B;
   box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
 
@@ -90,7 +90,7 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 28px rgba(0,0,0,0.28);
   text-decoration: none;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .public-hero__btn--outline {
@@ -111,7 +111,7 @@
 }
 
 .public-section--alt {
-  background: #f6fbff;
+  background: #F9FAFB;
 }
 
 .public-section__inner {
@@ -128,7 +128,7 @@
   display: inline-block;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #2563eb;
+  color: #4F46E5;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 0.5rem;
@@ -137,12 +137,12 @@
 .public-section__title {
   font-size: clamp(1.5rem, 3vw, 2.1rem);
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0 0 0.6rem;
 }
 
 .public-section__desc {
-  color: #4a5b8a;
+  color: #4B5563;
   font-size: 0.97rem;
   max-width: 540px;
   margin: 0 auto;
@@ -161,7 +161,7 @@
 
 .public-card {
   background: #fff;
-  border: 1px solid #dde9f7;
+  border: 1px solid #E0E7FF;
   border-radius: 16px;
   padding: 1.5rem;
 }
@@ -178,7 +178,7 @@
 /* ─── Products ────────────────────────────────────────────── */
 .public-product-card {
   background: #fff;
-  border: 1px solid #dde9f7;
+  border: 1px solid #E0E7FF;
   border-radius: 16px;
   padding: 1.75rem;
   display: grid;
@@ -198,8 +198,8 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #2563eb;
-  background: #e8f3ff;
+  color: #4F46E5;
+  background: #EEF2FF;
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
 }
@@ -207,12 +207,12 @@
 .public-product-card__name {
   font-size: 1.2rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0;
 }
 
 .public-product-card__desc {
-  color: #4a5b8a;
+  color: #4B5563;
   font-size: 0.88rem;
   line-height: 1.65;
   margin: 0;
@@ -234,7 +234,7 @@
 .public-product-card__price-label {
   display: block;
   font-size: 0.7rem;
-  color: #6a86a7;
+  color: #6B7280;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -243,13 +243,13 @@
 .public-product-card__price-value {
   font-size: 1.3rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .public-product-card__price-value span {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #6a86a7;
+  color: #6B7280;
 }
 
 .public-product-card__features {
@@ -265,7 +265,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.87rem;
-  color: #355a7f;
+  color: #374151;
 }
 
 .public-product-card__features li svg {
@@ -279,7 +279,7 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.7rem 1.25rem;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   border-radius: 10px;
   font-weight: 700;
@@ -312,7 +312,7 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   display: flex;
   align-items: center;
@@ -325,13 +325,13 @@
 .public-step__title {
   font-size: 1rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0 0 0.4rem;
 }
 
 .public-step__desc {
   font-size: 0.87rem;
-  color: #4a5b8a;
+  color: #4B5563;
   line-height: 1.6;
   margin: 0;
 }
@@ -339,7 +339,7 @@
 /* ─── Feature highlight cards ──────────────────────────────── */
 .public-feature-card {
   background: #fff;
-  border: 1px solid #dde9f7;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 1.5rem;
   display: flex;
@@ -351,8 +351,8 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: #e8f3ff;
-  color: #2563eb;
+  background: #EEF2FF;
+  color: #4F46E5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -361,13 +361,13 @@
 .public-feature-card__title {
   font-size: 0.97rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0;
 }
 
 .public-feature-card__desc {
   font-size: 0.85rem;
-  color: #4a5b8a;
+  color: #4B5563;
   line-height: 1.6;
   margin: 0;
 }
@@ -375,14 +375,14 @@
 /* ─── Testimonials ────────────────────────────────────────── */
 .public-testimonial {
   background: #fff;
-  border: 1px solid #dde9f7;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 1.5rem;
 }
 
 .public-testimonial__quote {
   font-size: 0.9rem;
-  color: #355a7f;
+  color: #374151;
   line-height: 1.7;
   margin: 0 0 1rem;
   font-style: italic;
@@ -398,7 +398,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   display: flex;
   align-items: center;
@@ -411,19 +411,19 @@
 .public-testimonial__name {
   font-size: 0.88rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0;
 }
 
 .public-testimonial__role {
   font-size: 0.78rem;
-  color: #6a86a7;
+  color: #6B7280;
   margin: 0;
 }
 
 /* ─── CTA Banner ──────────────────────────────────────────── */
 .public-cta-banner {
-  background: linear-gradient(135deg, #0f1f6a 0%, #2563eb 55%, #7c3aed 100%);
+  background: linear-gradient(135deg, #1E1B4B 0%, #4F46E5 55%, #7c3aed 100%);
   padding: 3.5rem 2rem;
   text-align: center;
   color: #fff;
@@ -443,7 +443,7 @@
 
 /* ─── About / Contact / FAQs ──────────────────────────────── */
 .public-page-hero {
-  background: linear-gradient(140deg, #0f1f6a 0%, #2563eb 60%, #7c3aed 100%);
+  background: linear-gradient(140deg, #1E1B4B 0%, #4F46E5 60%, #7c3aed 100%);
   padding: 3.5rem 2rem;
   text-align: center;
 }
@@ -484,17 +484,17 @@
 .public-form-label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #264f76;
+  color: #3730A3;
 }
 
 .public-form-input,
 .public-form-textarea {
-  border: 1.5px solid #cde0f5;
+  border: 1.5px solid #C7D2FE;
   border-radius: 10px;
   padding: 0.65rem 0.9rem;
   font-size: 0.9rem;
-  color: #0f1f6a;
-  background: #f8fbff;
+  color: #1E1B4B;
+  background: #F9FAFB;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
   width: 100%;
@@ -504,7 +504,7 @@
 
 .public-form-input:focus,
 .public-form-textarea:focus {
-  border-color: #2563eb;
+  border-color: #4F46E5;
   box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
   background: #fff;
 }
@@ -516,7 +516,7 @@
 
 .public-form-submit {
   padding: 0.75rem 1.5rem;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -539,7 +539,7 @@
 
 .public-contact-info-card {
   background: #fff;
-  border: 1px solid #dde9f7;
+  border: 1px solid #E0E7FF;
   border-radius: 12px;
   padding: 1rem 1.25rem;
   display: flex;
@@ -551,8 +551,8 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #e8f3ff;
-  color: #2563eb;
+  background: #EEF2FF;
+  color: #4F46E5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -562,7 +562,7 @@
 .public-contact-info-card__label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #6a86a7;
+  color: #6B7280;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 0.15rem;
@@ -570,7 +570,7 @@
 
 .public-contact-info-card__value {
   font-size: 0.9rem;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-weight: 600;
 }
 
@@ -582,7 +582,7 @@
 .public-faq-category h3 {
   font-size: 1rem;
   font-weight: 700;
-  color: #2563eb;
+  color: #4F46E5;
   margin: 0 0 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -590,7 +590,7 @@
 }
 
 .public-faq-item {
-  border: 1px solid #dde9f7;
+  border: 1px solid #E0E7FF;
   border-radius: 12px;
   margin-bottom: 0.5rem;
   overflow: hidden;
@@ -610,15 +610,15 @@
   text-align: left;
   font-size: 0.93rem;
   font-weight: 600;
-  color: #0f1f6a;
+  color: #1E1B4B;
   transition: background 0.15s;
 }
 
-.public-faq-item__trigger:hover { background: #f6fbff; }
+.public-faq-item__trigger:hover { background: #F9FAFB; }
 
 .public-faq-item__chevron {
   flex-shrink: 0;
-  color: #6a86a7;
+  color: #6B7280;
   transition: transform 0.2s ease;
 }
 
@@ -629,7 +629,7 @@
 .public-faq-item__body {
   padding: 0 1.25rem 1rem;
   font-size: 0.88rem;
-  color: #4a5b8a;
+  color: #4B5563;
   line-height: 1.7;
 }
 

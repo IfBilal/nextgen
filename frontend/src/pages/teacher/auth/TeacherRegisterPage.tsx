@@ -194,7 +194,7 @@ export default function TeacherRegisterPage() {
             <div className="auth-field">
               <label className="auth-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span>Bio / Experience *</span>
-                <span style={{ fontWeight: 400, color: bioLength > 280 ? '#dc2626' : '#6a86a7', fontSize: '0.78rem' }}>
+                <span style={{ fontWeight: 400, color: bioLength > 280 ? '#dc2626' : '#6B7280', fontSize: '0.78rem' }}>
                   {bioLength}/300
                 </span>
               </label>
@@ -221,7 +221,7 @@ export default function TeacherRegisterPage() {
             Already approved? <Link to="/teacher/login">Sign in here</Link>
           </p>
           <p className="auth-switch">
-            <Link to="/" style={{ fontSize: '0.82rem', color: '#6a86a7' }}>← Back to home</Link>
+            <Link to="/" style={{ fontSize: '0.82rem', color: '#6B7280' }}>← Back to home</Link>
           </p>
         </div>
       </div>

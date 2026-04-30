@@ -116,10 +116,10 @@ export default function EditorDashboardPage() {
       <div className="editor-section" style={{ padding: '18px 20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
               Editor Dashboard
             </h1>
-            <p style={{ fontSize: '0.85rem', color: '#55789c', margin: '4px 0 0' }}>
+            <p style={{ fontSize: '0.85rem', color: '#6B7280', margin: '4px 0 0' }}>
               Welcome, {editor.name}. Here's the platform overview.
             </p>
           </div>
@@ -229,15 +229,15 @@ export default function EditorDashboardPage() {
               {upcomingSessions.map(session => (
                 <tr key={session.id}>
                   <td style={{ fontWeight: 600 }}>{formatDateTime(session.scheduledAt)}</td>
-                  <td style={{ color: '#0d2d5e', fontWeight: 600 }}>{session.className}</td>
+                  <td style={{ color: '#1E1B4B', fontWeight: 600 }}>{session.className}</td>
                   <td>{session.teacherName}</td>
                   <td>
                     <span
                       style={{
                         fontSize: '0.75rem',
                         fontWeight: 700,
-                        background: '#e8f3ff',
-                        color: '#1a6fad',
+                        background: '#EEF2FF',
+                        color: '#3730A3',
                         padding: '2px 8px',
                         borderRadius: 999,
                       }}

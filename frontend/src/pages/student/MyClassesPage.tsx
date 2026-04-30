@@ -148,11 +148,11 @@ export default function MyClassesPage() {
   return (
     <div className="lms-classes-page">
       {/* Header */}
-      <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 14, padding: '18px 20px' }}>
-        <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+      <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '18px 20px' }}>
+        <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
           My Classes
         </h1>
-        <p style={{ fontSize: '0.85rem', color: '#55789c', margin: '4px 0 0' }}>
+        <p style={{ fontSize: '0.85rem', color: '#6B7280', margin: '4px 0 0' }}>
           {loading ? 'Loading…' : `${classes.length} class${classes.length !== 1 ? 'es' : ''} enrolled`}
         </p>
       </div>
@@ -177,13 +177,13 @@ export default function MyClassesPage() {
 
       {/* Classes or empty state */}
       {loading ? (
-        <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 14, padding: '2.5rem', textAlign: 'center', color: '#6a86a7' }}>
+        <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '2.5rem', textAlign: 'center', color: '#6B7280' }}>
           Loading your classes…
         </div>
       ) : classes.length === 0 ? (
-        <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 14, padding: '3rem 2rem', textAlign: 'center', color: '#6a86a7' }}>
+        <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '3rem 2rem', textAlign: 'center', color: '#6B7280' }}>
           <GraduationCap size={40} style={{ opacity: 0.3, margin: '0 auto 12px', display: 'block' }} />
-          <p style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: 6, color: '#355a7f' }}>
+          <p style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: 6, color: '#374151' }}>
             You are not enrolled in any classes yet.
           </p>
           <p style={{ fontSize: '0.83rem', marginBottom: 16 }}>
@@ -191,7 +191,7 @@ export default function MyClassesPage() {
           </p>
           <Link
             to="/student/programs"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 16px', background: '#1a6fad', color: '#fff', borderRadius: 8, fontWeight: 600, fontSize: '0.87rem', textDecoration: 'none' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 16px', background: '#3730A3', color: '#fff', borderRadius: 8, fontWeight: 600, fontSize: '0.87rem', textDecoration: 'none' }}
           >
             Browse Programs
           </Link>

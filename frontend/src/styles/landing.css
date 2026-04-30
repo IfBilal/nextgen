@@ -7,7 +7,7 @@
   background:
     radial-gradient(circle at 10% 10%, rgba(96, 165, 250, 0.34), transparent 36%),
     radial-gradient(circle at 90% 0%, rgba(37, 99, 235, 0.28), transparent 42%),
-    linear-gradient(180deg, #e8f3ff 0%, #eff6ff 46%, #f8fcff 100%);
+    linear-gradient(180deg, #EEF2FF 0%, #EEF2FF 46%, #f8fcff 100%);
   position: relative;
   overflow-x: hidden;
   padding-bottom: 4rem;
@@ -216,7 +216,7 @@
 }
 
 .landing-btn--primary {
-  background: linear-gradient(135deg, #2563eb, #6366f1, #2563eb);
+  background: linear-gradient(135deg, #4F46E5, #6366f1, #4F46E5);
   background-size: 220% 220%;
   animation: gradientShift 7s ease infinite;
   color: #fff;
@@ -280,7 +280,7 @@
   align-items: center;
   gap: 0.4rem;
   border-radius: 999px;
-  background: #eff6ff;
+  background: #EEF2FF;
   color: #165f95;
   padding: 0.28rem 0.65rem;
   font-size: 0.74rem;
@@ -296,7 +296,7 @@
 }
 
 .landing-hero-copy h1 span {
-  background: linear-gradient(120deg, #2563eb, #60a5fa 45%, #2563eb);
+  background: linear-gradient(120deg, #4F46E5, #818CF8 45%, #4F46E5);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -343,8 +343,8 @@
 .landing-hero-panel {
   border-radius: 24px;
   border: 1px solid rgba(37, 99, 235, 0.2);
-  background: linear-gradient(180deg, #0f1f6a, #1a3580);
-  color: #dbeafe;
+  background: linear-gradient(180deg, #1E1B4B, #312E81);
+  color: #E0E7FF;
   padding: 1.6rem;
   box-shadow: 0 18px 40px rgba(30, 27, 75, 0.26);
   position: relative;
@@ -444,7 +444,7 @@
 .landing-panel-rating p {
   margin-top: 0.35rem;
   font-size: 0.8rem;
-  color: #bfdbfe;
+  color: #C7D2FE;
 }
 
 .landing-trust-strip {
@@ -510,7 +510,7 @@
 .landing-section {
   border-radius: 22px;
   border: 1px solid #c9def2;
-  background: linear-gradient(180deg, #f7faff, #eff6ff);
+  background: linear-gradient(180deg, #F9FAFB, #EEF2FF);
   padding: 1.6rem;
   box-shadow: var(--shadow-md);
 }
@@ -568,8 +568,8 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #eff6ff;
-  color: #2563eb;
+  background: #EEF2FF;
+  color: #4F46E5;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -641,7 +641,7 @@
 
 .landing-testimonial-card {
   border-radius: 16px;
-  border: 1px solid #bfdbfe;
+  border: 1px solid #C7D2FE;
   background: #eaf4ff;
   padding: 1rem;
   position: relative;
@@ -656,7 +656,7 @@
   top: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(180deg, #2563eb, #60a5fa);
+  background: linear-gradient(180deg, #4F46E5, #818CF8);
   opacity: 0.9;
 }
 
@@ -666,7 +666,7 @@
 }
 
 .landing-quote-icon {
-  color: #60a5fa;
+  color: #818CF8;
 }
 
 .landing-testimonial-quote {
@@ -689,7 +689,7 @@
   height: 1.65rem;
   border-radius: 50%;
   background: #cfe7ff;
-  color: #2563eb;
+  color: #4F46E5;
   font-weight: 800;
   font-size: 0.82rem;
   display: inline-flex;
@@ -706,7 +706,7 @@
 }
 
 .landing-testimonial-author span {
-  color: #4a5b8a;
+  color: #4B5563;
   font-size: 0.75rem;
 }
 
@@ -714,8 +714,8 @@
   margin-top: 0.45rem;
   display: inline-block;
   border-radius: 999px;
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: #EEF2FF;
+  color: #4338CA;
   padding: 0.28rem 0.56rem;
   font-size: 0.73rem;
   font-weight: 700;
@@ -724,10 +724,10 @@
 .landing-final-cta {
   border-radius: 24px;
   border: 1px solid rgba(37, 99, 235, 0.22);
-  background: linear-gradient(135deg, #0f1f6a 0%, #1D4ED8 50%, #7c3aed 100%);
+  background: linear-gradient(135deg, #1E1B4B 0%, #4338CA 50%, #7c3aed 100%);
   background-size: 220% 220%;
   animation: gradientShift 9s ease infinite;
-  color: #dbeafe;
+  color: #E0E7FF;
   text-align: center;
   padding: 2.1rem 1.1rem;
   position: relative;
@@ -755,7 +755,7 @@
 
 .landing-final-cta p {
   margin-top: 0.55rem;
-  color: #bfdbfe;
+  color: #C7D2FE;
 }
 
 .landing-final-cta div {
@@ -906,12 +906,12 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #2563eb;
+  color: #4F46E5;
   margin-bottom: 0.5rem;
 }
 
 .landing-section-highlight {
-  background: linear-gradient(120deg, #2563eb, #7c3aed);
+  background: linear-gradient(120deg, #4F46E5, #7c3aed);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -921,7 +921,7 @@
 .landing-how-section {
   background: #fff;
   border-radius: 24px;
-  border: 1px solid #dbeafe;
+  border: 1px solid #E0E7FF;
   padding: 3rem 2.5rem;
 }
 
@@ -943,9 +943,9 @@
   width: 68px;
   height: 68px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #eff6ff, #dbeafe);
-  border: 2px solid #bfdbfe;
-  color: #2563eb;
+  background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
+  border: 2px solid #C7D2FE;
+  color: #4F46E5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -956,7 +956,7 @@
 .landing-how-step:hover .landing-how-step__icon {
   transform: translateY(-4px);
   box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
-  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  background: linear-gradient(135deg, #4F46E5, #7c3aed);
   color: #fff;
   border-color: transparent;
 }
@@ -966,20 +966,20 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #2563eb;
+  color: #4F46E5;
   margin-bottom: 0.4rem;
 }
 
 .landing-how-step__title {
   font-size: 1rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0 0 0.4rem;
 }
 
 .landing-how-step__desc {
   font-size: 0.83rem;
-  color: #4a5b8a;
+  color: #4B5563;
   line-height: 1.6;
   margin: 0;
   max-width: 180px;
@@ -992,7 +992,7 @@
   gap: 3px;
   padding-top: 34px;
   flex-shrink: 0;
-  color: #60a5fa;
+  color: #818CF8;
   opacity: 0.7;
 }
 
@@ -1029,7 +1029,7 @@
   position: relative;
   border-radius: 20px;
   overflow: hidden;
-  border: 1px solid #bfdbfe;
+  border: 1px solid #C7D2FE;
   box-shadow: 0 24px 60px rgba(15, 31, 106, 0.14);
   margin-top: 2rem;
 }
@@ -1052,7 +1052,7 @@
 .landing-dashboard-mockup {
   display: flex;
   min-height: 340px;
-  background: #0f1f6a;
+  background: #1E1B4B;
   font-family: var(--font-body);
 }
 
@@ -1070,7 +1070,7 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  background: linear-gradient(135deg, #4F46E5, #7c3aed);
   margin-bottom: 1.2rem;
 }
 
@@ -1085,7 +1085,7 @@
 
 .landing-db-nav-item--active {
   background: rgba(37,99,235,0.25);
-  color: #60a5fa;
+  color: #818CF8;
 }
 
 .landing-db-main {
@@ -1094,7 +1094,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background: #f7faff;
+  background: #F9FAFB;
 }
 
 .landing-db-header {
@@ -1106,12 +1106,12 @@
 .landing-db-greeting {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .landing-db-sub {
   font-size: 0.75rem;
-  color: #4a5b8a;
+  color: #4B5563;
   margin-top: 2px;
 }
 
@@ -1133,7 +1133,7 @@
 
 .landing-db-card {
   background: #fff;
-  border: 1px solid #dbeafe;
+  border: 1px solid #E0E7FF;
   border-radius: 10px;
   padding: 0.75rem 0.9rem;
   display: flex;
@@ -1159,7 +1159,7 @@
 .landing-db-card__label {
   font-size: 0.68rem;
   font-weight: 600;
-  color: #4a5b8a;
+  color: #4B5563;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -1167,7 +1167,7 @@
 .landing-db-card__value {
   font-size: 1.3rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   line-height: 1;
 }
 
@@ -1178,7 +1178,7 @@
 
 .landing-db-card__sub {
   font-size: 0.68rem;
-  color: #8a9cc8;
+  color: #9CA3AF;
 }
 
 .landing-db-ring {
@@ -1201,7 +1201,7 @@
   justify-content: center;
   font-size: 0.82rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .landing-db-card--progress {
@@ -1210,7 +1210,7 @@
 
 .landing-db-today {
   background: #fff;
-  border: 1px solid #dbeafe;
+  border: 1px solid #E0E7FF;
   border-radius: 10px;
   padding: 0.75rem 1rem;
 }
@@ -1218,7 +1218,7 @@
 .landing-db-today__label {
   font-size: 0.72rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.6rem;
@@ -1230,8 +1230,8 @@
   gap: 0.55rem;
   padding: 0.3rem 0;
   font-size: 0.78rem;
-  color: #4a5b8a;
-  border-bottom: 1px solid #eff6ff;
+  color: #4B5563;
+  border-bottom: 1px solid #EEF2FF;
 }
 
 .landing-db-task:last-child {
@@ -1242,7 +1242,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  border: 2px solid #bfdbfe;
+  border: 2px solid #C7D2FE;
   flex-shrink: 0;
 }
 
@@ -1258,9 +1258,9 @@
 
 /* ─── About Us ──────────────────────────────────────────────── */
 .landing-about-section {
-  background: linear-gradient(135deg, #eff6ff 0%, #f7faff 100%);
+  background: linear-gradient(135deg, #EEF2FF 0%, #F9FAFB 100%);
   border-radius: 24px;
-  border: 1px solid #dbeafe;
+  border: 1px solid #E0E7FF;
 }
 
 .landing-about-inner {
@@ -1273,14 +1273,14 @@
 .landing-about-text h2 {
   font-size: clamp(1.4rem, 2.8vw, 2rem);
   font-weight: 900;
-  color: #0f1f6a;
+  color: #1E1B4B;
   line-height: 1.2;
   margin: 0.6rem 0 1rem;
 }
 
 .landing-about-text p {
   font-size: 0.9rem;
-  color: #4a5b8a;
+  color: #4B5563;
   line-height: 1.75;
   margin: 0 0 0.9rem;
 }
@@ -1290,7 +1290,7 @@
   gap: 1.5rem;
   margin-top: 1.5rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #dbeafe;
+  border-top: 1px solid #E0E7FF;
   flex-wrap: wrap;
 }
 
@@ -1303,12 +1303,12 @@
 .landing-about-stats strong {
   font-size: 1.4rem;
   font-weight: 900;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .landing-about-stats span {
   font-size: 0.75rem;
-  color: #4a5b8a;
+  color: #4B5563;
   font-weight: 500;
 }
 
@@ -1320,7 +1320,7 @@
 
 .landing-about-value-card {
   background: #fff;
-  border: 1px solid #dbeafe;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 1.1rem 1.25rem;
   display: flex;
@@ -1337,8 +1337,8 @@
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #eff6ff, #dbeafe);
-  color: #2563eb;
+  background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
+  color: #4F46E5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1348,13 +1348,13 @@
 .landing-about-value-card h4 {
   font-size: 0.92rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0;
 }
 
 .landing-about-value-card p {
   font-size: 0.8rem;
-  color: #4a5b8a;
+  color: #4B5563;
   line-height: 1.6;
   margin: 0;
 }

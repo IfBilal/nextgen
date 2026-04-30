@@ -95,7 +95,7 @@ export default function AdminCouponsPage() {
         </div>
         <button
           onClick={() => { resetForm(); setShowModal(true) }}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 16px', background: '#1a6fad', color: '#fff', border: 'none', borderRadius: 9, fontWeight: 700, fontSize: '0.87rem', cursor: 'pointer' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 16px', background: '#3730A3', color: '#fff', border: 'none', borderRadius: 9, fontWeight: 700, fontSize: '0.87rem', cursor: 'pointer' }}
         >
           <Plus size={14} /> Create Coupon
         </button>
@@ -166,7 +166,7 @@ export default function AdminCouponsPage() {
           <div className="admin-modal">
             <div className="admin-modal__header">
               <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                <Tag size={16} style={{ color: '#1a6fad' }} />
+                <Tag size={16} style={{ color: '#3730A3' }} />
                 <h3 className="admin-modal__title">Create Coupon</h3>
               </div>
               <button className="admin-modal__close" onClick={() => setShowModal(false)}><X size={16} /></button>
@@ -224,7 +224,7 @@ export default function AdminCouponsPage() {
       )}
 
       {toast && (
-        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#0d2d5e', color: '#fff', padding: '10px 18px', borderRadius: 10, fontSize: '0.87rem', fontWeight: 600, zIndex: 2000 }}>
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#1E1B4B', color: '#fff', padding: '10px 18px', borderRadius: 10, fontSize: '0.87rem', fontWeight: 600, zIndex: 2000 }}>
           {toast}
         </div>
       )}

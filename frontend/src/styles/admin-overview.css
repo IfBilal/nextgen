@@ -6,13 +6,13 @@
 
 .admin-overview-header h1 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1.6rem;
 }
 
 .admin-overview-header p {
   margin: 0.35rem 0 0;
-  color: #5a7a9d;
+  color: #6B7280;
 }
 
 .admin-kpi-grid {
@@ -23,14 +23,14 @@
 
 .admin-kpi-card {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 0.95rem;
 }
 
 .admin-kpi-card h4 {
   margin: 0;
-  color: #5f7fa2;
+  color: #6B7280;
   font-size: 0.83rem;
   font-weight: 700;
 }
@@ -38,7 +38,7 @@
 .admin-kpi-value {
   margin: 0.45rem 0 0;
   font-size: 1.65rem;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-weight: 800;
 }
 
@@ -51,7 +51,7 @@
 
 .admin-panel {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 0.95rem;
   height: fit-content;
@@ -59,13 +59,13 @@
 
 .admin-panel h3 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1rem;
 }
 
 .admin-panel p {
   margin: 0.35rem 0 0.8rem;
-  color: #5a7a9d;
+  color: #6B7280;
   font-size: 0.86rem;
 }
 
@@ -116,7 +116,7 @@
   border: 1px solid #e5eff9;
   border-radius: 10px;
   padding: 0.62rem 0.72rem;
-  background: #fbfdff;
+  background: #F9FAFB;
 }
 
 .admin-activity-item.alert {
@@ -132,7 +132,7 @@
 
 .admin-activity-time {
   margin: 0.28rem 0 0;
-  color: #6f8cab;
+  color: #6B7280;
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -151,7 +151,7 @@
 }
 
 .admin-risk-table th {
-  color: #5a7a9d;
+  color: #6B7280;
   font-weight: 700;
 }
 

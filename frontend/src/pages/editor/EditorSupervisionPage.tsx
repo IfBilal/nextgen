@@ -66,16 +66,16 @@ export default function EditorSupervisionPage() {
       <div className="editor-section" style={{ padding: '18px 20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
               Class Supervision
             </h1>
-            <p style={{ fontSize: '0.85rem', color: '#55789c', margin: '4px 0 0' }}>
+            <p style={{ fontSize: '0.85rem', color: '#6B7280', margin: '4px 0 0' }}>
               Monitor conversations across all classes. Read-only view.
             </p>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: 8, padding: '5px 10px' }}>
-            <Shield size={13} style={{ color: '#0369a1' }} />
-            <span style={{ fontSize: '0.75rem', color: '#0369a1', fontWeight: 600 }}>Supervision Active</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#EEF2FF', border: '1px solid #bae6fd', borderRadius: 8, padding: '5px 10px' }}>
+            <Shield size={13} style={{ color: '#3730A3' }} />
+            <span style={{ fontSize: '0.75rem', color: '#3730A3', fontWeight: 600 }}>Supervision Active</span>
           </div>
         </div>
       </div>
@@ -84,13 +84,13 @@ export default function EditorSupervisionPage() {
       <div className="editor-chat-panel">
         {/* Sidebar */}
         <div className="editor-chat-sidebar">
-          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#6a86a7', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 10px 8px' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 10px 8px' }}>
             Classes ({classes.length})
           </div>
           {loading ? (
-            <div style={{ padding: '1rem', color: '#6a86a7', fontSize: '0.83rem' }}>Loading classes…</div>
+            <div style={{ padding: '1rem', color: '#6B7280', fontSize: '0.83rem' }}>Loading classes…</div>
           ) : classes.length === 0 ? (
-            <div style={{ padding: '1rem', color: '#6a86a7', fontSize: '0.83rem' }}>No classes found.</div>
+            <div style={{ padding: '1rem', color: '#6B7280', fontSize: '0.83rem' }}>No classes found.</div>
           ) : (
             classes.map(cls => (
               <div
@@ -104,7 +104,7 @@ export default function EditorSupervisionPage() {
                     mock
                   </span>
                 </div>
-                <div style={{ fontSize: '0.73rem', color: '#6a86a7', marginTop: 1 }}>
+                <div style={{ fontSize: '0.73rem', color: '#6B7280', marginTop: 1 }}>
                   {cls.productName}
                 </div>
               </div>
@@ -128,16 +128,16 @@ export default function EditorSupervisionPage() {
               <div style={{ marginBottom: 12 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
                   <div>
-                    <h2 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+                    <h2 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
                       Supervision — {selectedClass.name}
                     </h2>
-                    <p style={{ fontSize: '0.78rem', color: '#6a86a7', margin: '3px 0 0' }}>
+                    <p style={{ fontSize: '0.78rem', color: '#6B7280', margin: '3px 0 0' }}>
                       Teacher: {selectedClass.teacherName} · {selectedClass.enrolledStudentIds.length} students
                     </p>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: 8, padding: '4px 10px' }}>
-                    <Eye size={12} style={{ color: '#0369a1' }} />
-                    <span style={{ fontSize: '0.72rem', color: '#0369a1', fontWeight: 600 }}>Privacy Protected</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#EEF2FF', border: '1px solid #bae6fd', borderRadius: 8, padding: '4px 10px' }}>
+                    <Eye size={12} style={{ color: '#3730A3' }} />
+                    <span style={{ fontSize: '0.72rem', color: '#3730A3', fontWeight: 600 }}>Privacy Protected</span>
                   </div>
                 </div>
 
@@ -166,8 +166,8 @@ export default function EditorSupervisionPage() {
                           style={{
                             marginLeft: 6,
                             fontSize: '0.68rem',
-                            background: msg.sender === 'teacher' ? '#dcfce7' : '#e8f3ff',
-                            color: msg.sender === 'teacher' ? '#15803d' : '#1a6fad',
+                            background: msg.sender === 'teacher' ? '#dcfce7' : '#EEF2FF',
+                            color: msg.sender === 'teacher' ? '#15803d' : '#3730A3',
                             padding: '1px 5px',
                             borderRadius: 4,
                           }}

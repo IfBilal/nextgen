@@ -213,7 +213,7 @@ export default function TeacherClassDetailPage() {
               <ChevronLeft size={14} />
               All Classes
             </button>
-            <h1 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+            <h1 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
               {cls.name}
             </h1>
             <div style={{ display: 'flex', gap: 8, marginTop: 6, flexWrap: 'wrap' }}>
@@ -238,7 +238,7 @@ export default function TeacherClassDetailPage() {
       </div>
 
       {/* Tabs */}
-      <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 14, padding: '0 16px 16px' }}>
+      <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '0 16px 16px' }}>
         <div className="teacher-tabs" style={{ marginBottom: 0, paddingTop: 12 }}>
           {(['sessions', 'students', 'notices', 'recordings'] as Tab[]).map(tab => (
             <button
@@ -395,13 +395,13 @@ export default function TeacherClassDetailPage() {
                   <tbody>
                     {MOCK_STUDENTS.map(student => (
                       <tr key={student.id}>
-                        <td style={{ fontWeight: 600, color: '#0d2d5e' }}>{student.name}</td>
+                        <td style={{ fontWeight: 600, color: '#1E1B4B' }}>{student.name}</td>
                         <td>{formatDate(student.joined)}</td>
                         <td>
                           <span style={{ fontWeight: 700 }}>
                             {student.attended}/{student.total}
                           </span>
-                          <span style={{ fontSize: '0.75rem', color: '#55789c', marginLeft: 4 }}>
+                          <span style={{ fontSize: '0.75rem', color: '#6B7280', marginLeft: 4 }}>
                             ({Math.round((student.attended / student.total) * 100)}%)
                           </span>
                         </td>
@@ -410,7 +410,7 @@ export default function TeacherClassDetailPage() {
                   </tbody>
                 </table>
               )}
-              <p style={{ fontSize: '0.75rem', color: '#6a86a7', marginTop: 8 }}>
+              <p style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: 8 }}>
                 Student names are anonymized for privacy. Full details available after backend integration.
               </p>
             </>
@@ -449,12 +449,12 @@ export default function TeacherClassDetailPage() {
                           {formatDateTime(notice.createdAt)}
                         </div>
                         {notice.fileName && (
-                          <div style={{ fontSize: '0.75rem', color: '#1a6fad', marginTop: 2 }}>
+                          <div style={{ fontSize: '0.75rem', color: '#3730A3', marginTop: 2 }}>
                             📎 {notice.fileName}
                           </div>
                         )}
                         {notice.content && (
-                          <p style={{ fontSize: '0.82rem', color: '#55789c', margin: '4px 0 0', lineHeight: 1.5 }}>
+                          <p style={{ fontSize: '0.82rem', color: '#6B7280', margin: '4px 0 0', lineHeight: 1.5 }}>
                             {notice.content}
                           </p>
                         )}
@@ -479,7 +479,7 @@ export default function TeacherClassDetailPage() {
           {/* Recordings Tab */}
           {activeTab === 'recordings' && (
             <div>
-              <p style={{ fontSize: '0.8rem', color: '#55789c', margin: '0 0 12px' }}>
+              <p style={{ fontSize: '0.8rem', color: '#6B7280', margin: '0 0 12px' }}>
                 Add or remove recording URLs for completed sessions. URLs are visible to enrolled students.
               </p>
               {sessions.filter(s => s.status === 'completed').length === 0 ? (
@@ -487,13 +487,13 @@ export default function TeacherClassDetailPage() {
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {sessions.filter(s => s.status === 'completed').map(session => (
-                    <div key={session.id} style={{ background: '#f5f8fc', border: '1px solid #e8f1f8', borderRadius: 10, padding: '12px 14px' }}>
+                    <div key={session.id} style={{ background: '#F9FAFB', border: '1px solid #EEF2FF', borderRadius: 10, padding: '12px 14px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
                         <div>
-                          <div style={{ fontWeight: 600, color: '#0d2d5e', fontSize: '0.87rem' }}>
+                          <div style={{ fontWeight: 600, color: '#1E1B4B', fontSize: '0.87rem' }}>
                             {formatDateTime(session.scheduledAt)}
                           </div>
-                          <div style={{ fontSize: '0.75rem', color: '#55789c', marginTop: 2 }}>
+                          <div style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: 2 }}>
                             {session.durationMinutes} min
                           </div>
                         </div>
@@ -518,7 +518,7 @@ export default function TeacherClassDetailPage() {
                             </>
                           ) : (
                             <>
-                              <span style={{ fontSize: '0.72rem', padding: '2px 8px', background: '#f1f5f9', color: '#6a86a7', borderRadius: 99, fontWeight: 700 }}>Not uploaded</span>
+                              <span style={{ fontSize: '0.72rem', padding: '2px 8px', background: '#f1f5f9', color: '#6B7280', borderRadius: 99, fontWeight: 700 }}>Not uploaded</span>
                               <button
                                 className="teacher-btn teacher-btn--primary"
                                 style={{ padding: '4px 10px', fontSize: '0.75rem' }}

@@ -147,10 +147,10 @@ export default function TeacherSessionFormPage() {
             <ChevronLeft size={14} />
             Back
           </button>
-          <h1 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+          <h1 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
             {isEditing ? 'Edit Session' : 'Schedule New Session'}
           </h1>
-          <p style={{ fontSize: '0.83rem', color: '#55789c', margin: '4px 0 0' }}>
+          <p style={{ fontSize: '0.83rem', color: '#6B7280', margin: '4px 0 0' }}>
             {isEditing
               ? 'Update session details. A reason for change is required.'
               : 'Add a new live session to your class.'}

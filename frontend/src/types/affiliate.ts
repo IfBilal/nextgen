@@ -52,6 +52,23 @@ export interface AdminAffiliate {
   createdAt: string
 }
 
+export interface AffiliateStudentInsight {
+  id: string
+  studentName: string
+  studentEmail: string
+  plan: 'basic' | 'standard' | 'premium'
+  status: 'active' | 'deactivated'
+  joinedAt: string
+  overallProgress: number
+  lastTestScore: number | null
+  studyStreak: number
+  totalStudyHours: number
+  questionsAttempted: number
+  avgAccuracy: number
+  lastActiveAt: string
+  weakAreas: string[]
+}
+
 export interface CreateAffiliatePayload {
   name: string
   email: string

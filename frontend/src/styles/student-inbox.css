@@ -9,12 +9,12 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .student-inbox-header p {
   margin: 0.25rem 0 0;
-  color: #5f7fa2;
+  color: #6B7280;
 }
 
 .student-inbox-summary {
@@ -22,17 +22,17 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
 }
 
 .student-inbox-summary h3 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .student-inbox-summary p {
   margin: 0.25rem 0 0;
-  color: #5f7fa2;
+  color: #6B7280;
 }
 
 .student-inbox-read-all {
@@ -41,7 +41,7 @@
   gap: 0.45rem;
   border: none;
   border-radius: 999px;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   font-weight: 700;
   padding: 0.6rem 0.95rem;
@@ -59,7 +59,7 @@
 }
 
 .student-inbox-item {
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -80,12 +80,12 @@
 
 .student-inbox-item h3 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .student-inbox-item header p {
   margin: 0.25rem 0 0;
-  color: #6a86a7;
+  color: #6B7280;
   font-size: 0.82rem;
 }
 
@@ -117,22 +117,22 @@
 }
 
 .student-inbox-item footer span {
-  color: #6a86a7;
+  color: #6B7280;
   font-size: 0.8rem;
 }
 
 .student-inbox-item footer button {
-  border: 1px solid #2563eb;
+  border: 1px solid #4F46E5;
   border-radius: 999px;
   background: #fff;
-  color: #2563eb;
+  color: #4F46E5;
   font-size: 0.78rem;
   font-weight: 700;
   padding: 0.35rem 0.65rem;
 }
 
 .student-inbox-empty {
-  color: #5f7fa2;
+  color: #6B7280;
   margin: 0;
 }
 

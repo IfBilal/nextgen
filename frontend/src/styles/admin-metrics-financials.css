@@ -7,13 +7,13 @@
 
 .admin-metrics-header h1 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1.55rem;
 }
 
 .admin-metrics-header p {
   margin: 0.3rem 0 0;
-  color: #5a7a9d;
+  color: #6B7280;
 }
 
 .admin-metrics-controls {
@@ -30,23 +30,23 @@
 }
 
 .admin-metrics-controls select {
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 9px;
   background: #fff;
   padding: 0.42rem 0.58rem;
-  color: #17395f;
+  color: #1E1B4B;
   font: inherit;
 }
 
 .admin-metrics-controls__hint {
-  color: #6f8cab;
+  color: #6B7280;
   font-size: 0.78rem;
 }
 
 .admin-metrics-taxonomy h3,
 .admin-metrics-ai-insight h3 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 0.95rem;
 }
 
@@ -75,11 +75,11 @@
 }
 
 .taxonomy-filter__field select {
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 9px;
   background: #fff;
   padding: 0.42rem 0.58rem;
-  color: #17395f;
+  color: #1E1B4B;
   font: inherit;
 }
 
@@ -91,7 +91,7 @@
 
 .admin-metrics-ai-insight p {
   margin: 0;
-  color: #5a7a9d;
+  color: #6B7280;
   font-size: 0.82rem;
 }
 
@@ -129,7 +129,7 @@
 .admin-metrics-kpi,
 .admin-financials-kpi {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 12px;
   padding: 0.8rem;
 }
@@ -137,7 +137,7 @@
 .admin-metrics-kpi h4,
 .admin-financials-kpi h4 {
   margin: 0;
-  color: #5f7fa2;
+  color: #6B7280;
   font-size: 0.78rem;
   font-weight: 700;
 }
@@ -145,7 +145,7 @@
 .admin-metrics-kpi .value,
 .admin-financials-kpi .value {
   margin: 0.42rem 0 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1.32rem;
   font-weight: 800;
 }
@@ -159,7 +159,7 @@
 
 .delta.up { color: #1d9b57; }
 .delta.down { color: #d64545; }
-.delta.neutral { color: #5f7fa2; }
+.delta.neutral { color: #6B7280; }
 
 .admin-metrics-grid {
   display: grid;
@@ -179,13 +179,13 @@
 
 .admin-metrics-panel h3 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1rem;
 }
 
 .admin-metrics-panel > p {
   margin: 0;
-  color: #5a7a9d;
+  color: #6B7280;
   font-size: 0.84rem;
 }
 
@@ -241,12 +241,12 @@
   text-align: left;
   padding: 0.58rem;
   font-size: 0.82rem;
-  color: #17395f;
+  color: #1E1B4B;
 }
 
 .admin-metrics-table th {
-  color: #5a7a9d;
-  background: #f7faff;
+  color: #6B7280;
+  background: #F9FAFB;
 }
 
 .admin-financials-invoices {
@@ -275,7 +275,7 @@
 
 .admin-financials-status.refunded {
   background: #eef6ff;
-  color: #2563eb;
+  color: #4F46E5;
 }
 
 @media (max-width: 1280px) {

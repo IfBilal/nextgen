@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   Users,
   DollarSign,
+  BarChart2,
   LogOut,
   Menu,
   X,
@@ -13,9 +14,10 @@ import { useAffiliateAuth } from '../context/AffiliateAuthContext'
 import './AffiliateLayout.css'
 
 const AFFILIATE_NAV_ITEMS = [
-  { to: '/affiliate/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/affiliate/referrals', label: 'My Referrals', icon: Users },
-  { to: '/affiliate/earnings', label: 'Earnings', icon: DollarSign },
+  { to: '/affiliate/dashboard',        label: 'Dashboard',        icon: LayoutDashboard },
+  { to: '/affiliate/referrals',        label: 'My Referrals',     icon: Users },
+  { to: '/affiliate/earnings',         label: 'Earnings',         icon: DollarSign },
+  { to: '/affiliate/student-insights', label: 'Student Insights', icon: BarChart2 },
 ]
 
 export default function AffiliateLayout() {

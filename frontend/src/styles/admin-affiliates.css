@@ -12,7 +12,7 @@
 
 .admin-affiliates-kpi {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 1.1rem;
   display: flex;
@@ -24,8 +24,8 @@
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: #eaf5ff;
-  color: #2563eb;
+  background: #EEF2FF;
+  color: #4F46E5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,13 +33,13 @@
 }
 
 .admin-affiliates-kpi__icon--green { background: #e8f8f0; color: #16a34a; }
-.admin-affiliates-kpi__icon--blue  { background: #eaf5ff; color: #2563eb; }
-.admin-affiliates-kpi__icon--navy  { background: #e8ecf5; color: #0f1f6a; }
+.admin-affiliates-kpi__icon--blue  { background: #EEF2FF; color: #4F46E5; }
+.admin-affiliates-kpi__icon--navy  { background: #e8ecf5; color: #1E1B4B; }
 
 .admin-affiliates-kpi__label {
   margin: 0;
   font-size: 0.78rem;
-  color: #5a7a9d;
+  color: #6B7280;
   font-weight: 500;
 }
 
@@ -47,7 +47,7 @@
   margin: 0.2rem 0 0;
   font-size: 1.3rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 /* Table section */
@@ -72,7 +72,7 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.55rem 1.1rem;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   border-radius: 8px;
   font-weight: 600;
@@ -150,7 +150,7 @@
 
 .admin-affiliates-modal__header h3 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1.1rem;
 }
 
@@ -164,12 +164,12 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #5a7a9d;
+  color: #6B7280;
 }
 
 .admin-affiliates-modal__close:hover {
   background: #e8f0fa;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .admin-affiliates-form-error {
@@ -196,22 +196,22 @@
 .admin-affiliates-form__field label {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #1e3a5a;
+  color: #1F2937;
 }
 
 .admin-affiliates-form__field input {
   padding: 0.6rem 0.85rem;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 8px;
   font-size: 0.875rem;
-  color: #1e3a5a;
-  background: #f8fbff;
+  color: #1F2937;
+  background: #F9FAFB;
   outline: none;
   transition: border-color 0.15s;
 }
 
 .admin-affiliates-form__field input:focus {
-  border-color: #60a5fa;
+  border-color: #818CF8;
   background: #fff;
 }
 
@@ -231,9 +231,9 @@
 .admin-affiliates-form__cancel {
   padding: 0.55rem 1.1rem;
   border-radius: 8px;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   background: #f4f8fc;
-  color: #5a7a9d;
+  color: #6B7280;
   font-weight: 600;
   cursor: pointer;
 }
@@ -242,7 +242,7 @@
   padding: 0.55rem 1.25rem;
   border-radius: 8px;
   border: none;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   font-weight: 600;
   cursor: pointer;

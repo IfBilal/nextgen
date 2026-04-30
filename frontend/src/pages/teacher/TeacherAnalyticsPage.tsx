@@ -44,7 +44,7 @@ export default function TeacherAnalyticsPage() {
   return (
     <div className="teacher-page">
       {/* Privacy notice */}
-      <div style={{ margin: '0 0 16px', padding: '10px 14px', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.78rem', color: '#0369a1', fontWeight: 600 }}>
+      <div style={{ margin: '0 0 16px', padding: '10px 14px', background: '#EEF2FF', border: '1px solid #bae6fd', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.78rem', color: '#3730A3', fontWeight: 600 }}>
         <Shield size={13} />
         This data is strictly internal and not visible to students.
       </div>
@@ -57,26 +57,26 @@ export default function TeacherAnalyticsPage() {
           { icon: Clock, label: 'Avg Session Duration', value: `${analytics.avgActualDuration} min` },
           { icon: Users, label: 'Students Taught', value: analytics.totalStudentsTaught },
         ].map(kpi => (
-          <div key={kpi.label} style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 12, padding: '16px 18px' }}>
+          <div key={kpi.label} style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 12, padding: '16px 18px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-              <kpi.icon size={16} style={{ color: '#1a6fad' }} />
-              <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#6a86a7', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{kpi.label}</span>
+              <kpi.icon size={16} style={{ color: '#3730A3' }} />
+              <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{kpi.label}</span>
             </div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0d2d5e' }}>{kpi.value}</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#1E1B4B' }}>{kpi.value}</div>
           </div>
         ))}
       </div>
 
       {/* Class selector */}
-      <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 14, padding: '18px 20px', marginBottom: 16 }}>
+      <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '18px 20px', marginBottom: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+          <h2 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
             Attendance Over Time
           </h2>
           <select
             value={selectedClassId}
             onChange={e => setSelectedClassId(e.target.value)}
-            style={{ padding: '6px 10px', border: '1px solid #cde0f5', borderRadius: 8, fontSize: '0.82rem', color: '#355a7f' }}
+            style={{ padding: '6px 10px', border: '1px solid #C7D2FE', borderRadius: 8, fontSize: '0.82rem', color: '#374151' }}
           >
             <option value="all">All Classes</option>
             {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -98,7 +98,7 @@ export default function TeacherAnalyticsPage() {
                   <div
                     style={{
                       width: '100%',
-                      background: (s.attendancePercent ?? 0) >= 80 ? '#1a6fad' : (s.attendancePercent ?? 0) >= 60 ? '#d97706' : '#dc2626',
+                      background: (s.attendancePercent ?? 0) >= 80 ? '#3730A3' : (s.attendancePercent ?? 0) >= 60 ? '#d97706' : '#dc2626',
                       borderRadius: '4px 4px 0 0',
                       height: `${Math.max(4, ((s.attendancePercent ?? 0) / maxAttendance) * 90)}px`,
                       transition: 'height 0.3s',
@@ -115,8 +115,8 @@ export default function TeacherAnalyticsPage() {
       </div>
 
       {/* Sessions table */}
-      <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 14, padding: '18px 20px' }}>
-        <h2 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0d2d5e', margin: '0 0 14px' }}>
+      <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '18px 20px' }}>
+        <h2 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1E1B4B', margin: '0 0 14px' }}>
           Session Details
         </h2>
         {filteredSessions.length === 0 ? (

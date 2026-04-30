@@ -34,10 +34,10 @@ export default function TeacherClassesPage() {
       <div className="teacher-section" style={{ padding: '18px 20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
               My Classes
             </h1>
-            <p style={{ fontSize: '0.85rem', color: '#55789c', margin: '4px 0 0' }}>
+            <p style={{ fontSize: '0.85rem', color: '#6B7280', margin: '4px 0 0' }}>
               {loading ? 'Loading…' : `${classes.length} class${classes.length !== 1 ? 'es' : ''} assigned to you`}
             </p>
           </div>
@@ -72,7 +72,7 @@ export default function TeacherClassesPage() {
                   <BookOpen size={10} />
                   {cls.productName}
                 </span>
-                <span style={{ fontSize: '0.78rem', color: '#6a86a7', display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ fontSize: '0.78rem', color: '#6B7280', display: 'flex', alignItems: 'center', gap: 4 }}>
                   <Users size={11} />
                   {cls.enrolledStudentIds.length} student{cls.enrolledStudentIds.length !== 1 ? 's' : ''}
                 </span>
@@ -83,11 +83,11 @@ export default function TeacherClassesPage() {
               <div
                 style={{
                   fontSize: '0.8rem',
-                  color: '#55789c',
+                  color: '#6B7280',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 5,
-                  background: '#f6fbff',
+                  background: '#F9FAFB',
                   border: '1px solid #e8f0fb',
                   borderRadius: 8,
                   padding: '6px 10px',

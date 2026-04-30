@@ -11,7 +11,7 @@
 
 .teacher-sidebar {
   width: 260px;
-  background: #0f1f6a;
+  background: #1E1B4B;
   color: #dcecff;
   display: flex;
   flex-direction: column;
@@ -108,7 +108,7 @@
 
 .teacher-sidebar__link--active {
   color: #fff;
-  background: #2563eb;
+  background: #4F46E5;
 }
 
 .teacher-sidebar__bottom {
@@ -131,7 +131,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   display: flex;
   align-items: center;
@@ -187,7 +187,7 @@
 
 .teacher-topbar {
   height: 68px;
-  border-bottom: 1px solid #d8e9f8;
+  border-bottom: 1px solid #E0E7FF;
   background: #fff;
   display: flex;
   align-items: center;
@@ -202,7 +202,7 @@
 .teacher-topbar__menu {
   display: none;
   background: #f1f7ff;
-  color: #0f1f6a;
+  color: #1E1B4B;
   border-radius: 8px;
   width: 34px;
   height: 34px;
@@ -219,13 +219,13 @@
 }
 
 .teacher-topbar__title {
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-weight: 700;
   font-size: 0.96rem;
 }
 
 .teacher-topbar__subtitle {
-  color: #6a86a7;
+  color: #6B7280;
   font-size: 0.78rem;
 }
 

@@ -195,11 +195,11 @@ export default function AdminMetricsPage() {
             <div className="admin-metrics-chart-canvas">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={engagementTrend}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e6eef7" />
-                  <XAxis dataKey="day" tick={{ fill: '#5f7fa2', fontSize: 12 }} />
-                  <YAxis tick={{ fill: '#5f7fa2', fontSize: 12 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#EEF2FF" />
+                  <XAxis dataKey="day" tick={{ fill: '#6B7280', fontSize: 12 }} />
+                  <YAxis tick={{ fill: '#6B7280', fontSize: 12 }} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="dau" stroke="#1a6fad" strokeWidth={3} dot={{ r: 3 }} name="DAU" />
+                  <Line type="monotone" dataKey="dau" stroke="#3730A3" strokeWidth={3} dot={{ r: 3 }} name="DAU" />
                   <Line type="monotone" dataKey="wau" stroke="#5fb3eb" strokeWidth={2} dot={false} name="WAU" />
                 </LineChart>
               </ResponsiveContainer>
@@ -214,11 +214,11 @@ export default function AdminMetricsPage() {
             <div className="admin-metrics-chart-canvas">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={scoreDistribution}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e6eef7" />
-                  <XAxis dataKey="band" tick={{ fill: '#5f7fa2', fontSize: 12 }} />
-                  <YAxis tick={{ fill: '#5f7fa2', fontSize: 12 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#EEF2FF" />
+                  <XAxis dataKey="band" tick={{ fill: '#6B7280', fontSize: 12 }} />
+                  <YAxis tick={{ fill: '#6B7280', fontSize: 12 }} />
                   <Tooltip />
-                  <Bar dataKey="learners" fill="#1a6fad" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="learners" fill="#3730A3" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

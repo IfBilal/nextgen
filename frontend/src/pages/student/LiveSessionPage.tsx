@@ -109,7 +109,7 @@ export default function LiveSessionPage() {
   if (loading) {
     return (
       <div className="lms-session-page">
-        <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 14, padding: '2.5rem', textAlign: 'center', color: '#6a86a7' }}>
+        <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '2.5rem', textAlign: 'center', color: '#6B7280' }}>
           Loading session…
         </div>
       </div>
@@ -119,7 +119,7 @@ export default function LiveSessionPage() {
   if (!cls) {
     return (
       <div className="lms-session-page">
-        <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 14, padding: '2.5rem', textAlign: 'center', color: '#6a86a7' }}>
+        <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '2.5rem', textAlign: 'center', color: '#6B7280' }}>
           Class not found.
         </div>
       </div>
@@ -133,15 +133,15 @@ export default function LiveSessionPage() {
         <div>
           <Link
             to="/student/classes"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.82rem', color: '#6a86a7', textDecoration: 'none', marginBottom: 6 }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.82rem', color: '#6B7280', textDecoration: 'none', marginBottom: 6 }}
           >
             <ChevronLeft size={14} />
             My Classes
           </Link>
-          <h1 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+          <h1 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
             {cls.name}
           </h1>
-          <p style={{ fontSize: '0.83rem', color: '#55789c', margin: '3px 0 0' }}>
+          <p style={{ fontSize: '0.83rem', color: '#6B7280', margin: '3px 0 0' }}>
             {liveSession ? 'Session in progress' : nextScheduled ? `Next: ${formatFullDateTime(nextScheduled.scheduledAt)}` : 'No upcoming sessions'}
           </p>
         </div>
@@ -197,7 +197,7 @@ export default function LiveSessionPage() {
           ) : nextScheduled && countdown ? (
             /* SCHEDULED STATE */
             <div className="lms-countdown-large">
-              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#6a86a7', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>
                 Session starts in
               </div>
               <div className="lms-countdown-large__time">
@@ -219,9 +219,9 @@ export default function LiveSessionPage() {
             </div>
           ) : (
             /* NO SESSION STATE */
-            <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 16, padding: '3rem 2rem', textAlign: 'center', color: '#6a86a7' }}>
+            <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 16, padding: '3rem 2rem', textAlign: 'center', color: '#6B7280' }}>
               <Calendar size={40} style={{ opacity: 0.3, margin: '0 auto 12px', display: 'block' }} />
-              <p style={{ fontWeight: 600, fontSize: '0.95rem', color: '#355a7f', margin: '0 0 6px' }}>
+              <p style={{ fontWeight: 600, fontSize: '0.95rem', color: '#374151', margin: '0 0 6px' }}>
                 No upcoming session scheduled
               </p>
               <p style={{ fontSize: '0.83rem', margin: 0 }}>
@@ -234,7 +234,7 @@ export default function LiveSessionPage() {
         {/* Sidebar: Tabbed */}
         <aside className="lms-sidebar">
           {/* Tab bar */}
-          <div style={{ display: 'flex', borderBottom: '1px solid #e8f1f8', marginBottom: 12 }}>
+          <div style={{ display: 'flex', borderBottom: '1px solid #EEF2FF', marginBottom: 12 }}>
             {([
               { key: 'notices', icon: Megaphone, label: 'Notices' },
               { key: 'recordings', icon: Video, label: 'Recordings' },
@@ -246,8 +246,8 @@ export default function LiveSessionPage() {
                 onClick={() => setSidebarTab(tab.key)}
                 style={{
                   flex: 1, padding: '8px 2px', border: 'none', background: 'none', cursor: 'pointer',
-                  fontSize: '0.68rem', fontWeight: 600, color: sidebarTab === tab.key ? '#1a6fad' : '#6a86a7',
-                  borderBottom: `2px solid ${sidebarTab === tab.key ? '#1a6fad' : 'transparent'}`,
+                  fontSize: '0.68rem', fontWeight: 600, color: sidebarTab === tab.key ? '#3730A3' : '#6B7280',
+                  borderBottom: `2px solid ${sidebarTab === tab.key ? '#3730A3' : 'transparent'}`,
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
                   transition: 'color 0.15s',
                 }}
@@ -288,12 +288,12 @@ export default function LiveSessionPage() {
           {/* Recordings tab */}
           {sidebarTab === 'recordings' && (
             <div style={{ padding: '4px 0' }}>
-              <p style={{ fontSize: '0.8rem', color: '#55789c', margin: '0 0 10px' }}>
+              <p style={{ fontSize: '0.8rem', color: '#6B7280', margin: '0 0 10px' }}>
                 Access recorded sessions for this class.
               </p>
               <Link
                 to={`/student/classes/${classId}/recordings`}
-                style={{ display: 'block', padding: '9px 12px', background: '#e8f3ff', border: '1px solid #cde0f5', borderRadius: 9, fontSize: '0.82rem', fontWeight: 700, color: '#1a6fad', textDecoration: 'none', textAlign: 'center' }}
+                style={{ display: 'block', padding: '9px 12px', background: '#EEF2FF', border: '1px solid #C7D2FE', borderRadius: 9, fontSize: '0.82rem', fontWeight: 700, color: '#3730A3', textDecoration: 'none', textAlign: 'center' }}
               >
                 View Recordings →
               </Link>
@@ -303,12 +303,12 @@ export default function LiveSessionPage() {
           {/* Attendance tab */}
           {sidebarTab === 'attendance' && (
             <div style={{ padding: '4px 0' }}>
-              <p style={{ fontSize: '0.8rem', color: '#55789c', margin: '0 0 10px' }}>
+              <p style={{ fontSize: '0.8rem', color: '#6B7280', margin: '0 0 10px' }}>
                 Track your personal attendance for this class.
               </p>
               <Link
                 to={`/student/classes/${classId}/attendance`}
-                style={{ display: 'block', padding: '9px 12px', background: '#e8f3ff', border: '1px solid #cde0f5', borderRadius: 9, fontSize: '0.82rem', fontWeight: 700, color: '#1a6fad', textDecoration: 'none', textAlign: 'center' }}
+                style={{ display: 'block', padding: '9px 12px', background: '#EEF2FF', border: '1px solid #C7D2FE', borderRadius: 9, fontSize: '0.82rem', fontWeight: 700, color: '#3730A3', textDecoration: 'none', textAlign: 'center' }}
               >
                 View Attendance →
               </Link>
@@ -318,18 +318,18 @@ export default function LiveSessionPage() {
           {/* Chat tab */}
           {sidebarTab === 'chat' && (
             <div style={{ padding: '4px 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <p style={{ fontSize: '0.8rem', color: '#55789c', margin: 0 }}>
+              <p style={{ fontSize: '0.8rem', color: '#6B7280', margin: 0 }}>
                 Message your teacher privately.
               </p>
               <button
                 onClick={() => setShowAskModal(true)}
-                style={{ padding: '8px 12px', background: '#1a6fad', color: '#fff', border: 'none', borderRadius: 9, fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}
+                style={{ padding: '8px 12px', background: '#3730A3', color: '#fff', border: 'none', borderRadius: 9, fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}
               >
                 <MessageCircle size={13} /> Ask a Question
               </button>
               <Link
                 to={`/student/classes/${classId}/chat`}
-                style={{ display: 'block', padding: '8px 12px', background: '#f0f7ff', border: '1px solid #cde0f5', borderRadius: 9, fontSize: '0.82rem', fontWeight: 700, color: '#1a6fad', textDecoration: 'none', textAlign: 'center' }}
+                style={{ display: 'block', padding: '8px 12px', background: '#EEF2FF', border: '1px solid #C7D2FE', borderRadius: 9, fontSize: '0.82rem', fontWeight: 700, color: '#3730A3', textDecoration: 'none', textAlign: 'center' }}
               >
                 Open Full Chat →
               </Link>

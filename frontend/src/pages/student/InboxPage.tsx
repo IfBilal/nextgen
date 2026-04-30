@@ -22,10 +22,10 @@ function formatRelative(isoTimestamp: string): string {
 }
 
 function NotifIcon({ type }: { type: LmsNotification['type'] }) {
-  if (type === 'session_starting' || type === 'session_live') return <Video size={14} style={{ color: '#1a6fad' }} />
-  if (type === 'notice_posted') return <Megaphone size={14} style={{ color: '#1a6fad' }} />
+  if (type === 'session_starting' || type === 'session_live') return <Video size={14} style={{ color: '#3730A3' }} />
+  if (type === 'notice_posted') return <Megaphone size={14} style={{ color: '#3730A3' }} />
   if (type === 'demo_expiring') return <Clock size={14} style={{ color: '#d97706' }} />
-  return <Bell size={14} style={{ color: '#1a6fad' }} />
+  return <Bell size={14} style={{ color: '#3730A3' }} />
 }
 
 type InboxTab = 'announcements' | 'lms'
@@ -62,16 +62,16 @@ export default function InboxPage() {
       </header>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #e8f1f8', marginBottom: 16, background: '#fff', borderRadius: '10px 10px 0 0', border: '1px solid #d8e9f8', borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid #EEF2FF', marginBottom: 16, background: '#fff', borderRadius: '10px 10px 0 0', border: '1px solid #E0E7FF', borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}>
         <button
           onClick={() => setActiveTab('announcements')}
-          style={{ flex: 1, padding: '12px', border: 'none', background: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.87rem', color: activeTab === 'announcements' ? '#1a6fad' : '#6a86a7', borderBottom: `2px solid ${activeTab === 'announcements' ? '#1a6fad' : 'transparent'}` }}
+          style={{ flex: 1, padding: '12px', border: 'none', background: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.87rem', color: activeTab === 'announcements' ? '#3730A3' : '#6B7280', borderBottom: `2px solid ${activeTab === 'announcements' ? '#3730A3' : 'transparent'}` }}
         >
-          Announcements {totalUnread > 0 && <span style={{ background: '#1a6fad', color: '#fff', borderRadius: 99, padding: '1px 6px', fontSize: '0.7rem', marginLeft: 5 }}>{totalUnread}</span>}
+          Announcements {totalUnread > 0 && <span style={{ background: '#3730A3', color: '#fff', borderRadius: 99, padding: '1px 6px', fontSize: '0.7rem', marginLeft: 5 }}>{totalUnread}</span>}
         </button>
         <button
           onClick={() => setActiveTab('lms')}
-          style={{ flex: 1, padding: '12px', border: 'none', background: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.87rem', color: activeTab === 'lms' ? '#1a6fad' : '#6a86a7', borderBottom: `2px solid ${activeTab === 'lms' ? '#1a6fad' : 'transparent'}` }}
+          style={{ flex: 1, padding: '12px', border: 'none', background: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.87rem', color: activeTab === 'lms' ? '#3730A3' : '#6B7280', borderBottom: `2px solid ${activeTab === 'lms' ? '#3730A3' : 'transparent'}` }}
         >
           LMS Alerts {lmsUnread > 0 && <span style={{ background: '#d97706', color: '#fff', borderRadius: 99, padding: '1px 6px', fontSize: '0.7rem', marginLeft: 5 }}>{lmsUnread}</span>}
         </button>
@@ -134,18 +134,18 @@ export default function InboxPage() {
             <p className="student-inbox-empty">No LMS alerts yet.</p>
           ) : (
             lmsNotifications.map(notif => (
-              <article key={notif.id} style={{ background: '#fff', border: `1px solid ${notif.read ? '#e8f1f8' : '#cde0f5'}`, borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                <div style={{ width: 34, height: 34, borderRadius: 10, background: notif.type === 'demo_expiring' ? '#fffbeb' : '#e8f3ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <article key={notif.id} style={{ background: '#fff', border: `1px solid ${notif.read ? '#EEF2FF' : '#C7D2FE'}`, borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                <div style={{ width: 34, height: 34, borderRadius: 10, background: notif.type === 'demo_expiring' ? '#fffbeb' : '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <NotifIcon type={notif.type} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: notif.read ? 500 : 700, color: '#0d2d5e', fontSize: '0.87rem' }}>{notif.message}</div>
+                  <div style={{ fontWeight: notif.read ? 500 : 700, color: '#1E1B4B', fontSize: '0.87rem' }}>{notif.message}</div>
                   <div style={{ fontSize: '0.73rem', color: '#9ca3af', marginTop: 3 }}>{formatRelative(notif.createdAt)}</div>
                 </div>
                 {!notif.read && (
                   <button
                     onClick={() => handleMarkLmsRead(notif.id)}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#1a6fad', padding: 4 }}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3730A3', padding: 4 }}
                     title="Mark as read"
                   >
                     <CheckCircle2 size={15} />

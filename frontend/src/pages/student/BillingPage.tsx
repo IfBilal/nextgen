@@ -40,10 +40,10 @@ export default function BillingPage() {
   return (
     <div className="billing-page">
       <div>
-        <h1 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0d2d5e', margin: '0 0 4px' }}>
+        <h1 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1E1B4B', margin: '0 0 4px' }}>
           Billing & Payments
         </h1>
-        <p style={{ fontSize: '0.85rem', color: '#55789c', margin: 0 }}>
+        <p style={{ fontSize: '0.85rem', color: '#6B7280', margin: 0 }}>
           {isInstallment ? 'Manage your installment plan and payment history.' : 'View your payment history.'}
         </p>
       </div>
@@ -75,7 +75,7 @@ export default function BillingPage() {
           <div className="billing-meta-item">
             <label>Payment Method</label>
             <p style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <CreditCard size={14} style={{ color: '#1a6fad' }} /> •••• {MOCK_PLAN.cardLast4}
+              <CreditCard size={14} style={{ color: '#3730A3' }} /> •••• {MOCK_PLAN.cardLast4}
             </p>
           </div>
         </div>
@@ -107,7 +107,7 @@ export default function BillingPage() {
                       display: 'inline-flex', alignItems: 'center', gap: 4,
                       padding: '3px 8px', borderRadius: 99, fontSize: '0.72rem', fontWeight: 700,
                       background: row.status === 'Paid' ? '#dcfce7' : row.status === 'Failed' ? '#fee2e2' : '#f1f5f9',
-                      color: row.status === 'Paid' ? '#15803d' : row.status === 'Failed' ? '#991b1b' : '#6a86a7',
+                      color: row.status === 'Paid' ? '#15803d' : row.status === 'Failed' ? '#991b1b' : '#6B7280',
                     }}>
                       {row.status}
                     </span>
@@ -115,7 +115,7 @@ export default function BillingPage() {
                   <td>
                     {row.status === 'Paid' && (
                       <button
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#1a6fad', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.78rem' }}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3730A3', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.78rem' }}
                         onClick={() => alert('Receipt download coming soon.')}
                       >
                         <Download size={12} /> Receipt
@@ -158,8 +158,8 @@ export default function BillingPage() {
       {showCancelModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
           <div style={{ background: '#fff', borderRadius: 14, padding: '24px 24px 20px', maxWidth: 420, width: '100%', boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }}>
-            <h3 style={{ margin: '0 0 8px', fontSize: '1rem', fontWeight: 800, color: '#0d2d5e' }}>Cancel Installment Plan?</h3>
-            <p style={{ fontSize: '0.85rem', color: '#55789c', margin: '0 0 12px' }}>
+            <h3 style={{ margin: '0 0 8px', fontSize: '1rem', fontWeight: 800, color: '#1E1B4B' }}>Cancel Installment Plan?</h3>
+            <p style={{ fontSize: '0.85rem', color: '#6B7280', margin: '0 0 12px' }}>
               Here's what happens when you cancel:
             </p>
             <ul style={{ fontSize: '0.83rem', color: '#374151', paddingLeft: 18, margin: '0 0 20px', lineHeight: 1.8 }}>
@@ -169,7 +169,7 @@ export default function BillingPage() {
               <li>This cannot be undone</li>
             </ul>
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-              <button onClick={() => setShowCancelModal(false)} style={{ padding: '9px 16px', border: '1px solid #d8e9f8', background: '#fff', borderRadius: 8, color: '#55789c', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>
+              <button onClick={() => setShowCancelModal(false)} style={{ padding: '9px 16px', border: '1px solid #E0E7FF', background: '#fff', borderRadius: 8, color: '#6B7280', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>
                 Keep Plan
               </button>
               <button onClick={handleCancel} style={{ padding: '9px 16px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
@@ -181,7 +181,7 @@ export default function BillingPage() {
       )}
 
       {toast && (
-        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#0d2d5e', color: '#fff', padding: '10px 18px', borderRadius: 10, fontSize: '0.87rem', fontWeight: 600, zIndex: 2000 }}>
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#1E1B4B', color: '#fff', padding: '10px 18px', borderRadius: 10, fontSize: '0.87rem', fontWeight: 600, zIndex: 2000 }}>
           {toast}
         </div>
       )}

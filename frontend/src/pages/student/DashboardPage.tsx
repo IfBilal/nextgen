@@ -74,7 +74,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="db-progress-body">
-            <DonutRing value={data.overallScore} label="Completed" color="#2563eb" size={140} />
+            <DonutRing value={data.overallScore} label="Completed" color="#4F46E5" size={140} />
 
             <div className="db-progress-stats">
               <div className="db-progress-stat">

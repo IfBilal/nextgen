@@ -95,7 +95,7 @@ export default function AffiliateEarningsPage() {
               </tbody>
               <tfoot>
                 <tr>
-                  <td colSpan={4} style={{ textAlign: 'right', fontWeight: 700, color: '#0d2d5e' }}>Total</td>
+                  <td colSpan={4} style={{ textAlign: 'right', fontWeight: 700, color: '#1E1B4B' }}>Total</td>
                   <td className="affiliate-amount affiliate-amount--highlight">+${totalCommission.toFixed(2)}</td>
                   <td />
                 </tr>

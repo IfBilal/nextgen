@@ -1,7 +1,7 @@
 /* ─── Admin Auth — white card, navy accents ───────────────── */
 .admin-auth-container {
   min-height: 100vh;
-  background: linear-gradient(150deg, #f0f7ff 0%, #e8f3ff 50%, #dbeafe 100%);
+  background: linear-gradient(150deg, #f0f7ff 0%, #EEF2FF 50%, #E0E7FF 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -57,7 +57,7 @@
 .admin-shield-icon {
   width: 52px;
   height: 52px;
-  background: linear-gradient(135deg, #0f1f6a, #2563eb);
+  background: linear-gradient(135deg, #1E1B4B, #4F46E5);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
@@ -107,18 +107,18 @@
 /* Divider line between header and form */
 .admin-auth-divider {
   height: 1px;
-  background: #e8f1f8;
+  background: #EEF2FF;
   margin-bottom: var(--space-6);
 }
 
 .admin-demo-hint {
   margin-top: var(--space-5);
   padding: var(--space-3) var(--space-4);
-  background: #f7faff;
+  background: #F9FAFB;
   border: 1px dashed #bfd9f2;
   border-radius: var(--radius-md);
   font-size: var(--text-xs);
-  color: #4a6a8a;
+  color: #4B5563;
   text-align: center;
 }
 

@@ -167,10 +167,10 @@ export default function EditorSessionsPage() {
       <div className="editor-section" style={{ padding: '18px 20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
               Session Management
             </h1>
-            <p style={{ fontSize: '0.85rem', color: '#55789c', margin: '4px 0 0' }}>
+            <p style={{ fontSize: '0.85rem', color: '#6B7280', margin: '4px 0 0' }}>
               View, edit, and manage all sessions across the platform.
             </p>
           </div>
@@ -181,7 +181,7 @@ export default function EditorSessionsPage() {
       <div className="editor-section">
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div style={{ display: 'grid', gap: 4, minWidth: 160 }}>
-            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6a86a7', textTransform: 'uppercase' }}>Product</label>
+            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase' }}>Product</label>
             <select
               className="editor-form-select"
               style={{ fontSize: '0.83rem', padding: '6px 10px' }}
@@ -195,7 +195,7 @@ export default function EditorSessionsPage() {
             </select>
           </div>
           <div style={{ display: 'grid', gap: 4, minWidth: 160 }}>
-            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6a86a7', textTransform: 'uppercase' }}>Class</label>
+            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase' }}>Class</label>
             <select
               className="editor-form-select"
               style={{ fontSize: '0.83rem', padding: '6px 10px' }}
@@ -209,7 +209,7 @@ export default function EditorSessionsPage() {
             </select>
           </div>
           <div style={{ display: 'grid', gap: 4 }}>
-            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6a86a7', textTransform: 'uppercase' }}>From</label>
+            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase' }}>From</label>
             <input
               type="date"
               className="editor-form-input"
@@ -219,7 +219,7 @@ export default function EditorSessionsPage() {
             />
           </div>
           <div style={{ display: 'grid', gap: 4 }}>
-            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6a86a7', textTransform: 'uppercase' }}>To</label>
+            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase' }}>To</label>
             <input
               type="date"
               className="editor-form-input"
@@ -282,10 +282,10 @@ export default function EditorSessionsPage() {
                   <tr key={session.id}>
                     <td>{formatDate(session.scheduledAt)}</td>
                     <td>{formatTime(session.scheduledAt)}</td>
-                    <td style={{ fontWeight: 600, color: '#0d2d5e' }}>{session.className}</td>
+                    <td style={{ fontWeight: 600, color: '#1E1B4B' }}>{session.className}</td>
                     <td>{session.teacherName}</td>
                     <td>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 700, background: '#e8f3ff', color: '#1a6fad', padding: '2px 8px', borderRadius: 999 }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, background: '#EEF2FF', color: '#3730A3', padding: '2px 8px', borderRadius: 999 }}>
                         {session.productName}
                       </span>
                     </td>

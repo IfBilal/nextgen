@@ -103,19 +103,19 @@
 }
 
 .demo-gate__lock-icon {
-  color: #6a86a7;
+  color: #6B7280;
 }
 
 .demo-gate__reason {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #355a7f;
+  color: #374151;
   margin: 0;
 }
 
 .demo-gate__cta {
   padding: 7px 16px;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -128,7 +128,7 @@
 }
 
 .demo-gate__cta:hover {
-  background: #155d94;
+  background: #3730A3;
 }
 
 /* ─── Demo Expired Page ─────────────────────────────────────── */
@@ -143,7 +143,7 @@
 
 .demo-expired-card {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 18px;
   padding: 48px 40px;
   max-width: 500px;
@@ -153,7 +153,7 @@
 }
 
 .demo-expired-card__icon {
-  color: #6a86a7;
+  color: #6B7280;
   margin: 0 auto 16px;
   display: block;
 }
@@ -161,13 +161,13 @@
 .demo-expired-card h1 {
   font-size: 1.4rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0 0 8px;
 }
 
 .demo-expired-card__sub {
   font-size: 0.87rem;
-  color: #4a5b8a;
+  color: #4B5563;
   margin: 0 0 24px;
 }
 
@@ -179,12 +179,12 @@
 }
 
 .demo-expired-feature {
-  background: #f5f8fc;
-  border: 1px solid #e8f1f8;
+  background: #F9FAFB;
+  border: 1px solid #EEF2FF;
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 0.8rem;
-  color: #355a7f;
+  color: #374151;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -192,8 +192,8 @@
 }
 
 .demo-expired-feature--locked {
-  background: #e8f1f8;
-  color: #2563eb;
+  background: #EEF2FF;
+  color: #4F46E5;
 }
 
 .demo-expired-card__actions {
@@ -205,7 +205,7 @@
 
 .demo-btn-primary {
   padding: 11px 24px;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -219,14 +219,14 @@
 }
 
 .demo-btn-primary:hover {
-  background: #155d94;
+  background: #3730A3;
 }
 
 .demo-btn-ghost {
   padding: 11px 24px;
   background: #fff;
-  color: #4a5b8a;
-  border: 1px solid #cde0f5;
+  color: #4B5563;
+  border: 1px solid #C7D2FE;
   border-radius: 10px;
   font-size: 0.9rem;
   font-weight: 600;
@@ -238,7 +238,7 @@
 }
 
 .demo-btn-ghost:hover {
-  background: #f5f8fc;
+  background: #F9FAFB;
 }
 
 /* ─── FOMO Preview Page ──────────────────────────────────────── */
@@ -250,7 +250,7 @@
 }
 
 .fomo-hero {
-  background: linear-gradient(135deg, #0f1f6a 0%, #2563eb 55%, #7c3aed 100%);
+  background: linear-gradient(135deg, #1E1B4B 0%, #4F46E5 55%, #7c3aed 100%);
   border-radius: 16px;
   padding: 32px 28px;
   color: #fff;
@@ -316,7 +316,7 @@
 
 .fomo-feature-card {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 18px;
   text-align: center;
@@ -330,29 +330,29 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #e8f3ff;
+  background: #EEF2FF;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2563eb;
+  color: #4F46E5;
 }
 
 .fomo-feature-card h3 {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0;
 }
 
 .fomo-feature-card p {
   font-size: 0.75rem;
-  color: #6a86a7;
+  color: #6B7280;
   margin: 0;
 }
 
 .fomo-roadmap-section {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 22px 20px;
 }
@@ -360,7 +360,7 @@
 .fomo-roadmap-section h2 {
   font-size: 1rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0 0 16px;
 }
 
@@ -376,7 +376,7 @@
   gap: 12px;
   padding: 10px 14px;
   border-radius: 10px;
-  border: 1px solid #e8f1f8;
+  border: 1px solid #EEF2FF;
 }
 
 .fomo-session-item--unlocked {
@@ -385,8 +385,8 @@
 }
 
 .fomo-session-item--locked {
-  background: #f5f8fc;
-  border-color: #d8e9f8;
+  background: #F9FAFB;
+  border-color: #E0E7FF;
   opacity: 0.75;
 }
 
@@ -408,15 +408,15 @@
 }
 
 .fomo-session-item--locked .fomo-session-num {
-  background: #e8f1f8;
-  color: #6a86a7;
+  background: #EEF2FF;
+  color: #6B7280;
 }
 
 .fomo-session-topic {
   flex: 1;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #355a7f;
+  color: #374151;
 }
 
 .fomo-session-item--locked .fomo-session-topic {
@@ -424,8 +424,8 @@
 }
 
 .fomo-social-strip {
-  background: #f5f8fc;
-  border: 1px solid #d8e9f8;
+  background: #F9FAFB;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 18px 20px;
   display: flex;
@@ -437,12 +437,12 @@
 .fomo-social-stat {
   font-size: 0.87rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
   white-space: nowrap;
 }
 
 .fomo-social-stat span {
-  color: #2563eb;
+  color: #4F46E5;
 }
 
 .fomo-quotes {
@@ -454,14 +454,14 @@
 
 .fomo-quote {
   font-size: 0.75rem;
-  color: #4a5b8a;
+  color: #4B5563;
   font-style: italic;
   flex: 1;
   min-width: 120px;
 }
 
 .fomo-cta-banner {
-  background: linear-gradient(135deg, #0f1f6a 0%, #2563eb 55%, #7c3aed 100%);
+  background: linear-gradient(135deg, #1E1B4B 0%, #4F46E5 55%, #7c3aed 100%);
   border-radius: 14px;
   padding: 28px 24px;
   display: flex;
@@ -481,7 +481,7 @@
 .fomo-cta-btn {
   padding: 12px 28px;
   background: #fff;
-  color: #0f1f6a;
+  color: #1E1B4B;
   border: none;
   border-radius: 10px;
   font-size: 0.95rem;
@@ -495,5 +495,5 @@
 }
 
 .fomo-cta-btn:hover {
-  background: #e8f1f8;
+  background: #EEF2FF;
 }

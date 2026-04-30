@@ -88,6 +88,7 @@ import AffiliateLoginPage from './pages/affiliate/auth/AffiliateLoginPage'
 import AffiliateDashboardPage from './pages/affiliate/AffiliateDashboardPage'
 import AffiliateReferralsPage from './pages/affiliate/AffiliateReferralsPage'
 import AffiliateEarningsPage from './pages/affiliate/AffiliateEarningsPage'
+import AffiliateStudentInsightsPage from './pages/affiliate/AffiliateStudentInsightsPage'
 
 // Teacher pages
 import TeacherRegisterPage from './pages/teacher/auth/TeacherRegisterPage'
@@ -215,6 +216,7 @@ export default function App() {
                           <Route path="/affiliate/dashboard" element={<AffiliateDashboardPage />} />
                           <Route path="/affiliate/referrals" element={<AffiliateReferralsPage />} />
                           <Route path="/affiliate/earnings" element={<AffiliateEarningsPage />} />
+                          <Route path="/affiliate/student-insights" element={<AffiliateStudentInsightsPage />} />
                         </Route>
                       </Route>
 

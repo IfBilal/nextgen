@@ -28,12 +28,12 @@ export default function AskQuestionModal({ classId, studentId, teacherFirstName,
       <div style={{ background: '#fff', borderRadius: 16, padding: '26px 26px 22px', width: '100%', maxWidth: 440, boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <MessageCircle size={18} style={{ color: '#1a6fad' }} />
-            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#0d2d5e' }}>
+            <MessageCircle size={18} style={{ color: '#3730A3' }} />
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#1E1B4B' }}>
               Ask {teacherFirstName} a Question
             </h3>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6a86a7', padding: 2 }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: 2 }}>
             <X size={18} />
           </button>
         </div>
@@ -42,11 +42,11 @@ export default function AskQuestionModal({ classId, studentId, teacherFirstName,
           <div style={{ textAlign: 'center', padding: '24px 0', color: '#15803d' }}>
             <CheckCircle2 size={40} style={{ margin: '0 auto 10px', display: 'block' }} />
             <p style={{ fontWeight: 700, margin: 0 }}>Question sent ✓</p>
-            <p style={{ fontSize: '0.82rem', color: '#55789c', margin: '4px 0 0' }}>Your teacher will reply soon.</p>
+            <p style={{ fontSize: '0.82rem', color: '#6B7280', margin: '4px 0 0' }}>Your teacher will reply soon.</p>
           </div>
         ) : (
           <>
-            <p style={{ fontSize: '0.8rem', color: '#6a86a7', margin: '0 0 14px', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, padding: '8px 12px' }}>
+            <p style={{ fontSize: '0.8rem', color: '#6B7280', margin: '0 0 14px', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, padding: '8px 12px' }}>
               Your question will be visible to your teacher and platform supervisors.
             </p>
             <div style={{ position: 'relative' }}>
@@ -55,7 +55,7 @@ export default function AskQuestionModal({ classId, studentId, teacherFirstName,
                 onChange={e => setText(e.target.value.slice(0, 500))}
                 placeholder="Type your question here…"
                 maxLength={500}
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid #cde0f5', borderRadius: 10, fontSize: '0.87rem', fontFamily: 'inherit', resize: 'vertical', minHeight: 120, boxSizing: 'border-box', color: '#0d2d5e' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #C7D2FE', borderRadius: 10, fontSize: '0.87rem', fontFamily: 'inherit', resize: 'vertical', minHeight: 120, boxSizing: 'border-box', color: '#1E1B4B' }}
               />
               <span style={{ position: 'absolute', bottom: 8, right: 10, fontSize: '0.7rem', color: '#9ca3af' }}>
                 {text.length}/500
@@ -64,14 +64,14 @@ export default function AskQuestionModal({ classId, studentId, teacherFirstName,
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 14 }}>
               <button
                 onClick={onClose}
-                style={{ padding: '8px 16px', border: '1px solid #d8e9f8', background: '#fff', borderRadius: 8, color: '#55789c', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}
+                style={{ padding: '8px 16px', border: '1px solid #E0E7FF', background: '#fff', borderRadius: 8, color: '#6B7280', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={!text.trim() || submitting}
-                style={{ padding: '8px 18px', background: '#1a6fad', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', opacity: (!text.trim() || submitting) ? 0.6 : 1 }}
+                style={{ padding: '8px 18px', background: '#3730A3', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', opacity: (!text.trim() || submitting) ? 0.6 : 1 }}
               >
                 {submitting ? 'Sending…' : 'Send Question'}
               </button>

@@ -28,7 +28,7 @@ export default function RankingsTable({ entries }: RankingsTableProps) {
         <div key={entry.rank} className="list-row">
           <div className="col-rank">
             #{entry.rank}
-            <span style={{ fontSize: '0.75rem', color: '#4A6A8A' }}>{changeLabel(entry.rankChange)}</span>
+            <span style={{ fontSize: '0.75rem', color: '#4B5563' }}>{changeLabel(entry.rankChange)}</span>
           </div>
           <div className="col-user">
             <div className="avatar" style={{ width: 34, height: 34 }}>{entry.name.charAt(0)}</div>

@@ -1,0 +1,248 @@
+/* ── Controls ────────────────────────────────────────────────── */
+.si-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.si-search {
+  flex: 1;
+  min-width: 200px;
+}
+
+.si-sort-select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #E0E7FF;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  color: #1E1B4B;
+  background: #F9FAFB;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.si-sort-select:focus { border-color: #818CF8; }
+
+/* ── List header ─────────────────────────────────────────────── */
+.si-list-head {
+  display: grid;
+  grid-template-columns: 2.5fr 1.6fr 0.7fr 0.7fr 0.7fr 1.4fr 0.9fr;
+  gap: 0.5rem;
+  padding: 0 0.75rem 0.6rem;
+  border-bottom: 1px solid #F3F4F6;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── List ────────────────────────────────────────────────────── */
+.si-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Row ─────────────────────────────────────────────────────── */
+.si-row {
+  display: grid;
+  grid-template-columns: 2.5fr 1.6fr 0.7fr 0.7fr 0.7fr 1.4fr 0.9fr;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.85rem 0.75rem;
+  border-bottom: 1px solid #F9FAFB;
+  transition: background 0.12s;
+}
+
+.si-row:last-child { border-bottom: none; }
+
+.si-row:hover { background: #FAFBFF; }
+
+.si-row--inactive { opacity: 0.6; }
+
+/* ── Student column ──────────────────────────────────────────── */
+.si-col-student {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.si-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #EEF2FF;
+  color: #4F46E5;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.si-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.si-name {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #1E1B4B;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.si-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.si-email {
+  font-size: 0.74rem;
+  color: #9CA3AF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+/* ── Plan badge ──────────────────────────────────────────────── */
+.si-plan-badge {
+  display: inline-block;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.si-plan-badge--basic    { background: #F3F4F6; color: #374151; }
+.si-plan-badge--standard { background: #EEF2FF; color: #4F46E5; }
+.si-plan-badge--premium  { background: #FEF3C7; color: #92400E; }
+
+/* ── Status ──────────────────────────────────────────────────── */
+.si-status {
+  display: inline-block;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.si-status--active      { background: #E8F8F0; color: #16a34a; }
+.si-status--deactivated { background: #FEF2F2; color: #dc2626; }
+
+/* ── Progress column ─────────────────────────────────────────── */
+.si-col-progress { display: flex; align-items: center; }
+
+.si-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.si-bar-track {
+  flex: 1;
+  height: 6px;
+  background: #F3F4F6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.si-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.si-bar-pct {
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ── Stat columns ────────────────────────────────────────────── */
+.si-col-stat { display: flex; align-items: center; }
+
+.si-stat-val {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1E1B4B;
+}
+
+.si-stat-none {
+  font-size: 0.85rem;
+  color: #D1D5DB;
+}
+
+/* ── Weak areas column ───────────────────────────────────────── */
+.si-col-weak {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.si-weak-tag {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #FEF2F2;
+  color: #dc2626;
+  font-size: 0.68rem;
+  font-weight: 500;
+}
+
+.si-weak-more {
+  font-size: 0.68rem;
+  color: #9CA3AF;
+  font-weight: 500;
+}
+
+/* ── Last active column ──────────────────────────────────────── */
+.si-col-meta { display: flex; align-items: center; }
+
+.si-last-active {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: #9CA3AF;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .si-list-head,
+  .si-row {
+    grid-template-columns: 2fr 1.4fr 0.7fr 0.7fr 1.2fr 0.9fr;
+  }
+  /* hide hours column */
+  .si-list-head .si-col-stat:nth-child(5),
+  .si-row .si-col-stat:nth-child(5) { display: none; }
+}
+
+@media (max-width: 650px) {
+  .si-list-head { display: none; }
+  .si-row {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+  .si-col-progress,
+  .si-col-stat,
+  .si-col-weak,
+  .si-col-meta { display: none; }
+}

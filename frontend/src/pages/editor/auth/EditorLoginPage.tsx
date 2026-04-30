@@ -121,7 +121,7 @@ export default function EditorLoginPage() {
             Editor accounts are created by administrators.
           </p>
           <p className="auth-switch">
-            <Link to="/" style={{ fontSize: '0.82rem', color: '#6a86a7' }}>
+            <Link to="/" style={{ fontSize: '0.82rem', color: '#6B7280' }}>
               ← Back to home
             </Link>
           </p>

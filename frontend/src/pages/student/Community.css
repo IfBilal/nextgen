@@ -30,7 +30,7 @@
 .community-title {
   font-size: 22px;
   font-weight: 700;
-  background: linear-gradient(90deg, var(--color-navy), #2563eb);
+  background: linear-gradient(90deg, var(--color-navy), #4F46E5);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -93,7 +93,7 @@
 .community-msg__body {
   flex: 1;
   background: #fff;
-  border: 1px solid #e8f1f8;
+  border: 1px solid #EEF2FF;
   border-radius: 0 14px 14px 14px;
   padding: 10px 14px;
   box-shadow: 0 2px 8px rgba(15,31,106,0.05);
@@ -105,8 +105,8 @@
 }
 
 .community-msg--own .community-msg__body {
-  background: linear-gradient(135deg, #eff6ff, #dbeafe);
-  border-color: #bfdbfe;
+  background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
+  border-color: #C7D2FE;
   border-radius: 14px 0 14px 14px;
 }
 
@@ -115,7 +115,7 @@
 }
 
 .community-msg--own .community-msg__avatar {
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
 }
 
@@ -138,7 +138,7 @@
 .community-msg__admin-tag {
   font-size: 10px;
   font-weight: 700;
-  background: linear-gradient(90deg, var(--color-navy), #2563eb);
+  background: linear-gradient(90deg, var(--color-navy), #4F46E5);
   color: #fff;
   padding: 2px 7px;
   border-radius: 999px;
@@ -167,7 +167,7 @@
   align-items: center;
   gap: 10px;
   padding: 14px 0 0;
-  border-top: 1px solid #e8f1f8;
+  border-top: 1px solid #EEF2FF;
 }
 
 .community-composer__input {
@@ -191,7 +191,7 @@
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #4F46E5, #4338CA);
   border: none;
   color: #fff;
   display: flex;
@@ -226,7 +226,7 @@
   font-size: 13px;
   color: var(--color-text-muted);
   background: #f8fafc;
-  border: 1px solid #e8f1f8;
+  border: 1px solid #EEF2FF;
   border-radius: 10px;
   padding: 10px 14px;
 }

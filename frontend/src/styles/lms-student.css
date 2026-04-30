@@ -48,7 +48,7 @@
 /* Class Card */
 .lms-class-card {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 16px;
   padding: 16px;
   display: grid;
@@ -76,7 +76,7 @@
 .lms-class-card__name {
   font-size: 1rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0;
   line-height: 1.3;
 }
@@ -84,8 +84,8 @@
 .lms-class-card__product-badge {
   font-size: 0.72rem;
   font-weight: 700;
-  background: #e8f3ff;
-  color: #2563eb;
+  background: #EEF2FF;
+  color: #4F46E5;
   padding: 3px 8px;
   border-radius: 999px;
   display: inline-block;
@@ -95,7 +95,7 @@
 
 .lms-class-card__teacher {
   font-size: 0.83rem;
-  color: #4a5b8a;
+  color: #4B5563;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -119,9 +119,9 @@
 }
 
 .lms-countdown-chip--today {
-  background: #dbeafe;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+  background: #E0E7FF;
+  color: #4338CA;
+  border: 1px solid #C7D2FE;
 }
 
 .lms-countdown-chip--upcoming {
@@ -139,7 +139,7 @@
 /* Attendance chip */
 .lms-class-card__attendance {
   font-size: 0.78rem;
-  color: #6a86a7;
+  color: #6B7280;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -177,9 +177,9 @@
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
-  background: #f7faff;
-  color: #2563eb;
-  border: 1px solid #cde0f5;
+  background: #F9FAFB;
+  color: #4F46E5;
+  border: 1px solid #C7D2FE;
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.83rem;
@@ -201,7 +201,7 @@
 
 .lms-session-header {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 16px;
   display: flex;
@@ -267,27 +267,27 @@
   text-align: center;
   padding: 3rem 2rem;
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 16px;
 }
 
 .lms-countdown-large__time {
   font-size: clamp(2rem, 6vw, 3.5rem);
   font-weight: 900;
-  color: #0f1f6a;
+  color: #1E1B4B;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 
 .lms-countdown-large__label {
   font-size: 0.83rem;
-  color: #6a86a7;
+  color: #6B7280;
   margin-top: 0.5rem;
 }
 
 .lms-countdown-large__date {
   font-size: 0.87rem;
-  color: #355a7f;
+  color: #374151;
   font-weight: 600;
   margin-top: 0.75rem;
 }
@@ -295,7 +295,7 @@
 /* Sidebar */
 .lms-sidebar {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 14px;
   display: grid;
@@ -305,7 +305,7 @@
 .lms-sidebar__title {
   font-size: 0.87rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0;
 }
 
@@ -316,7 +316,7 @@
   align-items: flex-start;
   padding: 8px;
   border-radius: 8px;
-  background: #fafcff;
+  background: #F9FAFB;
   border: 1px solid #eef4fc;
 }
 
@@ -331,8 +331,8 @@
 }
 
 .lms-notice-item__icon--announcement {
-  background: #e8f3ff;
-  color: #2563eb;
+  background: #EEF2FF;
+  color: #4F46E5;
 }
 
 .lms-notice-item__icon--pdf {
@@ -343,19 +343,19 @@
 .lms-notice-item__title {
   font-size: 0.83rem;
   font-weight: 600;
-  color: #0f1f6a;
+  color: #1E1B4B;
   line-height: 1.3;
 }
 
 .lms-notice-item__date {
   font-size: 0.72rem;
-  color: #6a86a7;
+  color: #6B7280;
   margin-top: 2px;
 }
 
 .lms-notice-item__filename {
   font-size: 0.72rem;
-  color: #2563eb;
+  color: #4F46E5;
   margin-top: 2px;
 }
 
@@ -363,7 +363,7 @@
 .lms-empty-state {
   text-align: center;
   padding: 2rem;
-  color: #6a86a7;
+  color: #6B7280;
 }
 
 /* Responsive */

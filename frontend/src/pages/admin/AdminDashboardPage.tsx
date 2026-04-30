@@ -41,11 +41,11 @@ export default function AdminDashboardPage() {
             <div className="admin-chart-canvas">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={DAILY_ACTIVE_USERS}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e6eef7" />
-                  <XAxis dataKey="day" tick={{ fill: '#5f7fa2', fontSize: 12 }} />
-                  <YAxis tick={{ fill: '#5f7fa2', fontSize: 12 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#EEF2FF" />
+                  <XAxis dataKey="day" tick={{ fill: '#6B7280', fontSize: 12 }} />
+                  <YAxis tick={{ fill: '#6B7280', fontSize: 12 }} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="users" stroke="#1a6fad" strokeWidth={3} dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="users" stroke="#3730A3" strokeWidth={3} dot={{ r: 4 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -58,11 +58,11 @@ export default function AdminDashboardPage() {
             <div className="admin-chart-canvas">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={SCORE_DISTRIBUTION}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e6eef7" />
-                  <XAxis dataKey="bucket" tick={{ fill: '#5f7fa2', fontSize: 12 }} />
-                  <YAxis tick={{ fill: '#5f7fa2', fontSize: 12 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#EEF2FF" />
+                  <XAxis dataKey="bucket" tick={{ fill: '#6B7280', fontSize: 12 }} />
+                  <YAxis tick={{ fill: '#6B7280', fontSize: 12 }} />
                   <Tooltip />
-                  <Bar dataKey="count" fill="#1a6fad" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="count" fill="#3730A3" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

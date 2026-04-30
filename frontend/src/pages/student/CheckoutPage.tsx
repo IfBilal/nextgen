@@ -28,7 +28,7 @@ export default function CheckoutPage() {
     })
   }, [productId])
 
-  if (!product) return <div style={{ padding: '2rem', color: '#6a86a7' }}>Loading…</div>
+  if (!product) return <div style={{ padding: '2rem', color: '#6B7280' }}>Loading…</div>
 
   const basePrice = plan === 'upfront' ? product.upfrontPrice : product.installmentAmount
   let discount = 0
@@ -60,7 +60,7 @@ export default function CheckoutPage() {
 
   return (
     <div style={{ padding: '24px 0' }}>
-      <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0d2d5e', margin: '0 0 20px' }}>
+      <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1B4B', margin: '0 0 20px' }}>
         Complete Your Enrollment
       </h1>
       <div className="checkout-page" style={{ margin: 0 }}>
@@ -103,12 +103,12 @@ export default function CheckoutPage() {
           <h2>Payment Details</h2>
 
           {/* Plan toggle */}
-          <div style={{ display: 'flex', background: '#f0f4f8', borderRadius: 10, padding: 4, gap: 4, marginBottom: 16 }}>
+          <div style={{ display: 'flex', background: '#F3F4F6', borderRadius: 10, padding: 4, gap: 4, marginBottom: 16 }}>
             {(['upfront', 'installment'] as const).map(p => (
               <button
                 key={p}
                 onClick={() => { setPlan(p); setCouponDiscount(null); setCouponCode('') }}
-                style={{ flex: 1, padding: '8px', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer', background: plan === p ? '#fff' : 'none', color: plan === p ? '#0d2d5e' : '#55789c', boxShadow: plan === p ? '0 1px 3px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.15s' }}
+                style={{ flex: 1, padding: '8px', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer', background: plan === p ? '#fff' : 'none', color: plan === p ? '#1E1B4B' : '#6B7280', boxShadow: plan === p ? '0 1px 3px rgba(0,0,0,0.08)' : 'none', transition: 'all 0.15s' }}
               >
                 {p === 'upfront' ? `Upfront ($${product.upfrontPrice})` : `Installment ($${product.installmentAmount}/mo)`}
               </button>
@@ -116,14 +116,14 @@ export default function CheckoutPage() {
           </div>
 
           {plan === 'installment' && (
-            <div style={{ fontSize: '0.78rem', color: '#55789c', marginBottom: 14, padding: '8px 12px', background: '#f5f8fc', borderRadius: 8 }}>
+            <div style={{ fontSize: '0.78rem', color: '#6B7280', marginBottom: 14, padding: '8px 12px', background: '#F9FAFB', borderRadius: 8 }}>
               ${product.installmentAmount}/month for {product.installmentMonths} months — total ${product.installmentAmount * product.installmentMonths}
             </div>
           )}
 
           {/* Coupon */}
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.78rem', fontWeight: 600, color: '#355a7f', marginBottom: 6 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.78rem', fontWeight: 600, color: '#374151', marginBottom: 6 }}>
               <Tag size={12} /> Coupon Code
             </label>
             <div className="coupon-input-row">

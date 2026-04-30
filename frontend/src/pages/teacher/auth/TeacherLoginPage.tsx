@@ -112,7 +112,7 @@ export default function TeacherLoginPage() {
             Not a teacher yet? <Link to="/teacher/register">Apply to teach</Link>
           </p>
           <p className="auth-switch">
-            <Link to="/" style={{ fontSize: '0.82rem', color: '#6a86a7' }}>← Back to home</Link>
+            <Link to="/" style={{ fontSize: '0.82rem', color: '#6B7280' }}>← Back to home</Link>
           </p>
         </div>
       </div>

@@ -11,7 +11,7 @@
 
 .admin-sidebar {
   width: 280px;
-  background: #0f1f6a;
+  background: #1E1B4B;
   color: #dcecff;
   display: flex;
   flex-direction: column;
@@ -89,7 +89,7 @@
 
 .admin-sidebar__link--active {
   color: #fff;
-  background: #2563eb;
+  background: #4F46E5;
 }
 
 .admin-sidebar__bottom {
@@ -112,7 +112,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   display: flex;
   align-items: center;
@@ -159,7 +159,7 @@
 
 .admin-topbar {
   height: 68px;
-  border-bottom: 1px solid #d8e9f8;
+  border-bottom: 1px solid #E0E7FF;
   background: #fff;
   display: flex;
   align-items: center;
@@ -174,7 +174,7 @@
 .admin-topbar__menu {
   display: none;
   background: #f1f7ff;
-  color: #0f1f6a;
+  color: #1E1B4B;
   border-radius: 8px;
   width: 34px;
   height: 34px;
@@ -189,7 +189,7 @@
 }
 
 .admin-topbar__title {
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-weight: 700;
   font-size: 0.96rem;
   white-space: nowrap;
@@ -198,7 +198,7 @@
 }
 
 .admin-topbar__subtitle {
-  color: #6a86a7;
+  color: #6B7280;
   font-size: 0.78rem;
 }
 
@@ -207,8 +207,8 @@
   align-items: center;
   gap: 0.35rem;
   font-size: 0.75rem;
-  background: #eaf5ff;
-  color: #2563eb;
+  background: #EEF2FF;
+  color: #4F46E5;
   padding: 0.36rem 0.58rem;
   border-radius: 999px;
   font-weight: 700;
@@ -227,13 +227,13 @@
 
 .admin-shell-page__header h1 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1.45rem;
 }
 
 .admin-shell-page__header p {
   margin: 0.25rem 0 0;
-  color: #5a7a9d;
+  color: #6B7280;
 }
 
 .admin-shell-grid {
@@ -244,7 +244,7 @@
 
 .admin-shell-card {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 1rem;
   min-height: 130px;
@@ -252,13 +252,13 @@
 
 .admin-shell-card h3 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1rem;
 }
 
 .admin-shell-card p {
   margin: 0.5rem 0 0;
-  color: #5a7a9d;
+  color: #6B7280;
   font-size: 0.92rem;
 }
 
@@ -269,7 +269,7 @@
   padding: 0.28rem 0.55rem;
   border-radius: 999px;
   background: #eef6ff;
-  color: #2563eb;
+  color: #4F46E5;
   font-size: 0.74rem;
   font-weight: 700;
   margin-top: 0.75rem;

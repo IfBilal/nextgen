@@ -36,7 +36,7 @@ export default function DonutRing({ value, label, color, size = 160 }: DonutRing
         {/* Track */}
         <circle
           cx={size / 2} cy={size / 2} r={radius}
-          fill="none" stroke="#e8f1f8" strokeWidth={strokeWidth}
+          fill="none" stroke="#EEF2FF" strokeWidth={strokeWidth}
         />
         {/* Arc */}
         <circle

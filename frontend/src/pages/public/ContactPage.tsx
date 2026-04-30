@@ -26,7 +26,7 @@ export default function ContactPage() {
         <div className="public-section__inner">
           <div className="public-contact-grid">
             <div>
-              <h2 style={{ color: '#0d2d5e', fontWeight: 800, marginBottom: '1.5rem', fontSize: '1.3rem' }}>
+              <h2 style={{ color: '#1E1B4B', fontWeight: 800, marginBottom: '1.5rem', fontSize: '1.3rem' }}>
                 Send Us a Message
               </h2>
 
@@ -97,7 +97,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <h2 style={{ color: '#0d2d5e', fontWeight: 800, marginBottom: '1.5rem', fontSize: '1.3rem' }}>
+              <h2 style={{ color: '#1E1B4B', fontWeight: 800, marginBottom: '1.5rem', fontSize: '1.3rem' }}>
                 Contact Information
               </h2>
               <div className="public-contact-info">
@@ -124,9 +124,9 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div style={{ marginTop: '1.5rem', background: '#f6fbff', border: '1px solid #d6e9fa', borderRadius: 12, padding: '1rem 1.25rem' }}>
-                <p style={{ margin: 0, fontSize: '0.87rem', color: '#355a7f', lineHeight: 1.65 }}>
-                  <strong style={{ color: '#0d2d5e' }}>For technical issues</strong> or account problems,
+              <div style={{ marginTop: '1.5rem', background: '#F9FAFB', border: '1px solid #d6e9fa', borderRadius: 12, padding: '1rem 1.25rem' }}>
+                <p style={{ margin: 0, fontSize: '0.87rem', color: '#374151', lineHeight: 1.65 }}>
+                  <strong style={{ color: '#1E1B4B' }}>For technical issues</strong> or account problems,
                   please include your registered email address and a description of the problem.
                   Our support team will prioritize your ticket.
                 </p>

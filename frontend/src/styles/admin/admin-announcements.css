@@ -9,12 +9,12 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .admin-announcements-header p {
   margin: 0.25rem 0 0;
-  color: #5a7a9d;
+  color: #6B7280;
 }
 
 .admin-announcements-kpis {
@@ -25,21 +25,21 @@
 
 .admin-announcements-kpi {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 12px;
   padding: 0.9rem 1rem;
 }
 
 .admin-announcements-kpi h4 {
   margin: 0;
-  color: #5a7a9d;
+  color: #6B7280;
   font-size: 0.82rem;
   font-weight: 600;
 }
 
 .admin-announcements-kpi p {
   margin: 0.35rem 0 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1.1rem;
   font-weight: 700;
 }
@@ -52,13 +52,13 @@
 
 .admin-announcements-form-card,
 .admin-announcements-history-card {
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
 }
 
 .admin-announcements-form-card h3,
 .admin-announcements-history-card h3 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .admin-announcements-form {
@@ -83,8 +83,8 @@
   border-radius: 10px;
   padding: 0.65rem 0.75rem;
   font: inherit;
-  color: #0f1f6a;
-  background: #f8fbff;
+  color: #1E1B4B;
+  background: #F9FAFB;
 }
 
 .admin-announcements-form textarea {
@@ -99,7 +99,7 @@
   gap: 0.45rem;
   border: none;
   border-radius: 999px;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   font-weight: 700;
   padding: 0.62rem 0.95rem;
@@ -107,7 +107,7 @@
 
 .admin-announcements-notice {
   margin: 0.75rem 0 0;
-  color: #2563eb;
+  color: #4F46E5;
   font-size: 0.86rem;
   font-weight: 600;
 }
@@ -122,10 +122,10 @@
 }
 
 .admin-announcement-item {
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 11px;
   padding: 0.8rem;
-  background: #fbfdff;
+  background: #F9FAFB;
 }
 
 .admin-announcement-item header {
@@ -136,12 +136,12 @@
 }
 
 .admin-announcement-item strong {
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .admin-announcement-item header span,
 .admin-announcement-item footer span {
-  color: #6a86a7;
+  color: #6B7280;
   font-size: 0.77rem;
 }
 
@@ -153,7 +153,7 @@
 }
 
 .admin-announcements-empty {
-  color: #6a86a7;
+  color: #6B7280;
   margin: 0;
 }
 

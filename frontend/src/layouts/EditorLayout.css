@@ -9,7 +9,7 @@
 
 .editor-sidebar {
   width: 260px;
-  background: #0f1f6a;
+  background: #1E1B4B;
   color: #dcecff;
   display: flex;
   flex-direction: column;
@@ -74,7 +74,7 @@
 }
 
 .editor-sidebar__link:hover { color: #fff; background: rgba(255,255,255,0.08); text-decoration: none; }
-.editor-sidebar__link--active { color: #fff; background: #2563eb; }
+.editor-sidebar__link--active { color: #fff; background: #4F46E5; }
 
 .editor-sidebar__bottom { margin-top: auto; display: flex; flex-direction: column; gap: 0.8rem; }
 
@@ -127,7 +127,7 @@
 
 .editor-topbar {
   height: 68px;
-  border-bottom: 1px solid #d8e9f8;
+  border-bottom: 1px solid #E0E7FF;
   background: #fff;
   display: flex;
   align-items: center;
@@ -142,7 +142,7 @@
 .editor-topbar__menu {
   display: none;
   background: #f1f7ff;
-  color: #0f1f6a;
+  color: #1E1B4B;
   border-radius: 8px;
   width: 34px; height: 34px;
   align-items: center; justify-content: center;
@@ -150,8 +150,8 @@
 }
 
 .editor-topbar__meta { display: flex; flex-direction: column; min-width: 0; }
-.editor-topbar__title { color: #0f1f6a; font-weight: 700; font-size: 0.96rem; }
-.editor-topbar__subtitle { color: #6a86a7; font-size: 0.78rem; }
+.editor-topbar__title { color: #1E1B4B; font-weight: 700; font-size: 0.96rem; }
+.editor-topbar__subtitle { color: #6B7280; font-size: 0.78rem; }
 
 .editor-topbar__badge {
   display: inline-flex;

@@ -12,7 +12,7 @@
 }
 
 .product-hero {
-  background: linear-gradient(135deg, #0f1f6a 0%, #2563eb 55%, #7c3aed 100%);
+  background: linear-gradient(135deg, #1E1B4B 0%, #4F46E5 55%, #7c3aed 100%);
   border-radius: 18px;
   padding: 36px 32px;
   color: #fff;
@@ -48,7 +48,7 @@
 
 .product-pricing-card {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 16px;
   padding: 24px;
 }
@@ -56,7 +56,7 @@
 .product-pricing-card h2 {
   font-size: 1.05rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0 0 16px;
 }
 
@@ -78,19 +78,19 @@
   font-weight: 600;
   cursor: pointer;
   background: none;
-  color: #4a5b8a;
+  color: #4B5563;
   transition: all 0.15s;
 }
 
 .pricing-toggle__btn--active {
   background: #fff;
-  color: #0f1f6a;
+  color: #1E1B4B;
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
 .pricing-option-card {
-  background: #f5f8fc;
-  border: 1px solid #d8e9f8;
+  background: #F9FAFB;
+  border: 1px solid #E0E7FF;
   border-radius: 12px;
   padding: 16px 18px;
   margin-bottom: 12px;
@@ -99,19 +99,19 @@
 .pricing-option-card__price {
   font-size: 1.6rem;
   font-weight: 900;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0;
 }
 
 .pricing-option-card__price span {
   font-size: 0.85rem;
   font-weight: 500;
-  color: #6a86a7;
+  color: #6B7280;
 }
 
 .pricing-option-card__note {
   font-size: 0.78rem;
-  color: #4a5b8a;
+  color: #4B5563;
   margin: 4px 0 0;
 }
 
@@ -124,27 +124,27 @@
 .coupon-input {
   flex: 1;
   padding: 9px 14px;
-  border: 1px solid #cde0f5;
+  border: 1px solid #C7D2FE;
   border-radius: 8px;
   font-size: 0.87rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .coupon-input:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #4F46E5;
 }
 
 .coupon-apply-btn {
   padding: 9px 16px;
-  background: #e8f3ff;
-  border: 1px solid #cde0f5;
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #2563eb;
+  color: #4F46E5;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -178,7 +178,7 @@
 .product-enroll-btn {
   flex: 1;
   padding: 13px 24px;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   border: none;
   border-radius: 11px;
@@ -194,14 +194,14 @@
 }
 
 .product-enroll-btn:hover {
-  background: #155d94;
+  background: #3730A3;
 }
 
 .product-demo-btn {
   padding: 13px 24px;
   background: #fff;
-  color: #2563eb;
-  border: 1px solid #cde0f5;
+  color: #4F46E5;
+  border: 1px solid #C7D2FE;
   border-radius: 11px;
   font-size: 0.95rem;
   font-weight: 700;
@@ -215,7 +215,7 @@
 }
 
 .product-demo-btn:hover {
-  background: #f7faff;
+  background: #F9FAFB;
 }
 
 /* ─── Checkout Page ──────────────────────────────────────────── */
@@ -237,14 +237,14 @@
 .checkout-page h1 {
   font-size: 1.2rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0 0 20px;
   grid-column: 1 / -1;
 }
 
 .checkout-summary {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 22px;
 }
@@ -252,7 +252,7 @@
 .checkout-summary h2 {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0 0 14px;
 }
 
@@ -260,16 +260,16 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.85rem;
-  color: #355a7f;
+  color: #374151;
   padding: 7px 0;
-  border-bottom: 1px solid #f7faff;
+  border-bottom: 1px solid #F9FAFB;
 }
 
 .checkout-line:last-of-type {
   border-bottom: none;
   font-weight: 700;
   font-size: 0.95rem;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .checkout-line--discount {
@@ -279,7 +279,7 @@
 .checkout-features {
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid #e8f1f8;
+  border-top: 1px solid #EEF2FF;
 }
 
 .checkout-feature {
@@ -287,13 +287,13 @@
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: #355a7f;
+  color: #374151;
   padding: 4px 0;
 }
 
 .checkout-form-card {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 22px;
 }
@@ -301,7 +301,7 @@
 .checkout-form-card h2 {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0 0 16px;
 }
 
@@ -313,23 +313,23 @@
   display: block;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #355a7f;
+  color: #374151;
   margin-bottom: 5px;
 }
 
 .checkout-form-input {
   width: 100%;
   padding: 9px 12px;
-  border: 1px solid #cde0f5;
+  border: 1px solid #C7D2FE;
   border-radius: 8px;
   font-size: 0.87rem;
-  color: #0f1f6a;
+  color: #1E1B4B;
   box-sizing: border-box;
 }
 
 .checkout-form-input:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #4F46E5;
 }
 
 .checkout-form-row {
@@ -341,7 +341,7 @@
 .checkout-submit-btn {
   width: 100%;
   padding: 13px;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -353,7 +353,7 @@
 }
 
 .checkout-submit-btn:hover {
-  background: #155d94;
+  background: #3730A3;
 }
 
 .checkout-submit-btn:disabled {
@@ -366,12 +366,12 @@
   text-align: center;
   margin-top: 10px;
   font-size: 0.82rem;
-  color: #6a86a7;
+  color: #6B7280;
   text-decoration: none;
 }
 
 .checkout-cancel:hover {
-  color: #355a7f;
+  color: #374151;
 }
 
 /* ─── Payment Success ────────────────────────────────────────── */
@@ -386,7 +386,7 @@
 
 .payment-success-card {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 20px;
   padding: 52px 40px;
   max-width: 460px;
@@ -418,13 +418,13 @@
 .payment-success-card h1 {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0 0 6px;
 }
 
 .payment-success-card p {
   font-size: 0.87rem;
-  color: #4a5b8a;
+  color: #4B5563;
   margin: 0 0 4px;
 }
 
@@ -446,7 +446,7 @@
 
 .billing-plan-card {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 22px;
 }
@@ -454,7 +454,7 @@
 .billing-plan-card h2 {
   font-size: 1rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0 0 16px;
 }
 
@@ -472,8 +472,8 @@
 }
 
 .billing-meta-item {
-  background: #f5f8fc;
-  border: 1px solid #e8f1f8;
+  background: #F9FAFB;
+  border: 1px solid #EEF2FF;
   border-radius: 10px;
   padding: 12px 14px;
 }
@@ -482,7 +482,7 @@
   display: block;
   font-size: 0.72rem;
   font-weight: 700;
-  color: #6a86a7;
+  color: #6B7280;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 4px;
@@ -491,7 +491,7 @@
 .billing-meta-item p {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0;
 }
 
@@ -529,18 +529,18 @@
 .billing-history-table th {
   text-align: left;
   padding: 8px 12px;
-  color: #6a86a7;
+  color: #6B7280;
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid #e8f1f8;
+  border-bottom: 1px solid #EEF2FF;
 }
 
 .billing-history-table td {
   padding: 10px 12px;
-  color: #355a7f;
-  border-bottom: 1px solid #f7faff;
+  color: #374151;
+  border-bottom: 1px solid #F9FAFB;
 }
 
 .billing-history-table tr:last-child td {

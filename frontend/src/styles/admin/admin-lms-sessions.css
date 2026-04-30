@@ -14,7 +14,7 @@
 
 .admin-lms-kpi-card {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 14px;
   position: relative;
@@ -28,7 +28,7 @@
 
 .admin-lms-kpi-card__label {
   font-size: 0.78rem;
-  color: #6a86a7;
+  color: #6B7280;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -41,7 +41,7 @@
 .admin-lms-kpi-card__value {
   font-size: 1.6rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin-top: 4px;
   line-height: 1.1;
 }
@@ -52,7 +52,7 @@
 
 .admin-lms-kpi-card__sub {
   font-size: 0.78rem;
-  color: #4a5b8a;
+  color: #4B5563;
   margin-top: 2px;
 }
 
@@ -61,8 +61,8 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #e8f3ff;
-  color: #2563eb;
+  background: #EEF2FF;
+  color: #4F46E5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,7 +123,7 @@
 /* Section */
 .admin-lms-section {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 16px;
   display: grid;
@@ -139,7 +139,7 @@
 .admin-lms-section__title {
   font-size: 0.92rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0;
 }
 
@@ -153,18 +153,18 @@
 .admin-lms-table th {
   text-align: left;
   padding: 8px 12px;
-  color: #6a86a7;
+  color: #6B7280;
   font-size: 0.78rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid #e8f0fb;
+  border-bottom: 1px solid #EEF2FF;
 }
 
 .admin-lms-table td {
   padding: 10px 12px;
-  border-bottom: 1px solid #f0f5fb;
-  color: #355a7f;
+  border-bottom: 1px solid #F3F4F6;
+  color: #374151;
   vertical-align: middle;
 }
 
@@ -173,7 +173,7 @@
 }
 
 .admin-lms-table tr:hover td {
-  background: #fafcff;
+  background: #F9FAFB;
 }
 
 /* Status Badges */
@@ -193,8 +193,8 @@
 }
 
 .admin-lms-badge--scheduled {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: #E0E7FF;
+  color: #4338CA;
 }
 
 .admin-lms-badge--completed {
@@ -221,16 +221,16 @@
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
-  border: 1px solid #e8f0fb;
+  border: 1px solid #EEF2FF;
   background: transparent;
-  color: #6a86a7;
+  color: #6B7280;
   transition: all 0.15s;
 }
 
 .admin-lms-filter-btn--active {
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
-  border-color: #2563eb;
+  border-color: #4F46E5;
 }
 
 /* Modal */
@@ -260,7 +260,7 @@
 .admin-lms-modal__title {
   font-size: 1rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0;
 }
 
@@ -269,7 +269,7 @@
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
-  background: #0f1f6a;
+  background: #1E1B4B;
   color: #fff;
   padding: 10px 16px;
   border-radius: 10px;
@@ -283,7 +283,7 @@
 .admin-lms-empty {
   text-align: center;
   padding: 2.5rem;
-  color: #6a86a7;
+  color: #6B7280;
 }
 
 /* Responsive */

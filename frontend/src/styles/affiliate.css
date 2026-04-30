@@ -14,13 +14,13 @@
 
 .affiliate-page-header h1 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1.45rem;
 }
 
 .affiliate-page-header p {
   margin: 0.2rem 0 0;
-  color: #5a7a9d;
+  color: #6B7280;
   font-size: 0.9rem;
 }
 
@@ -37,7 +37,7 @@
 
 .affiliate-kpi-card {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 1.1rem;
   display: flex;
@@ -53,8 +53,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: #eaf5ff;
-  color: #2563eb;
+  background: #EEF2FF;
+  color: #4F46E5;
 }
 
 .affiliate-kpi-icon--green {
@@ -63,13 +63,13 @@
 }
 
 .affiliate-kpi-icon--blue {
-  background: #eaf5ff;
-  color: #2563eb;
+  background: #EEF2FF;
+  color: #4F46E5;
 }
 
 .affiliate-kpi-icon--navy {
   background: #e8ecf5;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .affiliate-kpi-icon--teal {
@@ -80,7 +80,7 @@
 .affiliate-kpi-label {
   margin: 0;
   font-size: 0.78rem;
-  color: #5a7a9d;
+  color: #6B7280;
   font-weight: 500;
 }
 
@@ -88,7 +88,7 @@
   margin: 0.2rem 0 0;
   font-size: 1.35rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .affiliate-kpi-sub {
@@ -100,21 +100,21 @@
 /* Card */
 .affiliate-card {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 1.25rem;
 }
 
 .affiliate-card h3 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1rem;
   font-weight: 700;
 }
 
 .affiliate-card-sub {
   margin: 0.2rem 0 1rem;
-  color: #5a7a9d;
+  color: #6B7280;
   font-size: 0.84rem;
 }
 
@@ -144,7 +144,7 @@
   text-align: left;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #5a7a9d;
+  color: #6B7280;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   padding: 0.6rem 0.75rem;
@@ -154,7 +154,7 @@
 .affiliate-table td {
   padding: 0.75rem 0.75rem;
   border-bottom: 1px solid #f0f6ff;
-  color: #1e3a5a;
+  color: #1F2937;
   vertical-align: middle;
 }
 
@@ -163,12 +163,12 @@
 }
 
 .affiliate-table tfoot td {
-  border-top: 2px solid #d8e9f8;
+  border-top: 2px solid #E0E7FF;
   padding: 0.75rem;
 }
 
 .affiliate-table tbody tr:hover td {
-  background: #f7faff;
+  background: #F9FAFB;
 }
 
 /* Badges */
@@ -176,8 +176,8 @@
   display: inline-block;
   padding: 0.22rem 0.55rem;
   border-radius: 999px;
-  background: #eaf5ff;
-  color: #2563eb;
+  background: #EEF2FF;
+  color: #4F46E5;
   font-size: 0.74rem;
   font-weight: 600;
   text-transform: capitalize;
@@ -204,7 +204,7 @@
 /* Table text helpers */
 .affiliate-amount {
   font-weight: 600;
-  color: #1e3a5a;
+  color: #1F2937;
 }
 
 .affiliate-amount--highlight {
@@ -212,7 +212,7 @@
 }
 
 .affiliate-date {
-  color: #6a86a7;
+  color: #6B7280;
   font-size: 0.84rem;
 }
 
@@ -225,12 +225,12 @@
 
 .affiliate-student-name {
   font-weight: 600;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .affiliate-student-email {
   font-size: 0.78rem;
-  color: #6a86a7;
+  color: #6B7280;
 }
 
 /* Controls */
@@ -253,23 +253,23 @@
   left: 0.7rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #6a86a7;
+  color: #6B7280;
   pointer-events: none;
 }
 
 .affiliate-search {
   width: 100%;
   padding: 0.55rem 0.75rem 0.55rem 2.1rem;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 8px;
   font-size: 0.875rem;
-  color: #1e3a5a;
-  background: #f8fbff;
+  color: #1F2937;
+  background: #F9FAFB;
   outline: none;
 }
 
 .affiliate-search:focus {
-  border-color: #60a5fa;
+  border-color: #818CF8;
   background: #fff;
 }
 
@@ -281,9 +281,9 @@
 .affiliate-filter-tab {
   padding: 0.45rem 0.85rem;
   border-radius: 8px;
-  border: 1px solid #d8e9f8;
-  background: #f8fbff;
-  color: #5a7a9d;
+  border: 1px solid #E0E7FF;
+  background: #F9FAFB;
+  color: #6B7280;
   font-size: 0.82rem;
   font-weight: 500;
   cursor: pointer;
@@ -291,14 +291,14 @@
 }
 
 .affiliate-filter-tab:hover {
-  border-color: #60a5fa;
-  color: #2563eb;
+  border-color: #818CF8;
+  color: #4F46E5;
 }
 
 .affiliate-filter-tab--active {
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
-  border-color: #2563eb;
+  border-color: #4F46E5;
 }
 
 /* Stat chips (referrals header) */
@@ -332,9 +332,9 @@
   gap: 0.45rem;
   padding: 0.55rem 1rem;
   border-radius: 8px;
-  border: 1.5px solid #60a5fa;
-  background: #eaf5ff;
-  color: #2563eb;
+  border: 1.5px solid #818CF8;
+  background: #EEF2FF;
+  color: #4F46E5;
   font-weight: 700;
   font-size: 0.88rem;
   cursor: pointer;
@@ -343,7 +343,7 @@
 }
 
 .affiliate-copy-btn:hover {
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
 }
 
@@ -365,14 +365,14 @@
 
 .affiliate-overview-stat__label {
   font-size: 0.75rem;
-  color: #5a7a9d;
+  color: #6B7280;
   font-weight: 500;
 }
 
 .affiliate-overview-stat__value {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #0f1f6a;
+  color: #1E1B4B;
 }
 
 .affiliate-overview-stat__value--active { color: #16a34a; }
@@ -380,7 +380,7 @@
 
 /* Empty state */
 .affiliate-empty {
-  color: #6a86a7;
+  color: #6B7280;
   font-size: 0.9rem;
   padding: 1.5rem 0;
   text-align: center;

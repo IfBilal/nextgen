@@ -158,10 +158,10 @@ export default function TeacherDashboardPage() {
       <div className="teacher-section" style={{ padding: '18px 20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
               Welcome back, {teacher.name}
             </h1>
-            <p style={{ fontSize: '0.85rem', color: '#55789c', margin: '4px 0 0' }}>
+            <p style={{ fontSize: '0.85rem', color: '#6B7280', margin: '4px 0 0' }}>
               Here's what's happening with your classes today.
             </p>
           </div>
@@ -225,7 +225,7 @@ export default function TeacherDashboardPage() {
       <div className="teacher-section">
         <div className="teacher-section__header">
           <h2 className="teacher-section__title">Today's Sessions</h2>
-          <span style={{ fontSize: '0.78rem', color: '#6a86a7' }}>
+          <span style={{ fontSize: '0.78rem', color: '#6B7280' }}>
             {new Date().toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' })}
           </span>
         </div>
@@ -251,7 +251,7 @@ export default function TeacherDashboardPage() {
             <tbody>
               {todaysSessions.map(session => (
                 <tr key={session.id}>
-                  <td style={{ fontWeight: 600, color: '#0d2d5e' }}>
+                  <td style={{ fontWeight: 600, color: '#1E1B4B' }}>
                     {getClassName(session.classId)}
                   </td>
                   <td>{formatTime(session.scheduledAt)}</td>
@@ -317,7 +317,7 @@ export default function TeacherDashboardPage() {
                 <tr key={session.id}>
                   <td>{formatDate(session.scheduledAt)}</td>
                   <td>{formatTime(session.scheduledAt)}</td>
-                  <td style={{ fontWeight: 600, color: '#0d2d5e' }}>
+                  <td style={{ fontWeight: 600, color: '#1E1B4B' }}>
                     {getClassName(session.classId)}
                   </td>
                   <td>{session.durationMinutes} min</td>

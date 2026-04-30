@@ -6,7 +6,7 @@
 
 .student-comments-header h1 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -14,7 +14,7 @@
 
 .student-comments-header p {
   margin: 0.35rem 0 0;
-  color: #5a7a9d;
+  color: #6B7280;
 }
 
 .student-comments-layout {
@@ -30,22 +30,22 @@
   border: 1px solid #dcebf9;
   border-radius: 12px;
   padding: 0.9rem;
-  background: #fbfdff;
+  background: #F9FAFB;
 }
 
 .student-comment-form h3 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1rem;
 }
 
 .student-comment-form input,
 .student-comment-form textarea {
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 10px;
   padding: 0.58rem 0.68rem;
   font: inherit;
-  color: #17395f;
+  color: #1E1B4B;
   background: #fff;
 }
 
@@ -56,7 +56,7 @@
 
 .student-comment-notice {
   margin: 0;
-  color: #2563eb;
+  color: #4F46E5;
   font-size: 0.82rem;
   font-weight: 700;
 }
@@ -71,7 +71,7 @@
 }
 
 .student-comment-item {
-  border: 1px solid #e3edf8;
+  border: 1px solid #E0E7FF;
   border-radius: 12px;
   padding: 0.72rem;
   background: #fff;
@@ -85,12 +85,12 @@
 }
 
 .student-comment-item strong {
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 0.92rem;
 }
 
 .student-comment-item span {
-  color: #6f8cab;
+  color: #6B7280;
   font-size: 0.75rem;
 }
 

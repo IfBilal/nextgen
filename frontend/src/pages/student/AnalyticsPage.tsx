@@ -234,7 +234,7 @@ export default function AnalyticsPage() {
         <>
           <div className="stats-overview analytics-overview-grid">
             <article className="card stat-card">
-              <div className="stat-icon"><Target size={22} color="#1A6FAD" /></div>
+              <div className="stat-icon"><Target size={22} color="#3730A3" /></div>
               <div>
                 <p className="stat-label">Average Score</p>
                 <p className="stat-value">{analyticsKpi.avgScore}%</p>
@@ -242,7 +242,7 @@ export default function AnalyticsPage() {
             </article>
 
             <article className="card stat-card">
-              <div className="stat-icon"><Brain size={22} color="#1A6FAD" /></div>
+              <div className="stat-icon"><Brain size={22} color="#3730A3" /></div>
               <div>
                 <p className="stat-label">Questions Answered</p>
                 <p className="stat-value">{analyticsKpi.questionsAnswered}</p>
@@ -250,7 +250,7 @@ export default function AnalyticsPage() {
             </article>
 
             <article className="card stat-card">
-              <div className="stat-icon"><Flame size={22} color="#1A6FAD" /></div>
+              <div className="stat-icon"><Flame size={22} color="#3730A3" /></div>
               <div>
                 <p className="stat-label">Study Streak</p>
                 <p className="stat-value">{analyticsKpi.streakDays}d</p>
@@ -258,7 +258,7 @@ export default function AnalyticsPage() {
             </article>
 
             <article className="card stat-card">
-              <div className="stat-icon"><Clock3 size={22} color="#1A6FAD" /></div>
+              <div className="stat-icon"><Clock3 size={22} color="#3730A3" /></div>
               <div>
                 <p className="stat-label">Total Hours</p>
                 <p className="stat-value">{analyticsKpi.totalHours}</p>

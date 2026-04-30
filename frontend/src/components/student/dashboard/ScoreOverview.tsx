@@ -47,7 +47,7 @@ export default function ScoreOverview({ data }: Props) {
           <DonutRing value={data.overallScore} label="Correct" color="#27AE60" size={156} />
         </div>
         <div className="score-overview__ring-block">
-          <DonutRing value={qbankPct} label="Used" color="#1A6FAD" size={156} />
+          <DonutRing value={qbankPct} label="Used" color="#3730A3" size={156} />
         </div>
       </div>
 

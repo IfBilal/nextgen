@@ -108,7 +108,7 @@ export default function AffiliateLoginPage() {
             </button>
           </form>
 
-          <p className="auth-switch" style={{ marginTop: '1rem', textAlign: 'center', color: '#6a86a7', fontSize: '0.85rem' }}>
+          <p className="auth-switch" style={{ marginTop: '1rem', textAlign: 'center', color: '#6B7280', fontSize: '0.85rem' }}>
             Credentials are provided by your account manager.
           </p>
         </div>

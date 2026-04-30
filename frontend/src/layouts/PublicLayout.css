@@ -9,7 +9,7 @@
 .public-nav {
   height: 68px;
   background: #fff;
-  border-bottom: 1px solid #e8f0fb;
+  border-bottom: 1px solid #EEF2FF;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -40,7 +40,7 @@
 }
 
 .public-nav__brand-text strong {
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 0.95rem;
   font-weight: 800;
   line-height: 1.1;
@@ -48,7 +48,7 @@
 
 .public-nav__brand-text span {
   font-size: 0.68rem;
-  color: #6a86a7;
+  color: #6B7280;
   font-weight: 500;
 }
 
@@ -59,7 +59,7 @@
 }
 
 .public-nav__link {
-  color: #355a7f;
+  color: #374151;
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
@@ -69,14 +69,14 @@
 }
 
 .public-nav__link:hover {
-  color: #0f1f6a;
+  color: #1E1B4B;
   background: #f1f7ff;
   text-decoration: none;
 }
 
 .public-nav__link--active {
-  color: #2563eb;
-  background: #e8f3ff;
+  color: #4F46E5;
+  background: #EEF2FF;
   font-weight: 600;
 }
 
@@ -103,8 +103,8 @@
 
 .public-nav__btn--outline {
   background: transparent;
-  border: 1.5px solid #cde0f5;
-  color: #2563eb;
+  border: 1.5px solid #C7D2FE;
+  color: #4F46E5;
 }
 
 .public-nav__btn--outline:hover {
@@ -113,7 +113,7 @@
 }
 
 .public-nav__btn--primary {
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
 }
 
@@ -126,7 +126,7 @@
   display: none;
   background: #f1f7ff;
   border: none;
-  color: #0f1f6a;
+  color: #1E1B4B;
   border-radius: 8px;
   width: 36px;
   height: 36px;
@@ -142,7 +142,7 @@
 
 /* ─── Footer ──────────────────────────────────────────────── */
 .public-footer {
-  background: #0f1f6a;
+  background: #1E1B4B;
   color: #9fc1e4;
   padding: 2.5rem 2rem 1.5rem;
 }

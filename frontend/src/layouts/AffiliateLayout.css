@@ -11,7 +11,7 @@
 
 .affiliate-sidebar {
   width: 260px;
-  background: #0f1f6a;
+  background: #1E1B4B;
   color: #dcecff;
   display: flex;
   flex-direction: column;
@@ -114,7 +114,7 @@
 
 .affiliate-sidebar__link--active {
   color: #fff;
-  background: #2563eb;
+  background: #4F46E5;
 }
 
 .affiliate-sidebar__bottom {
@@ -137,7 +137,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
   display: flex;
   align-items: center;
@@ -188,7 +188,7 @@
 
 .affiliate-topbar {
   height: 68px;
-  border-bottom: 1px solid #d8e9f8;
+  border-bottom: 1px solid #E0E7FF;
   background: #fff;
   display: flex;
   align-items: center;
@@ -203,7 +203,7 @@
 .affiliate-topbar__menu {
   display: none;
   background: #f1f7ff;
-  color: #0f1f6a;
+  color: #1E1B4B;
   border-radius: 8px;
   width: 34px;
   height: 34px;
@@ -220,13 +220,13 @@
 }
 
 .affiliate-topbar__title {
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-weight: 700;
   font-size: 0.96rem;
 }
 
 .affiliate-topbar__subtitle {
-  color: #6a86a7;
+  color: #6B7280;
   font-size: 0.78rem;
 }
 
@@ -235,8 +235,8 @@
   align-items: center;
   gap: 0.35rem;
   font-size: 0.75rem;
-  background: #eaf5ff;
-  color: #2563eb;
+  background: #EEF2FF;
+  color: #4F46E5;
   padding: 0.36rem 0.65rem;
   border-radius: 999px;
   font-weight: 700;

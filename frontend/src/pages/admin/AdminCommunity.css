@@ -19,7 +19,7 @@
 .adm-community__title {
   font-size: 22px;
   font-weight: 700;
-  color: var(--color-navy, #0f1f6a);
+  color: var(--color-navy, #1E1B4B);
   margin: 0 0 4px;
 }
 
@@ -69,7 +69,7 @@
 }
 
 .adm-community__mode-btn--active {
-  background: #2563eb;
+  background: #4F46E5;
   color: #fff;
 }
 
@@ -99,8 +99,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: #E0E7FF;
+  color: #4338CA;
   font-size: 12px;
   font-weight: 700;
   display: flex;
@@ -110,14 +110,14 @@
 }
 
 .adm-community__avatar--admin {
-  background: #0f1f6a;
+  background: #1E1B4B;
   color: #fff;
 }
 
 .adm-community__msg-body {
   flex: 1;
   background: #fff;
-  border: 1px solid #e8f1f8;
+  border: 1px solid #EEF2FF;
   border-radius: 0 12px 12px 12px;
   padding: 10px 14px;
   box-shadow: 0 1px 3px rgba(15,31,106,0.04);
@@ -133,7 +133,7 @@
 .adm-community__msg-name {
   font-size: 13px;
   font-weight: 600;
-  color: #0f1f6a;
+  color: #1E1B4B;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -142,7 +142,7 @@
 .adm-community__admin-tag {
   font-size: 10px;
   font-weight: 700;
-  background: #0f1f6a;
+  background: #1E1B4B;
   color: #fff;
   padding: 1px 6px;
   border-radius: 999px;
@@ -184,7 +184,7 @@
   align-items: center;
   gap: 10px;
   padding: 14px 0 0;
-  border-top: 1px solid #e8f1f8;
+  border-top: 1px solid #EEF2FF;
 }
 
 .adm-community__input {
@@ -194,19 +194,19 @@
   padding: 10px 14px;
   font-size: 14px;
   font-family: inherit;
-  color: #0f1f6a;
+  color: #1E1B4B;
   outline: none;
   transition: border-color 0.15s;
   background: #fff;
 }
 
-.adm-community__input:focus { border-color: #2563eb; }
+.adm-community__input:focus { border-color: #4F46E5; }
 
 .adm-community__send {
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: #2563eb;
+  background: #4F46E5;
   border: none;
   color: #fff;
   display: flex;

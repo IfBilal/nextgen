@@ -17,13 +17,13 @@
 .admin-coupons-header h1 {
   font-size: 1.2rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0;
 }
 
 .admin-coupons-header p {
   font-size: 0.85rem;
-  color: #4a5b8a;
+  color: #4B5563;
   margin: 4px 0 0;
 }
 
@@ -41,7 +41,7 @@
 
 .admin-coupons-kpi {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 12px;
   padding: 16px 18px;
 }
@@ -49,7 +49,7 @@
 .admin-coupons-kpi h4 {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #6a86a7;
+  color: #6B7280;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0 0 6px;
@@ -58,13 +58,13 @@
 .admin-coupons-kpi p {
   font-size: 1.5rem;
   font-weight: 900;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0;
 }
 
 .admin-coupons-table-card {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 14px;
   padding: 20px;
 }
@@ -72,7 +72,7 @@
 .admin-coupons-table-card h3 {
   font-size: 0.95rem;
   font-weight: 800;
-  color: #0f1f6a;
+  color: #1E1B4B;
   margin: 0 0 14px;
 }
 
@@ -89,19 +89,19 @@
 .admin-coupons-table th {
   text-align: left;
   padding: 8px 12px;
-  color: #6a86a7;
+  color: #6B7280;
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid #e8f1f8;
+  border-bottom: 1px solid #EEF2FF;
   white-space: nowrap;
 }
 
 .admin-coupons-table td {
   padding: 11px 12px;
-  color: #355a7f;
-  border-bottom: 1px solid #f7faff;
+  color: #374151;
+  border-bottom: 1px solid #F9FAFB;
   vertical-align: middle;
 }
 
@@ -110,7 +110,7 @@
 }
 
 .admin-coupons-table tr:hover td {
-  background: #fafcff;
+  background: #F9FAFB;
 }
 
 .coupon-code-badge {
@@ -118,10 +118,10 @@
   font-size: 0.82rem;
   font-weight: 700;
   background: #f0f4f8;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 6px;
   padding: 2px 7px;
-  color: #0f1f6a;
+  color: #1E1B4B;
   letter-spacing: 0.04em;
 }
 
@@ -142,7 +142,7 @@
 
 .coupon-status-chip--inactive {
   background: #f1f5f9;
-  color: #6a86a7;
+  color: #6B7280;
 }
 
 .coupon-status-chip--expired {
@@ -164,9 +164,9 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  border: 1px solid #cde0f5;
-  background: #f7faff;
-  color: #2563eb;
+  border: 1px solid #C7D2FE;
+  background: #F9FAFB;
+  color: #4F46E5;
   white-space: nowrap;
 }
 
@@ -203,12 +203,12 @@
   font-weight: 600;
   cursor: pointer;
   background: none;
-  color: #4a5b8a;
+  color: #4B5563;
   transition: all 0.15s;
 }
 
 .coupon-type-toggle__btn--active {
   background: #fff;
-  color: #0f1f6a;
+  color: #1E1B4B;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }

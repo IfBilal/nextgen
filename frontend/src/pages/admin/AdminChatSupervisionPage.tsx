@@ -58,20 +58,20 @@ export default function AdminChatSupervisionPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 14, padding: '18px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '18px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>Chat Supervision</h1>
-          <p style={{ fontSize: '0.83rem', color: '#55789c', margin: '3px 0 0' }}>Monitor all student-teacher conversations. Admin can delete messages.</p>
+          <h1 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>Chat Supervision</h1>
+          <p style={{ fontSize: '0.83rem', color: '#6B7280', margin: '3px 0 0' }}>Monitor all student-teacher conversations. Admin can delete messages.</p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <select
             value={selectedClassId ?? ''}
             onChange={e => setSelectedClassId(e.target.value)}
-            style={{ padding: '7px 12px', border: '1px solid #cde0f5', borderRadius: 8, fontSize: '0.83rem', color: '#355a7f' }}
+            style={{ padding: '7px 12px', border: '1px solid #C7D2FE', borderRadius: 8, fontSize: '0.83rem', color: '#374151' }}
           >
             {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: 8, fontSize: '0.72rem', fontWeight: 600, color: '#0369a1' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', background: '#EEF2FF', border: '1px solid #bae6fd', borderRadius: 8, fontSize: '0.72rem', fontWeight: 600, color: '#3730A3' }}>
             <Shield size={12} /> Admin Supervision
           </div>
         </div>
@@ -139,7 +139,7 @@ export default function AdminChatSupervisionPage() {
                               padding: '9px 13px',
                               borderRadius: 14,
                               fontSize: '0.87rem',
-                              background: isStudent ? '#f0f4f8' : '#1a6fad',
+                              background: isStudent ? '#F3F4F6' : '#3730A3',
                               color: isStudent ? '#1a2d45' : '#fff',
                               maxWidth: 360,
                               wordBreak: 'break-word',
@@ -169,7 +169,7 @@ export default function AdminChatSupervisionPage() {
                 Read-only supervision view. Use "Delete" to remove inappropriate messages.
               </div>
 
-              <div style={{ padding: '10px 20px', borderTop: '1px solid #e8f1f8', display: 'flex', gap: 8 }}>
+              <div style={{ padding: '10px 20px', borderTop: '1px solid #EEF2FF', display: 'flex', gap: 8 }}>
                 <button
                   onClick={() => showToast('Conversation flagged for review ✓')}
                   style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '7px 14px', border: '1px solid #fca5a5', background: '#fff', color: '#dc2626', borderRadius: 8, fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}
@@ -183,7 +183,7 @@ export default function AdminChatSupervisionPage() {
       </div>
 
       {toast && (
-        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#0d2d5e', color: '#fff', padding: '10px 18px', borderRadius: 10, fontSize: '0.87rem', fontWeight: 600, zIndex: 2000 }}>
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#1E1B4B', color: '#fff', padding: '10px 18px', borderRadius: 10, fontSize: '0.87rem', fontWeight: 600, zIndex: 2000 }}>
           {toast}
         </div>
       )}

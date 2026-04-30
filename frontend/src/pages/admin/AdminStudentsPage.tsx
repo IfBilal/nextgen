@@ -213,10 +213,10 @@ export default function AdminStudentsPage() {
                     <td>{student.resolvedTier}</td>
                     <td>{student.avgScore}%</td>
                     <td>{student.lastActive}</td>
-                    <td style={{ fontSize: '0.8rem', color: '#55789c' }}>{getOverrideStatus(student.id)}</td>
+                    <td style={{ fontSize: '0.8rem', color: '#6B7280' }}>{getOverrideStatus(student.id)}</td>
                     <td>
                       <button
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', fontSize: '0.78rem', fontWeight: 600, background: '#f0f7ff', color: '#1a6fad', border: '1px solid #cde0f5', borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap' }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', fontSize: '0.78rem', fontWeight: 600, background: '#EEF2FF', color: '#3730A3', border: '1px solid #C7D2FE', borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap' }}
                         onClick={e => {
                           e.stopPropagation()
                           setOverrideType('extend')
@@ -279,18 +279,18 @@ export default function AdminStudentsPage() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#fff', borderRadius: 14, padding: '28px 28px 24px', width: '100%', maxWidth: 420, boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <ShieldCheck size={18} style={{ color: '#1a6fad' }} />
-              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#0d2d5e' }}>Override Demo Access</h3>
+              <ShieldCheck size={18} style={{ color: '#3730A3' }} />
+              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#1E1B4B' }}>Override Demo Access</h3>
             </div>
-            <p style={{ margin: '0 0 18px', fontSize: '0.83rem', color: '#55789c' }}>
+            <p style={{ margin: '0 0 18px', fontSize: '0.83rem', color: '#6B7280' }}>
               {overrideModal.studentName} &mdash; {overrideModal.studentEmail}
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
               {(['extend', 'full_access', 'reset'] as const).map(opt => (
-                <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', border: `1px solid ${overrideType === opt ? '#1a6fad' : '#d8e9f8'}`, borderRadius: 8, cursor: 'pointer', background: overrideType === opt ? '#f0f7ff' : '#fff' }}>
-                  <input type="radio" name="overrideType" checked={overrideType === opt} onChange={() => setOverrideType(opt)} style={{ accentColor: '#1a6fad' }} />
-                  <span style={{ fontSize: '0.87rem', fontWeight: 600, color: '#0d2d5e' }}>
+                <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', border: `1px solid ${overrideType === opt ? '#3730A3' : '#E0E7FF'}`, borderRadius: 8, cursor: 'pointer', background: overrideType === opt ? '#EEF2FF' : '#fff' }}>
+                  <input type="radio" name="overrideType" checked={overrideType === opt} onChange={() => setOverrideType(opt)} style={{ accentColor: '#3730A3' }} />
+                  <span style={{ fontSize: '0.87rem', fontWeight: 600, color: '#1E1B4B' }}>
                     {opt === 'extend' ? 'Extend by days' : opt === 'full_access' ? 'Grant Full Access' : 'Reset to Expired'}
                   </span>
                 </label>
@@ -299,14 +299,14 @@ export default function AdminStudentsPage() {
 
             {overrideType === 'extend' && (
               <div style={{ marginBottom: 20 }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#355a7f', display: 'block', marginBottom: 6 }}>Number of days (1–30)</label>
+                <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Number of days (1–30)</label>
                 <input
                   type="number"
                   min={1}
                   max={30}
                   value={extendDays}
                   onChange={e => setExtendDays(Math.min(30, Math.max(1, Number(e.target.value))))}
-                  style={{ padding: '8px 12px', border: '1px solid #cde0f5', borderRadius: 8, fontSize: '0.9rem', width: 100 }}
+                  style={{ padding: '8px 12px', border: '1px solid #C7D2FE', borderRadius: 8, fontSize: '0.9rem', width: 100 }}
                 />
               </div>
             )}
@@ -314,14 +314,14 @@ export default function AdminStudentsPage() {
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
               <button
                 onClick={() => setOverrideModal(null)}
-                style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #d8e9f8', background: '#fff', color: '#55789c', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}
+                style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #E0E7FF', background: '#fff', color: '#6B7280', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}
               >
                 Cancel
               </button>
               <button
                 onClick={handleOverrideSubmit}
                 disabled={overrideSubmitting}
-                style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1a6fad', color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', opacity: overrideSubmitting ? 0.6 : 1 }}
+                style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: '#3730A3', color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', opacity: overrideSubmitting ? 0.6 : 1 }}
               >
                 {overrideSubmitting ? 'Saving…' : 'Apply'}
               </button>
@@ -332,7 +332,7 @@ export default function AdminStudentsPage() {
 
       {/* Toast */}
       {toast && (
-        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#0d2d5e', color: '#fff', padding: '10px 18px', borderRadius: 10, fontSize: '0.87rem', fontWeight: 600, zIndex: 2000, boxShadow: '0 4px 16px rgba(0,0,0,0.2)' }}>
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#1E1B4B', color: '#fff', padding: '10px 18px', borderRadius: 10, fontSize: '0.87rem', fontWeight: 600, zIndex: 2000, boxShadow: '0 4px 16px rgba(0,0,0,0.2)' }}>
           {toast}
         </div>
       )}

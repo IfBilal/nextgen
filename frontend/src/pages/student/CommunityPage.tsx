@@ -9,7 +9,7 @@ import {
 import './Community.css'
 
 const AVATAR_PALETTE: [string, string][] = [
-  ['#dbeafe', '#1d4ed8'],
+  ['#E0E7FF', '#4338CA'],
   ['#dcfce7', '#15803d'],
   ['#fce7f3', '#be185d'],
   ['#fef3c7', '#b45309'],
@@ -76,7 +76,7 @@ export default function CommunityPage() {
         {messages.map(msg => {
           const isOwn = msg.authorId === user?.id
           const isAdmin = msg.authorRole === 'admin'
-          const avatarStyle = isAdmin ? { background: 'var(--color-navy)', color: '#fff' } : isOwn ? { background: '#2563eb', color: '#fff' } : getAvatarStyle(msg.authorName)
+          const avatarStyle = isAdmin ? { background: 'var(--color-navy)', color: '#fff' } : isOwn ? { background: '#4F46E5', color: '#fff' } : getAvatarStyle(msg.authorName)
           return (
             <div key={msg.id} className={`community-msg ${isOwn ? 'community-msg--own' : ''}`}>
               <div className="community-msg__avatar" style={avatarStyle}>

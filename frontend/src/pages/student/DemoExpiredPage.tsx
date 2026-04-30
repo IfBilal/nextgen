@@ -17,26 +17,26 @@ export default function DemoExpiredPage() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
           <div>
-            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#6a86a7', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
+            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
               You had access to
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {HAD_ACCESS.map(item => (
-                <div key={item} className="demo-expired-feature" style={{ background: '#f5f8fc', color: '#55789c' }}>
-                  <CheckCircle2 size={12} style={{ color: '#6a86a7', flexShrink: 0 }} />
+                <div key={item} className="demo-expired-feature" style={{ background: '#F9FAFB', color: '#6B7280' }}>
+                  <CheckCircle2 size={12} style={{ color: '#6B7280', flexShrink: 0 }} />
                   <span>{item}</span>
                 </div>
               ))}
             </div>
           </div>
           <div>
-            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#1a6fad', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
+            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#3730A3', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
               Enroll to get
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {WILL_GET.map(item => (
                 <div key={item} className="demo-expired-feature demo-expired-feature--locked">
-                  <CheckCircle2 size={12} style={{ color: '#1a6fad', flexShrink: 0 }} />
+                  <CheckCircle2 size={12} style={{ color: '#3730A3', flexShrink: 0 }} />
                   <span>{item}</span>
                 </div>
               ))}

@@ -23,12 +23,12 @@ export default function AboutPage() {
               <h2 className="public-section__title" style={{ textAlign: 'left', marginBottom: '1rem' }}>
                 Making Expert Medical Education Accessible
               </h2>
-              <p style={{ color: '#55789c', lineHeight: 1.75, fontSize: '0.93rem' }}>
+              <p style={{ color: '#6B7280', lineHeight: 1.75, fontSize: '0.93rem' }}>
                 NextGen Medical Mastery was founded by physicians who experienced firsthand the gap between
                 expensive one-on-one tutoring and generic self-study resources. We believe every medical
                 student deserves access to expert live instruction at a fair price.
               </p>
-              <p style={{ color: '#55789c', lineHeight: 1.75, fontSize: '0.93rem', marginTop: '0.75rem' }}>
+              <p style={{ color: '#6B7280', lineHeight: 1.75, fontSize: '0.93rem', marginTop: '0.75rem' }}>
                 Our platform combines the intimacy of small-group live sessions with the convenience of
                 recorded libraries, downloadable materials, and personalized progress tracking.
               </p>
@@ -38,12 +38,12 @@ export default function AboutPage() {
               <h2 className="public-section__title" style={{ textAlign: 'left', marginBottom: '1rem' }}>
                 Redefining Board Exam Preparation
               </h2>
-              <p style={{ color: '#55789c', lineHeight: 1.75, fontSize: '0.93rem' }}>
+              <p style={{ color: '#6B7280', lineHeight: 1.75, fontSize: '0.93rem' }}>
                 We envision a future where every medical student — regardless of their background or
                 budget — can access world-class exam preparation tools. We are continuously expanding
                 our faculty and curriculum to cover more exams and specialties.
               </p>
-              <p style={{ color: '#55789c', lineHeight: 1.75, fontSize: '0.93rem', marginTop: '0.75rem' }}>
+              <p style={{ color: '#6B7280', lineHeight: 1.75, fontSize: '0.93rem', marginTop: '0.75rem' }}>
                 Today we focus on USMLE. Tomorrow, every major medical board exam.
               </p>
             </div>
@@ -89,8 +89,8 @@ export default function AboutPage() {
               '2-day free demo with no credit card required',
               'WhatsApp, email, and push notifications for live sessions',
             ].map(item => (
-              <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.6rem 0', borderBottom: '1px solid #eef4fc', color: '#355a7f', fontSize: '0.9rem' }}>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#1a6fad', flexShrink: 0 }} />
+              <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.6rem 0', borderBottom: '1px solid #eef4fc', color: '#374151', fontSize: '0.9rem' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#3730A3', flexShrink: 0 }} />
                 {item}
               </div>
             ))}

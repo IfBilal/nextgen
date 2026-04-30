@@ -166,15 +166,15 @@ export default function AdminProductsPage() {
       <div className="admin-products-section" style={{ padding: '18px 20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
               Products
             </h1>
-            <p style={{ fontSize: '0.85rem', color: '#55789c', margin: '4px 0 0' }}>
+            <p style={{ fontSize: '0.85rem', color: '#6B7280', margin: '4px 0 0' }}>
               Manage LMS product packages, pricing, and class assignments.
             </p>
           </div>
           <button
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: '#1a6fad', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: '#3730A3', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer' }}
             onClick={openCreate}
           >
             <Plus size={14} />
@@ -268,7 +268,7 @@ export default function AdminProductsPage() {
 
                   <div className="admin-products-card__footer">
                     <button
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', background: '#f0f7ff', color: '#1a6fad', border: '1px solid #cde0f5', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer' }}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', background: '#EEF2FF', color: '#3730A3', border: '1px solid #C7D2FE', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer' }}
                       onClick={() => openEdit(product)}
                     >
                       <Edit2 size={12} />
@@ -295,7 +295,7 @@ export default function AdminProductsPage() {
                           Confirm Delete
                         </button>
                         <button
-                          style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6a86a7' }}
+                          style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6B7280' }}
                           onClick={() => setDeleteConfirmId(null)}
                         >
                           No
@@ -303,7 +303,7 @@ export default function AdminProductsPage() {
                       </>
                     ) : (
                       <button
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6a86a7' }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6B7280' }}
                         onClick={() => setDeleteConfirmId(product.id)}
                       >
                         <Trash2 size={12} />
@@ -326,7 +326,7 @@ export default function AdminProductsPage() {
                 {editingId ? 'Edit Product' : 'Add New Product'}
               </h2>
               <button
-                style={{ background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, padding: '4px 8px', cursor: 'pointer', color: '#6a86a7' }}
+                style={{ background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, padding: '4px 8px', cursor: 'pointer', color: '#6B7280' }}
                 onClick={() => setShowModal(false)}
               >
                 <X size={16} />
@@ -335,9 +335,9 @@ export default function AdminProductsPage() {
 
             <div style={{ display: 'grid', gap: 14 }}>
               <div style={{ display: 'grid', gap: 6 }}>
-                <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#264f76' }}>Product Name *</label>
+                <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Product Name *</label>
                 <input
-                  style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit' }}
+                  style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit' }}
                   placeholder="e.g. USMLE Step 1 Complete"
                   value={form.name}
                   onChange={e => updateForm('name', e.target.value)}
@@ -345,9 +345,9 @@ export default function AdminProductsPage() {
               </div>
 
               <div style={{ display: 'grid', gap: 6 }}>
-                <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#264f76' }}>Description</label>
+                <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Description</label>
                 <textarea
-                  style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit', resize: 'vertical', minHeight: 72 }}
+                  style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit', resize: 'vertical', minHeight: 72 }}
                   placeholder="Describe what this product includes…"
                   value={form.description}
                   onChange={e => updateForm('description', e.target.value)}
@@ -356,22 +356,22 @@ export default function AdminProductsPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div style={{ display: 'grid', gap: 6 }}>
-                  <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#264f76' }}>Upfront Price ($)</label>
+                  <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Upfront Price ($)</label>
                   <input
                     type="number"
                     min={0}
-                    style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit' }}
+                    style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit' }}
                     placeholder="e.g. 2500"
                     value={form.upfrontPrice}
                     onChange={e => updateForm('upfrontPrice', e.target.value)}
                   />
                 </div>
                 <div style={{ display: 'grid', gap: 6 }}>
-                  <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#264f76' }}>Monthly Installment ($)</label>
+                  <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Monthly Installment ($)</label>
                   <input
                     type="number"
                     min={0}
-                    style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit' }}
+                    style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit' }}
                     placeholder="e.g. 250"
                     value={form.installmentAmount}
                     onChange={e => updateForm('installmentAmount', e.target.value)}
@@ -380,18 +380,18 @@ export default function AdminProductsPage() {
               </div>
 
               <div style={{ display: 'grid', gap: 6 }}>
-                <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#264f76' }}>Installment Months</label>
+                <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Installment Months</label>
                 <input
                   type="number"
                   min={1}
                   max={60}
-                  style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit', maxWidth: 120 }}
+                  style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit', maxWidth: 120 }}
                   value={form.installmentMonths}
                   onChange={e => updateForm('installmentMonths', e.target.value)}
                 />
               </div>
 
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: '0.87rem', fontWeight: 600, color: '#264f76' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: '0.87rem', fontWeight: 600, color: '#3730A3' }}>
                 <input
                   type="checkbox"
                   checked={form.isActive}
@@ -409,13 +409,13 @@ export default function AdminProductsPage() {
 
               <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                 <button
-                  style={{ padding: '7px 14px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer', color: '#6a86a7' }}
+                  style={{ padding: '7px 14px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer', color: '#6B7280' }}
                   onClick={() => setShowModal(false)}
                 >
                   Cancel
                 </button>
                 <button
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', background: '#1a6fad', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer' }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', background: '#3730A3', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer' }}
                   onClick={handleSubmit}
                   disabled={formSubmitting}
                 >

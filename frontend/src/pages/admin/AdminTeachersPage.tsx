@@ -125,10 +125,10 @@ export default function AdminTeachersPage() {
       <div className="admin-teachers-section" style={{ padding: '18px 20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
               Teacher Management
             </h1>
-            <p style={{ fontSize: '0.85rem', color: '#55789c', margin: '4px 0 0' }}>
+            <p style={{ fontSize: '0.85rem', color: '#6B7280', margin: '4px 0 0' }}>
               Approve, manage, and create accounts for teachers and editors.
             </p>
           </div>
@@ -138,7 +138,7 @@ export default function AdminTeachersPage() {
               alignItems: 'center',
               gap: 6,
               padding: '8px 14px',
-              background: '#1a6fad',
+              background: '#3730A3',
               color: '#fff',
               border: 'none',
               borderRadius: 8,
@@ -233,8 +233,8 @@ export default function AdminTeachersPage() {
                 {filtered.map(teacher => (
                   <tr key={teacher.id}>
                     <td>
-                      <div style={{ fontWeight: 700, color: '#0d2d5e' }}>{teacher.name}</div>
-                      <div style={{ fontSize: '0.75rem', color: '#6a86a7', marginTop: 1 }}>
+                      <div style={{ fontWeight: 700, color: '#1E1B4B' }}>{teacher.name}</div>
+                      <div style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: 1 }}>
                         {teacher.bio.slice(0, 60)}{teacher.bio.length > 60 ? '…' : ''}
                       </div>
                     </td>
@@ -275,7 +275,7 @@ export default function AdminTeachersPage() {
                         )}
                         {teacher.status === 'suspended' && (
                           <button
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: '#dbeafe', color: '#1d4ed8', border: '1px solid #bfdbfe', borderRadius: 7, fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: '#E0E7FF', color: '#4338CA', border: '1px solid #bfdbfe', borderRadius: 7, fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer' }}
                             onClick={() => handleReinstate(teacher.id)}
                           >
                             Reinstate
@@ -298,7 +298,7 @@ export default function AdminTeachersPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 className="admin-teachers-modal__title">Create Editor Account</h2>
               <button
-                style={{ background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, padding: '4px 8px', cursor: 'pointer', color: '#6a86a7' }}
+                style={{ background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, padding: '4px 8px', cursor: 'pointer', color: '#6B7280' }}
                 onClick={() => { setShowEditorModal(false); setEditorSuccess(null) }}
               >
                 <X size={16} />
@@ -315,16 +315,16 @@ export default function AdminTeachersPage() {
                     Share these credentials securely with the editor:
                   </p>
                 </div>
-                <div style={{ background: '#f6fbff', border: '1px solid #d8e9f8', borderRadius: 10, padding: 12, fontFamily: 'monospace', fontSize: '0.85rem', color: '#0d2d5e', display: 'grid', gap: 4 }}>
+                <div style={{ background: '#F9FAFB', border: '1px solid #E0E7FF', borderRadius: 10, padding: 12, fontFamily: 'monospace', fontSize: '0.85rem', color: '#1E1B4B', display: 'grid', gap: 4 }}>
                   <div><strong>Name:</strong> {editorSuccess.name}</div>
                   <div><strong>Email:</strong> {editorSuccess.email}</div>
                   <div><strong>Password:</strong> {editorSuccess.password}</div>
                 </div>
-                <p style={{ fontSize: '0.78rem', color: '#6a86a7', margin: 0 }}>
+                <p style={{ fontSize: '0.78rem', color: '#6B7280', margin: 0 }}>
                   Make sure to share these credentials through a secure channel. The password cannot be retrieved after this dialog is closed.
                 </p>
                 <button
-                  style={{ padding: '8px 14px', background: '#1a6fad', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}
+                  style={{ padding: '8px 14px', background: '#3730A3', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}
                   onClick={() => { setShowEditorModal(false); setEditorSuccess(null) }}
                 >
                   Done
@@ -332,22 +332,22 @@ export default function AdminTeachersPage() {
               </div>
             ) : (
               <div style={{ display: 'grid', gap: 14 }}>
-                <p style={{ fontSize: '0.83rem', color: '#55789c', margin: 0 }}>
+                <p style={{ fontSize: '0.83rem', color: '#6B7280', margin: 0 }}>
                   Create an editor account. The editor can sign in at /editor/login.
                 </p>
                 <div style={{ display: 'grid', gap: 6 }}>
-                  <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#264f76' }}>Full Name *</label>
+                  <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Full Name *</label>
                   <input
-                    style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit' }}
+                    style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit' }}
                     placeholder="e.g. Ali Hassan"
                     value={editorName}
                     onChange={e => setEditorName(e.target.value)}
                   />
                 </div>
                 <div style={{ display: 'grid', gap: 6 }}>
-                  <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#264f76' }}>Email *</label>
+                  <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Email *</label>
                   <input
-                    style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit' }}
+                    style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit' }}
                     type="email"
                     placeholder="editor@example.com"
                     value={editorEmail}
@@ -355,15 +355,15 @@ export default function AdminTeachersPage() {
                   />
                 </div>
                 <div style={{ display: 'grid', gap: 6 }}>
-                  <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#264f76' }}>Password *</label>
+                  <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Password *</label>
                   <input
-                    style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit' }}
+                    style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit' }}
                     type="text"
                     placeholder="Minimum 6 characters"
                     value={editorPassword}
                     onChange={e => setEditorPassword(e.target.value)}
                   />
-                  <span style={{ fontSize: '0.75rem', color: '#6a86a7' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#6B7280' }}>
                     You'll be shown these credentials once after creation.
                   </span>
                 </div>
@@ -376,13 +376,13 @@ export default function AdminTeachersPage() {
 
                 <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                   <button
-                    style={{ padding: '7px 14px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer', color: '#6a86a7' }}
+                    style={{ padding: '7px 14px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer', color: '#6B7280' }}
                     onClick={() => setShowEditorModal(false)}
                   >
                     Cancel
                   </button>
                   <button
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', background: '#1a6fad', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', background: '#3730A3', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer' }}
                     onClick={handleCreateEditor}
                     disabled={editorSubmitting}
                   >

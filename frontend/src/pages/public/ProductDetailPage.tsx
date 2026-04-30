@@ -38,7 +38,7 @@ export default function ProductDetailPage() {
     })
   }, [productId])
 
-  if (!product) return <div style={{ padding: '2rem 20px', color: '#6a86a7' }}>Loading…</div>
+  if (!product) return <div style={{ padding: '2rem 20px', color: '#6B7280' }}>Loading…</div>
 
   const basePrice = plan === 'upfront' ? product.upfrontPrice : product.installmentAmount
   let discount = 0
@@ -123,13 +123,13 @@ export default function ProductDetailPage() {
       </div>
 
       {/* What's included */}
-      <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 14, padding: '20px 22px' }}>
-        <h2 style={{ fontSize: '1rem', fontWeight: 800, color: '#0d2d5e', margin: '0 0 14px' }}>What's Included</h2>
+      <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '20px 22px' }}>
+        <h2 style={{ fontSize: '1rem', fontWeight: 800, color: '#1E1B4B', margin: '0 0 14px' }}>What's Included</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {INCLUDED.map(item => (
-            <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.87rem', color: '#355a7f' }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: '#e8f3ff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <item.icon size={15} style={{ color: '#1a6fad' }} />
+            <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.87rem', color: '#374151' }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <item.icon size={15} style={{ color: '#3730A3' }} />
               </div>
               {item.label}
             </div>
@@ -138,18 +138,18 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Schedule preview */}
-      <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 14, padding: '20px 22px' }}>
-        <h2 style={{ fontSize: '1rem', fontWeight: 800, color: '#0d2d5e', margin: '0 0 14px' }}>Upcoming Sessions</h2>
+      <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '20px 22px' }}>
+        <h2 style={{ fontSize: '1rem', fontWeight: 800, color: '#1E1B4B', margin: '0 0 14px' }}>Upcoming Sessions</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {MOCK_SCHEDULE.map((s, idx) => (
-            <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '10px 14px', background: '#f5f8fc', border: '1px solid #e8f1f8', borderRadius: 10 }}>
+            <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '10px 14px', background: '#F9FAFB', border: '1px solid #EEF2FF', borderRadius: 10 }}>
               <div style={{ width: 44, textAlign: 'center' }}>
-                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#1a6fad', textTransform: 'uppercase' }}>{s.day.slice(0, 3)}</div>
-                <div style={{ fontSize: '0.78rem', color: '#55789c' }}>{s.time.split(' ')[0]}</div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#3730A3', textTransform: 'uppercase' }}>{s.day.slice(0, 3)}</div>
+                <div style={{ fontSize: '0.78rem', color: '#6B7280' }}>{s.time.split(' ')[0]}</div>
               </div>
               <div>
-                <div style={{ fontWeight: 600, color: '#0d2d5e', fontSize: '0.87rem' }}>{s.topic}</div>
-                <div style={{ fontSize: '0.75rem', color: '#6a86a7' }}>{s.time}</div>
+                <div style={{ fontWeight: 600, color: '#1E1B4B', fontSize: '0.87rem' }}>{s.topic}</div>
+                <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>{s.time}</div>
               </div>
             </div>
           ))}

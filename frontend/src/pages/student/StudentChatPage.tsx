@@ -57,10 +57,10 @@ export default function StudentChatPage() {
     <div className="lms-session-page">
       <div className="lms-session-header">
         <div>
-          <Link to={`/student/classes/${classId}/session`} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.82rem', color: '#6a86a7', textDecoration: 'none', marginBottom: 6 }}>
+          <Link to={`/student/classes/${classId}/session`} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.82rem', color: '#6B7280', textDecoration: 'none', marginBottom: 6 }}>
             <ChevronLeft size={14} /> Back to Class
           </Link>
-          <h1 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+          <h1 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
             Chat with {cls ? `Dr. ${cls.name.split(' ').slice(-1)[0]}` : 'Teacher'}
           </h1>
         </div>
@@ -69,7 +69,7 @@ export default function StudentChatPage() {
         </div>
       </div>
 
-      <div style={{ background: '#fff', border: '1px solid #d8e9f8', borderRadius: 14, display: 'flex', flexDirection: 'column', minHeight: 480 }}>
+      <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, display: 'flex', flexDirection: 'column', minHeight: 480 }}>
         {/* Privacy notice */}
         <div className="chat-privacy-bar">
           ⚠ All messages in this chat are visible to platform supervisors.
@@ -95,7 +95,7 @@ export default function StudentChatPage() {
                     <div className="chat-message__meta">
                       {formatTime(msg.sentAt)}
                       {isStudent && (
-                        <span style={{ fontSize: '0.65rem', color: msg.read ? '#1a6fad' : '#9ca3af' }}>
+                        <span style={{ fontSize: '0.65rem', color: msg.read ? '#3730A3' : '#9ca3af' }}>
                           {msg.read ? '✓✓' : '✓'}
                         </span>
                       )}

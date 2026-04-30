@@ -193,7 +193,7 @@ export default function ContentHubPage() {
                 }}
               >
                 <div className="pdf-icon-wrapper">
-                  <BookOpen size={42} color="#1A6FAD" />
+                  <BookOpen size={42} color="#3730A3" />
                 </div>
                 <div className="pdf-info">
                   <span className="subject-tag">{pdf.subject}</span>

@@ -6,13 +6,13 @@
 
 .admin-comments-header h1 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1.5rem;
 }
 
 .admin-comments-header p {
   margin: 0.3rem 0 0;
-  color: #5a7a9d;
+  color: #6B7280;
 }
 
 .admin-comments-kpis {
@@ -23,21 +23,21 @@
 
 .admin-comments-kpi {
   background: #fff;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 12px;
   padding: 0.8rem;
 }
 
 .admin-comments-kpi h4 {
   margin: 0;
-  color: #5f7fa2;
+  color: #6B7280;
   font-size: 0.76rem;
   font-weight: 700;
 }
 
 .admin-comments-kpi p {
   margin: 0.4rem 0 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1.4rem;
   font-weight: 800;
 }
@@ -52,18 +52,18 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 10px;
   padding: 0 0.6rem;
 }
 
 .admin-comments-search input,
 .admin-comments-filters select {
-  border: 1px solid #d8e9f8;
+  border: 1px solid #E0E7FF;
   border-radius: 10px;
   padding: 0.58rem 0.68rem;
   font: inherit;
-  color: #17395f;
+  color: #1E1B4B;
   background: #fff;
 }
 
@@ -95,7 +95,7 @@
 .admin-comments-queue-card h3,
 .admin-comments-detail-card h3 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 1rem;
   display: flex;
   align-items: center;
@@ -104,7 +104,7 @@
 
 .admin-comments-queue-card > p {
   margin: 0.35rem 0 0.75rem;
-  color: #5a7a9d;
+  color: #6B7280;
   font-size: 0.85rem;
 }
 
@@ -118,10 +118,10 @@
 }
 
 .admin-comment-item {
-  border: 1px solid #e3edf8;
+  border: 1px solid #E0E7FF;
   border-radius: 12px;
   padding: 0.62rem;
-  background: #fbfdff;
+  background: #F9FAFB;
   cursor: pointer;
 }
 
@@ -138,14 +138,14 @@
 }
 
 .admin-comment-item header strong {
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 0.88rem;
 }
 
 .admin-comment-item header span {
   display: block;
   margin-top: 0.2rem;
-  color: #6f8cab;
+  color: #6B7280;
   font-size: 0.74rem;
 }
 
@@ -164,7 +164,7 @@
 }
 
 .admin-comment-item footer span {
-  color: #6f8cab;
+  color: #6B7280;
   font-size: 0.74rem;
 }
 
@@ -204,7 +204,7 @@
 
 .admin-comments-detail-header p {
   margin: 0.25rem 0 0;
-  color: #5a7a9d;
+  color: #6B7280;
   font-size: 0.83rem;
 }
 
@@ -215,8 +215,8 @@
 }
 
 .admin-comments-detail-meta span {
-  background: #f7faff;
-  border: 1px solid #e3edf8;
+  background: #F9FAFB;
+  border: 1px solid #E0E7FF;
   border-radius: 9px;
   padding: 0.42rem 0.5rem;
   color: #315476;
@@ -227,7 +227,7 @@
 .admin-comments-actions h4,
 .admin-comments-history h4 {
   margin: 0;
-  color: #0f1f6a;
+  color: #1E1B4B;
   font-size: 0.9rem;
   display: flex;
   align-items: center;
@@ -240,7 +240,7 @@
   line-height: 1.45;
   font-size: 0.84rem;
   border: 1px solid #e4eef9;
-  background: #fbfdff;
+  background: #F9FAFB;
   border-radius: 10px;
   padding: 0.58rem;
 }
@@ -256,7 +256,7 @@
   border: 1px solid #c7ddf2;
   border-radius: 9px;
   background: #eff7ff;
-  color: #2563eb;
+  color: #4F46E5;
   font-weight: 700;
   font-size: 0.78rem;
   padding: 0.45rem 0.62rem;
@@ -267,7 +267,7 @@
 
 .admin-comments-notice {
   margin: 0.5rem 0 0;
-  color: #2563eb;
+  color: #4F46E5;
   font-size: 0.78rem;
   font-weight: 700;
 }
@@ -280,7 +280,7 @@
 }
 
 .admin-comments-history-list article {
-  border: 1px solid #e3edf8;
+  border: 1px solid #E0E7FF;
   border-radius: 10px;
   background: #fafdff;
   padding: 0.52rem 0.58rem;
@@ -295,12 +295,12 @@
 .admin-comments-history-list span {
   display: block;
   margin-top: 0.2rem;
-  color: #6f8cab;
+  color: #6B7280;
   font-size: 0.74rem;
 }
 
 .admin-comments-empty {
-  color: #6f8cab;
+  color: #6B7280;
   font-size: 0.83rem;
 }
 

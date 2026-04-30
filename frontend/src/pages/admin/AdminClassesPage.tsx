@@ -132,7 +132,7 @@ export default function AdminClassesPage() {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 16px', background: '#1a6fad', color: '#fff', border: 'none', borderRadius: 9, fontWeight: 700, fontSize: '0.87rem', cursor: 'pointer' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 16px', background: '#3730A3', color: '#fff', border: 'none', borderRadius: 9, fontWeight: 700, fontSize: '0.87rem', cursor: 'pointer' }}
         >
           <Plus size={14} /> Create Class
         </button>
@@ -161,12 +161,12 @@ export default function AdminClassesPage() {
             <tbody>
               {classes.map(cls => (
                 <tr key={cls.id}>
-                  <td style={{ fontWeight: 700, color: '#0d2d5e' }}>{cls.name}</td>
+                  <td style={{ fontWeight: 700, color: '#1E1B4B' }}>{cls.name}</td>
                   <td style={{ fontSize: '0.8rem' }}>{products.find(p => p.id === cls.productId)?.name ?? '—'}</td>
                   <td style={{ fontSize: '0.82rem' }}>{teachers.find(t => t.id === cls.teacherId)?.name ?? '—'}</td>
                   <td>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.8rem' }}>
-                      <Users size={11} style={{ color: '#6a86a7' }} />
+                      <Users size={11} style={{ color: '#6B7280' }} />
                       {cls.enrolledStudentIds.length}
                     </span>
                   </td>
@@ -195,7 +195,7 @@ export default function AdminClassesPage() {
           <div className="admin-modal">
             <div className="admin-modal__header">
               <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                <BookOpen size={16} style={{ color: '#1a6fad' }} />
+                <BookOpen size={16} style={{ color: '#3730A3' }} />
                 <h3 className="admin-modal__title">Create Class</h3>
               </div>
               <button className="admin-modal__close" onClick={() => setShowCreateModal(false)}><X size={16} /></button>
@@ -279,7 +279,7 @@ export default function AdminClassesPage() {
       )}
 
       {toast && (
-        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#0d2d5e', color: '#fff', padding: '10px 18px', borderRadius: 10, fontSize: '0.87rem', fontWeight: 600, zIndex: 2000 }}>
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#1E1B4B', color: '#fff', padding: '10px 18px', borderRadius: 10, fontSize: '0.87rem', fontWeight: 600, zIndex: 2000 }}>
           {toast}
         </div>
       )}

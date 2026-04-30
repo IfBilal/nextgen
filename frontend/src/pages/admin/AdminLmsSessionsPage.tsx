@@ -173,10 +173,10 @@ export default function AdminLmsSessionsPage() {
       <div className="admin-lms-section" style={{ padding: '18px 20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
               LMS Sessions
             </h1>
-            <p style={{ fontSize: '0.85rem', color: '#55789c', margin: '4px 0 0' }}>
+            <p style={{ fontSize: '0.85rem', color: '#6B7280', margin: '4px 0 0' }}>
               Platform-wide session management and oversight.
             </p>
           </div>
@@ -238,9 +238,9 @@ export default function AdminLmsSessionsPage() {
       <div className="admin-lms-section">
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div style={{ display: 'grid', gap: 4, minWidth: 160 }}>
-            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6a86a7', textTransform: 'uppercase' }}>Product</label>
+            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase' }}>Product</label>
             <select
-              style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '6px 10px', fontSize: '0.83rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit', appearance: 'none', cursor: 'pointer' }}
+              style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '6px 10px', fontSize: '0.83rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit', appearance: 'none', cursor: 'pointer' }}
               value={productFilter}
               onChange={e => { setProductFilter(e.target.value); setClassFilter('') }}
             >
@@ -251,9 +251,9 @@ export default function AdminLmsSessionsPage() {
             </select>
           </div>
           <div style={{ display: 'grid', gap: 4, minWidth: 160 }}>
-            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6a86a7', textTransform: 'uppercase' }}>Class</label>
+            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase' }}>Class</label>
             <select
-              style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '6px 10px', fontSize: '0.83rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit', appearance: 'none', cursor: 'pointer' }}
+              style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '6px 10px', fontSize: '0.83rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit', appearance: 'none', cursor: 'pointer' }}
               value={classFilter}
               onChange={e => setClassFilter(e.target.value)}
             >
@@ -264,26 +264,26 @@ export default function AdminLmsSessionsPage() {
             </select>
           </div>
           <div style={{ display: 'grid', gap: 4 }}>
-            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6a86a7', textTransform: 'uppercase' }}>From</label>
+            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase' }}>From</label>
             <input
               type="date"
-              style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '6px 10px', fontSize: '0.83rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit', width: 140 }}
+              style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '6px 10px', fontSize: '0.83rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit', width: 140 }}
               value={dateFrom}
               onChange={e => setDateFrom(e.target.value)}
             />
           </div>
           <div style={{ display: 'grid', gap: 4 }}>
-            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6a86a7', textTransform: 'uppercase' }}>To</label>
+            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#6B7280', textTransform: 'uppercase' }}>To</label>
             <input
               type="date"
-              style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '6px 10px', fontSize: '0.83rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit', width: 140 }}
+              style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '6px 10px', fontSize: '0.83rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit', width: 140 }}
               value={dateTo}
               onChange={e => setDateTo(e.target.value)}
             />
           </div>
           {(productFilter || classFilter || dateFrom || dateTo) && (
             <button
-              style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6a86a7', alignSelf: 'flex-end' }}
+              style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6B7280', alignSelf: 'flex-end' }}
               onClick={() => { setProductFilter(''); setClassFilter(''); setDateFrom(''); setDateTo('') }}
             >
               Clear
@@ -337,10 +337,10 @@ export default function AdminLmsSessionsPage() {
                   <tr key={session.id}>
                     <td>{formatDate(session.scheduledAt)}</td>
                     <td>{formatTime(session.scheduledAt)}</td>
-                    <td style={{ fontWeight: 600, color: '#0d2d5e' }}>{session.className}</td>
+                    <td style={{ fontWeight: 600, color: '#1E1B4B' }}>{session.className}</td>
                     <td>{session.teacherName}</td>
                     <td>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 700, background: '#e8f3ff', color: '#1a6fad', padding: '2px 8px', borderRadius: 999 }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, background: '#EEF2FF', color: '#3730A3', padding: '2px 8px', borderRadius: 999 }}>
                         {session.productName}
                       </span>
                     </td>
@@ -366,7 +366,7 @@ export default function AdminLmsSessionsPage() {
                         {session.status === 'scheduled' && (
                           <>
                             <button
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: '#f0f7ff', color: '#1a6fad', border: '1px solid #cde0f5', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: '#EEF2FF', color: '#3730A3', border: '1px solid #C7D2FE', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer' }}
                               onClick={() => openEdit(session)}
                             >
                               Edit
@@ -380,7 +380,7 @@ export default function AdminLmsSessionsPage() {
                                   Confirm
                                 </button>
                                 <button
-                                  style={{ padding: '5px 8px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6a86a7' }}
+                                  style={{ padding: '5px 8px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6B7280' }}
                                   onClick={() => setCancelConfirmId(null)}
                                 >
                                   No
@@ -388,7 +388,7 @@ export default function AdminLmsSessionsPage() {
                               </>
                             ) : (
                               <button
-                                style={{ padding: '5px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6a86a7' }}
+                                style={{ padding: '5px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6B7280' }}
                                 onClick={() => setCancelConfirmId(session.id)}
                               >
                                 Cancel
@@ -408,7 +408,7 @@ export default function AdminLmsSessionsPage() {
                         {session.status === 'completed' && (
                           <a
                             href="#"
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6a86a7', textDecoration: 'none' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6B7280', textDecoration: 'none' }}
                           >
                             <Video size={11} />
                             Recording
@@ -431,7 +431,7 @@ export default function AdminLmsSessionsPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 className="admin-lms-modal__title">Edit Session (Admin Override)</h2>
               <button
-                style={{ background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, padding: '4px 8px', cursor: 'pointer', color: '#6a86a7' }}
+                style={{ background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, padding: '4px 8px', cursor: 'pointer', color: '#6B7280' }}
                 onClick={() => setEditSession(null)}
               >
                 <X size={16} />
@@ -450,20 +450,20 @@ export default function AdminLmsSessionsPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div style={{ display: 'grid', gap: 6 }}>
-                <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#264f76' }}>Date *</label>
+                <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Date *</label>
                 <input
                   type="date"
-                  style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit' }}
+                  style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit' }}
                   min={todayStr()}
                   value={editDate}
                   onChange={e => setEditDate(e.target.value)}
                 />
               </div>
               <div style={{ display: 'grid', gap: 6 }}>
-                <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#264f76' }}>Start Time *</label>
+                <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Start Time *</label>
                 <input
                   type="time"
-                  style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit' }}
+                  style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit' }}
                   value={editTime}
                   onChange={e => setEditTime(e.target.value)}
                 />
@@ -471,26 +471,26 @@ export default function AdminLmsSessionsPage() {
             </div>
 
             <div style={{ display: 'grid', gap: 6 }}>
-              <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#264f76' }}>Duration (minutes)</label>
+              <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Duration (minutes)</label>
               <input
                 type="number"
                 min={15}
                 max={300}
-                style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit', maxWidth: 160 }}
+                style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit', maxWidth: 160 }}
                 value={editDuration}
                 onChange={e => setEditDuration(Number(e.target.value))}
               />
             </div>
 
             <div style={{ display: 'grid', gap: 6 }}>
-              <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#264f76' }}>Meeting Link</label>
+              <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Meeting Link</label>
               <input
-                style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit' }}
+                style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit' }}
                 value={editLink}
                 onChange={e => setEditLink(e.target.value)}
               />
               <button
-                style={{ padding: '4px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6a86a7', width: 'fit-content' }}
+                style={{ padding: '4px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6B7280', width: 'fit-content' }}
                 onClick={() => setEditLink(generateMeetingLink(editSession.classId))}
               >
                 Regenerate Link
@@ -498,9 +498,9 @@ export default function AdminLmsSessionsPage() {
             </div>
 
             <div style={{ display: 'grid', gap: 6 }}>
-              <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#264f76' }}>Reason for Change *</label>
+              <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Reason for Change *</label>
               <textarea
-                style={{ border: '1.5px solid #cde0f5', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#0d2d5e', background: '#f8fbff', outline: 'none', fontFamily: 'inherit', resize: 'vertical', minHeight: 80 }}
+                style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit', resize: 'vertical', minHeight: 80 }}
                 placeholder="Explain the reason for this change…"
                 value={editChangeNote}
                 onChange={e => setEditChangeNote(e.target.value)}
@@ -515,13 +515,13 @@ export default function AdminLmsSessionsPage() {
 
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
               <button
-                style={{ padding: '7px 14px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer', color: '#6a86a7' }}
+                style={{ padding: '7px 14px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer', color: '#6B7280' }}
                 onClick={() => setEditSession(null)}
               >
                 Cancel
               </button>
               <button
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', background: '#1a6fad', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer' }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', background: '#3730A3', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: '0.83rem', cursor: 'pointer' }}
                 onClick={handleEditSubmit}
                 disabled={editSubmitting}
               >

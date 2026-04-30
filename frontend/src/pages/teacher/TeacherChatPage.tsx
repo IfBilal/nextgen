@@ -92,10 +92,10 @@ export default function TeacherChatPage() {
   return (
     <div className="teacher-page">
       <div className="teacher-section" style={{ padding: '18px 20px' }}>
-        <h1 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0d2d5e', margin: 0 }}>
+        <h1 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>
           Student Chat — {cls?.name ?? 'Loading…'}
         </h1>
-        <p style={{ fontSize: '0.83rem', color: '#55789c', margin: '3px 0 0' }}>
+        <p style={{ fontSize: '0.83rem', color: '#6B7280', margin: '3px 0 0' }}>
           Respond to student questions. All conversations are supervised.
         </p>
       </div>
@@ -138,7 +138,7 @@ export default function TeacherChatPage() {
                   <div className="chat-main__name">{selectedStudent.name}</div>
                   <div className="chat-main__class">{cls?.name}</div>
                 </div>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: 8, fontSize: '0.72rem', fontWeight: 600, color: '#0369a1' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: '#EEF2FF', border: '1px solid #bae6fd', borderRadius: 8, fontSize: '0.72rem', fontWeight: 600, color: '#3730A3' }}>
                   <Shield size={11} /> Supervised
                 </div>
               </div>
