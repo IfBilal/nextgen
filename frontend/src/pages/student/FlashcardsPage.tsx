@@ -9,12 +9,93 @@ import {
   Sparkles,
   Target,
   XCircle,
+  Brain,
+  ListChecks,
 } from 'lucide-react'
 import { useStudentAuth } from '../../context/StudentAuthContext'
 import { buildDailyFlashcardDeck } from '../../services/flashcardsEngine'
+import { SUBJECT_BRIEFS, type FlashcardItem } from '../../data/flashcards'
 import '../../styles/flashcards.css'
 
 type CardStatus = 'new' | 'known' | 'review'
+
+function computeWeakSubject(
+  cards: FlashcardItem[],
+  statusMap: Record<number, CardStatus>,
+): string | null {
+  const reviewCounts: Record<string, number> = {}
+  Object.entries(statusMap).forEach(([idx, status]) => {
+    if (status !== 'review') return
+    const card = cards[Number(idx)]
+    if (!card) return
+    reviewCounts[card.subjectId] = (reviewCounts[card.subjectId] ?? 0) + 1
+  })
+  if (Object.keys(reviewCounts).length === 0) return null
+  return Object.entries(reviewCounts).sort((a, b) => b[1] - a[1])[0][0]
+}
+
+function SessionBrief({
+  cards,
+  statusMap,
+  knownCount,
+  reviewCount,
+}: {
+  cards: FlashcardItem[]
+  statusMap: Record<number, CardStatus>
+  knownCount: number
+  reviewCount: number
+}) {
+  const weakSubjectId = computeWeakSubject(cards, statusMap)
+  const brief = weakSubjectId ? SUBJECT_BRIEFS[weakSubjectId] : null
+
+  return (
+    <div className="flashcards-session-brief">
+      {/* Score row */}
+      <div className="fsb-score-row">
+        <div className="fsb-score fsb-score--known">
+          <CheckCircle2 size={18} />
+          <span>{knownCount}</span>
+          <small>Known</small>
+        </div>
+        <div className="fsb-score fsb-score--review">
+          <XCircle size={18} />
+          <span>{reviewCount}</span>
+          <small>Need Review</small>
+        </div>
+        <div className="fsb-score fsb-score--total">
+          <Target size={18} />
+          <span>{Math.round((knownCount / (knownCount + reviewCount || 1)) * 100)}%</span>
+          <small>Accuracy</small>
+        </div>
+      </div>
+
+      {brief ? (
+        <>
+          <div className="fsb-heading">
+            <Brain size={16} />
+            <span>{brief.headline}</span>
+          </div>
+          <p className="fsb-body">{brief.body}</p>
+          <div className="fsb-keypoints">
+            <div className="fsb-keypoints-label">
+              <ListChecks size={13} />
+              Key points to remember
+            </div>
+            <ul>
+              {brief.keyPoints.map(pt => (
+                <li key={pt}>{pt}</li>
+              ))}
+            </ul>
+          </div>
+        </>
+      ) : (
+        <p className="fsb-perfect">
+          Excellent session — you marked every card as known. Keep that streak going tomorrow.
+        </p>
+      )}
+    </div>
+  )
+}
 
 export default function FlashcardsPage() {
   const { user } = useStudentAuth()
@@ -141,10 +222,8 @@ export default function FlashcardsPage() {
         </div>
         {isSessionCompleted ? (
           <div className="flashcards-complete-banner" role="status" aria-live="polite">
-            <strong>
-              All cards completed
-            </strong>
-            <p>Session complete. You can shuffle through cards to reinforce recall.</p>
+            <strong>All cards completed</strong>
+            <p>Session complete. Review the summary below, then shuffle to reinforce recall.</p>
           </div>
         ) : null}
       </section>
@@ -254,6 +333,15 @@ export default function FlashcardsPage() {
           </div>
         </article>
       </section>
+
+      {isSessionCompleted && (
+        <SessionBrief
+          cards={deck.cards}
+          statusMap={statusByCardIndex}
+          knownCount={knownCount}
+          reviewCount={reviewCount}
+        />
+      )}
     </div>
   )
 }

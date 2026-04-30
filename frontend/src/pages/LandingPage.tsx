@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight,
   BarChart3,
@@ -8,18 +8,110 @@ import {
   CheckCircle2,
   CirclePlay,
   ClipboardList,
+  Clock,
   GraduationCap,
   LineChart,
   PlayCircle,
   Quote,
   ShieldCheck,
+  Sparkles,
   Stethoscope,
   Target,
   Users,
+  Zap,
 } from 'lucide-react'
 import { DEFAULT_DEMO_VIDEO_URL } from '../data/contentVault'
 import { LANDING_FEATURES, LANDING_STATS, LANDING_TESTIMONIALS } from '../data/landing'
 import '../styles/landing.css'
+
+function ScheduleGenerator() {
+  const navigate = useNavigate()
+  const [form, setForm] = useState({
+    examType: 'step1',
+    examDate: '',
+    hoursPerDay: '6',
+    readiness: 'beginner',
+  })
+
+  const set = (field: string, value: string) =>
+    setForm(prev => ({ ...prev, [field]: value }))
+
+  const handleGenerate = (e: React.FormEvent) => {
+    e.preventDefault()
+    navigate('/student/register')
+  }
+
+  return (
+    <section className="lsg-wrap">
+
+      {/* ── Left: illustration + copy ── */}
+      <div className="lsg-left">
+        {/* Calendar illustration */}
+        <div className="lsg-cal">
+          <div className="lsg-cal__header" />
+          <div className="lsg-cal__body">
+            {Array.from({ length: 15 }).map((_, i) => <div key={i} className="lsg-cal__cell" />)}
+          </div>
+          <div className="lsg-cal__badge"><CheckCircle2 size={14} /></div>
+        </div>
+
+        {/* Text */}
+        <div className="lsg-left-text">
+          <span className="lsg-badge"><Zap size={10} /> Free for a limited time</span>
+          <h2 className="lsg-title">Free Personalized<br />USMLE Schedule Generator</h2>
+          <p className="lsg-sub">Tell us your exam date, study hours, and target score — and our AI creates your perfect roadmap.</p>
+          <div className="lsg-arrow" aria-hidden="true">
+            <svg viewBox="0 0 90 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 10 C22 2, 54 2, 74 22 C78 26, 80 33, 76 40" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" fill="none" strokeDasharray="5 3"/>
+              <path d="M70 41 L76 40 L74 34" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Right: form ── */}
+      <form className="lsg-form" onSubmit={handleGenerate}>
+        <div className="lsg-fields">
+          <div className="lsg-field">
+            <label className="lsg-label">Exam Type</label>
+            <select className="lsg-select" value={form.examType} onChange={e => set('examType', e.target.value)}>
+              <option value="step1">Step 1</option>
+              <option value="step2ck">Step 2 CK</option>
+              <option value="step3">Step 3</option>
+              <option value="mccqe1">MCCQE Part 1</option>
+            </select>
+          </div>
+          <div className="lsg-field">
+            <label className="lsg-label">Exam Date</label>
+            <input type="date" className="lsg-select" value={form.examDate} onChange={e => set('examDate', e.target.value)} />
+          </div>
+          <div className="lsg-field">
+            <label className="lsg-label">Hours per day</label>
+            <select className="lsg-select" value={form.hoursPerDay} onChange={e => set('hoursPerDay', e.target.value)}>
+              <option value="2">2 Hours</option>
+              <option value="4">4 Hours</option>
+              <option value="6">6 Hours</option>
+              <option value="8">8 Hours</option>
+              <option value="10">10 Hours</option>
+            </select>
+          </div>
+          <div className="lsg-field">
+            <label className="lsg-label">Current Readiness</label>
+            <select className="lsg-select" value={form.readiness} onChange={e => set('readiness', e.target.value)}>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" className="lsg-btn">
+          Generate My Schedule
+        </button>
+      </form>
+    </section>
+  )
+}
 
 const FEATURE_ICONS = [Target, BookOpen, BarChart3, ShieldCheck]
 
@@ -152,6 +244,8 @@ export default function LandingPage() {
             </article>
           ))}
         </section>
+
+        <ScheduleGenerator />
 
         <section className="landing-section">
           <div className="landing-section-head">

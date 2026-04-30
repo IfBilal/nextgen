@@ -211,3 +211,68 @@ export const FLASHCARD_BANK: FlashcardItem[] = [
     answer: 'Compression ultrasonography of the symptomatic limb.',
   },
 ]
+
+export interface SubjectBrief {
+  subjectLabel: string
+  headline: string
+  body: string
+  keyPoints: string[]
+}
+
+export const SUBJECT_BRIEFS: Record<string, SubjectBrief> = {
+  cardio: {
+    subjectLabel: 'Cardiology',
+    headline: 'Cardiology — Core Concepts to Reinforce',
+    body: 'Cardiology questions on Step 1 & 2 heavily test arrhythmia recognition and cardiac physiology. The Frank-Starling curve, preload/afterload relationships, and the cardiac cycle timing underpin most calculations you will encounter. For arrhythmias, always anchor your thinking to the ECG finding first — PR interval, QRS morphology, and regularity — before choosing a management step. Unstable patients always go to synchronized cardioversion regardless of rhythm.',
+    keyPoints: [
+      'Coronary perfusion peaks in diastole — critical for LV but not RV.',
+      'AFib + hemodynamic instability → immediate synchronized cardioversion.',
+      'First-degree AV block: prolonged PR only, no treatment needed.',
+      'Frank-Starling: ↑ preload → ↑ stroke volume (up to a limit).',
+    ],
+  },
+  renal: {
+    subjectLabel: 'Renal',
+    headline: 'Renal — Core Concepts to Reinforce',
+    body: 'Renal acid-base and glomerular pathology are two of the highest-yield renal areas on USMLE. For acid-base, always follow the 4-step approach: primary disorder → expected compensation → anion gap → delta-delta. Glomerular diseases split cleanly into nephritic (inflammatory, hematuria, RBC casts) and nephrotic (proteinuria >3.5 g/day, hypoalbuminemia, edema). Knowing the prototypical cause of each pattern gets you most of the points.',
+    keyPoints: [
+      'Anion gap = Na⁺ − (Cl⁻ + HCO₃⁻); normal is 8–12.',
+      'Winter\'s formula: expected PaCO₂ = 1.5 × HCO₃⁻ + 8 ± 2.',
+      'Nephritic: RBC casts, hematuria, hypertension, oliguria.',
+      'Nephrotic: >3.5 g/day proteinuria, hypoalbuminemia, edema, hyperlipidemia.',
+    ],
+  },
+  pharma: {
+    subjectLabel: 'Pharmacology',
+    headline: 'Pharmacology — Core Concepts to Reinforce',
+    body: 'Pharmacology rewards knowing drug class mechanisms and their signature adverse effects. Beta-lactams inhibit PBP and cell wall synthesis — and cross-reactivity between penicillins and cephalosporins is much lower than classically taught (~1-2%). For autonomic drugs, always think in terms of receptor selectivity: β1 = heart, β2 = lung/vasculature. ACE inhibitor cough is a class effect from bradykinin accumulation and switches to an ARB, not dose reduction.',
+    keyPoints: [
+      'Beta-lactams → inhibit PBPs → disrupt peptidoglycan cross-linking.',
+      'Macrolides → QT prolongation + GI upset (motilin agonism).',
+      'ACE inhibitor cough → bradykinin accumulation → switch to ARB.',
+      'Metoprolol is β1-selective but loses selectivity at high doses.',
+    ],
+  },
+  'internal-medicine': {
+    subjectLabel: 'Internal Medicine',
+    headline: 'Internal Medicine — Core Concepts to Reinforce',
+    body: 'Internal medicine cases test systematic clinical reasoning. For chest pain, the priority is always risk stratification: ECG and troponins within 10 minutes for any high-risk presentation. For dyspnea, distinguishing cardiogenic from pulmonary causes relies on history (orthopnea, PND), exam (S3, JVD), and targeted testing. The Wells score for PE is a pre-test probability tool — a high score does not confirm PE; it drives the next step (D-dimer vs. CT-PA).',
+    keyPoints: [
+      'ACS protocol: ECG + serial troponins within 10 minutes of arrival.',
+      'Wells score stratifies PE probability — high score → CT pulmonary angiography.',
+      'Cardiogenic dyspnea clues: orthopnea, S3, bilateral crackles, elevated BNP.',
+      'Orthopnea + PND in dyspnea = think LV failure first.',
+    ],
+  },
+  surgery: {
+    subjectLabel: 'Surgery',
+    headline: 'Surgery — Core Concepts to Reinforce',
+    body: 'Surgical questions test ATLS principles, post-operative complication timelines, and indications for operative intervention. In trauma, airway always comes first — Airway → Breathing → Circulation → Disability → Exposure. For blunt abdominal trauma, hemodynamic instability with peritoneal signs bypasses imaging and goes straight to the OR. Post-operative fever timing is high-yield: Day 1-2 = atelectasis/wind, Day 3-5 = UTI/wound, Day 5+ = DVT/PE.',
+    keyPoints: [
+      'ATLS primary survey: A-B-C-D-E — airway with C-spine protection first.',
+      'Blunt trauma + hemodynamic instability = emergent laparotomy, not CT.',
+      'POD 1-2 fever: atelectasis most common (Wind).',
+      'DVT workup: compression ultrasound of the symptomatic limb.',
+    ],
+  },
+}

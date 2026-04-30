@@ -521,3 +521,106 @@
     animation: none !important;
   }
 }
+
+/* ── Session Brief ────────────────────────────────────────────── */
+.flashcards-session-brief {
+  background: #fff;
+  border: 1px solid #E0E7FF;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  animation: fadeIn 0.4s ease both;
+}
+
+.fsb-score-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.fsb-score {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.85rem;
+  border-radius: 12px;
+  background: #F9FAFB;
+}
+
+.fsb-score span {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.fsb-score small {
+  font-size: 0.72rem;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.fsb-score--known  { color: #16a34a; }
+.fsb-score--review { color: #dc2626; }
+.fsb-score--total  { color: #4F46E5; }
+
+.fsb-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1E1B4B;
+  border-top: 1px solid #F3F4F6;
+  padding-top: 1rem;
+}
+
+.fsb-body {
+  font-size: 0.9rem;
+  color: #374151;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.fsb-keypoints {
+  background: #EEF2FF;
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+}
+
+.fsb-keypoints-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #4F46E5;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.6rem;
+}
+
+.fsb-keypoints ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.fsb-keypoints li {
+  font-size: 0.85rem;
+  color: #1E1B4B;
+  line-height: 1.5;
+}
+
+.fsb-perfect {
+  font-size: 0.9rem;
+  color: #16a34a;
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+  padding: 0.5rem 0;
+}
