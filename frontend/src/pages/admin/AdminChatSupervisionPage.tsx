@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
-import { Eye, Trash2, Shield, Flag } from 'lucide-react'
-import { getAllClassesWithProducts, getAllChatThreads, deleteChatMessage } from '../../services/lmsApi'
+import { useState, useEffect, useRef } from 'react'
+import { Shield, Trash2, Users, Eye } from 'lucide-react'
+import { getAllClassesWithProducts, getGroupChatMessages, deleteChatMessage } from '../../services/lmsApi'
 import type { ClassWithProduct, ChatMessage } from '../../types/lms'
 import '../../styles/chat.css'
 
@@ -8,18 +8,20 @@ function formatTime(d: string) {
   return new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
-const MOCK_STUDENTS = [
-  { id: 'student-mock-001', name: 'Student A' },
-  { id: 'student-mock-002', name: 'Student B' },
-  { id: 'student-mock-003', name: 'Student C' },
-]
+function formatDate(d: string) {
+  return new Date(d).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })
+}
+
+function isSameDay(a: string, b: string) {
+  return new Date(a).toDateString() === new Date(b).toDateString()
+}
 
 export default function AdminChatSupervisionPage() {
   const [classes, setClasses] = useState<ClassWithProduct[]>([])
-  const [selectedClassId, setSelectedClassId] = useState<string | null>(null)
+  const [selectedClassId, setSelectedClassId] = useState<string>('')
   const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null)
   const [toast, setToast] = useState<string | null>(null)
+  const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     getAllClassesWithProducts().then(cls => {
@@ -30,8 +32,12 @@ export default function AdminChatSupervisionPage() {
 
   useEffect(() => {
     if (!selectedClassId) return
-    getAllChatThreads(selectedClassId).then(setMessages)
+    getGroupChatMessages(selectedClassId).then(setMessages)
   }, [selectedClassId])
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   function showToast(msg: string) {
     setToast(msg)
@@ -44,141 +50,102 @@ export default function AdminChatSupervisionPage() {
     showToast('Message deleted')
   }
 
-  function getUnread(studentId: string) {
-    return messages.filter(m => m.studentId === studentId && !m.read).length
-  }
-
-  function getLastMessage(studentId: string) {
-    const msgs = messages.filter(m => m.studentId === studentId)
-    return msgs[msgs.length - 1]?.text?.slice(0, 36) ?? ''
-  }
-
-  const selectedStudent = MOCK_STUDENTS.find(s => s.id === selectedStudentId)
-  const threadMessages = selectedStudentId ? messages.filter(m => m.studentId === selectedStudentId) : []
+  const selectedClass = classes.find(c => c.id === selectedClassId)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '18px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '18px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <h1 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>Chat Supervision</h1>
-          <p style={{ fontSize: '0.83rem', color: '#6B7280', margin: '3px 0 0' }}>Monitor all student-teacher conversations. Admin can delete messages.</p>
+          <p style={{ fontSize: '0.83rem', color: '#6B7280', margin: '3px 0 0' }}>Monitor group chats per class. Admin can delete any message.</p>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <select
-            value={selectedClassId ?? ''}
+            value={selectedClassId}
             onChange={e => setSelectedClassId(e.target.value)}
-            style={{ padding: '7px 12px', border: '1px solid #C7D2FE', borderRadius: 8, fontSize: '0.83rem', color: '#374151' }}
+            style={{ padding: '7px 12px', border: '1px solid #C7D2FE', borderRadius: 8, fontSize: '0.83rem', color: '#374151', background: '#fff' }}
           >
             {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', background: '#EEF2FF', border: '1px solid #bae6fd', borderRadius: 8, fontSize: '0.72rem', fontWeight: 600, color: '#3730A3' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', background: '#EEF2FF', border: '1px solid #C7D2FE', borderRadius: 8, fontSize: '0.72rem', fontWeight: 600, color: '#3730A3' }}>
             <Shield size={12} /> Admin Supervision
           </div>
         </div>
       </div>
 
-      <div className="chat-panel">
-        {/* Student list */}
-        <div className="chat-sidebar">
-          <div className="chat-sidebar__header">Students</div>
-          <div className="chat-sidebar__list">
-            {MOCK_STUDENTS.map(student => (
-              <div
-                key={student.id}
-                className={`chat-sidebar__item ${selectedStudentId === student.id ? 'chat-sidebar__item--active' : ''}`}
-                onClick={() => setSelectedStudentId(student.id)}
-              >
-                <div className="chat-sidebar__name">
-                  {student.name}
-                  {getUnread(student.id) > 0 && <span className="chat-unread-badge">{getUnread(student.id)}</span>}
-                </div>
-                <div className="chat-sidebar__preview">{getLastMessage(student.id) || 'No messages'}</div>
+      <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, display: 'flex', flexDirection: 'column', minHeight: 560 }}>
+        {selectedClass && (
+          <div style={{ padding: '14px 20px', borderBottom: '1px solid #EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1E1B4B' }}>{selectedClass.name} — Group Chat</div>
+              <div style={{ fontSize: '0.78rem', color: '#6B7280', display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                <Users size={12} /> All students and teacher
               </div>
-            ))}
+            </div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, fontSize: '0.72rem', fontWeight: 600, color: '#dc2626' }}>
+              <Eye size={11} /> Admin View — Read Only
+            </div>
           </div>
+        )}
+
+        <div className="chat-supervision-bar" style={{ borderRadius: 0 }}>
+          <Shield size={12} />
+          Supervision Mode — You can view all messages and delete any inappropriate content.
         </div>
 
-        {/* Thread */}
-        <div className="chat-main">
-          {!selectedStudent ? (
-            <div className="chat-empty" style={{ flex: 1 }}>
-              <Eye size={32} style={{ opacity: 0.3 }} />
-              <p>Select a student to view their conversation</p>
+        <div className="chat-messages" style={{ flex: 1 }}>
+          {messages.length === 0 ? (
+            <div className="chat-empty">
+              <Users size={32} style={{ opacity: 0.25 }} />
+              <p>No messages in this group chat yet.</p>
             </div>
           ) : (
-            <>
-              <div className="chat-main__header">
-                <div>
-                  <div className="chat-main__name">{selectedStudent.name}</div>
-                  <div className="chat-main__class">{classes.find(c => c.id === selectedClassId)?.name}</div>
-                </div>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, fontSize: '0.72rem', fontWeight: 600, color: '#dc2626' }}>
-                  <Eye size={11} /> Admin View
-                </div>
-              </div>
+            messages.map((msg, idx) => {
+              const isTeacher = msg.senderRole === 'teacher'
+              const showDate = idx === 0 || !isSameDay(messages[idx - 1].sentAt, msg.sentAt)
+              const showName = idx === 0 || messages[idx - 1].senderId !== msg.senderId
 
-              <div className="chat-supervision-bar">
-                <Shield size={12} />
-                Supervision Mode — Admin view. You can delete individual messages.
-              </div>
-
-              <div className="chat-messages">
-                {threadMessages.length === 0 ? (
-                  <div className="chat-empty">
-                    <p>No messages in this thread.</p>
-                  </div>
-                ) : (
-                  threadMessages.map(msg => {
-                    const isStudent = msg.senderRole === 'student'
-                    return (
-                      <div key={msg.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, maxWidth: '85%', alignSelf: isStudent ? 'flex-start' : 'flex-end' }}>
-                        {isStudent && <div className="chat-message__avatar chat-message__avatar--student">S</div>}
-                        <div>
-                          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, flexDirection: isStudent ? 'row' : 'row-reverse' }}>
-                            <div style={{
-                              padding: '9px 13px',
-                              borderRadius: 14,
-                              fontSize: '0.87rem',
-                              background: isStudent ? '#F3F4F6' : '#3730A3',
-                              color: isStudent ? '#1a2d45' : '#fff',
-                              maxWidth: 360,
-                              wordBreak: 'break-word',
-                            }}>
-                              {msg.text}
-                            </div>
-                            <button
-                              onClick={() => handleDelete(msg.id)}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', padding: 2, flexShrink: 0 }}
-                              title="Delete message"
-                            >
-                              <Trash2 size={13} />
-                            </button>
-                          </div>
-                          <div style={{ fontSize: '0.68rem', color: '#9ca3af', marginTop: 2, textAlign: isStudent ? 'left' : 'right' }}>
-                            {msg.senderRole === 'teacher' ? 'Teacher' : 'Student'} · {formatTime(msg.sentAt)}
-                          </div>
+              return (
+                <div key={msg.id}>
+                  {showDate && (
+                    <div style={{ textAlign: 'center', margin: '0.75rem 0', fontSize: '0.72rem', color: '#9CA3AF', fontWeight: 600 }}>
+                      {formatDate(msg.sentAt)}
+                    </div>
+                  )}
+                  <div className="chat-message chat-message--left" style={{ alignItems: 'flex-start' }}>
+                    <div className={`chat-message__avatar ${isTeacher ? 'chat-message__avatar--teacher' : 'chat-message__avatar--student'}`}>
+                      {msg.senderName[0]?.toUpperCase()}
+                    </div>
+                    <div className="chat-message__body" style={{ flex: 1 }}>
+                      {showName && (
+                        <div style={{ fontSize: '0.72rem', fontWeight: 700, color: isTeacher ? '#4F46E5' : '#374151', marginBottom: 2 }}>
+                          {isTeacher ? `${msg.senderName} (Teacher)` : msg.senderName}
                         </div>
-                        {!isStudent && <div className="chat-message__avatar chat-message__avatar--teacher">T</div>}
+                      )}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <div className="chat-message__bubble">{msg.text}</div>
+                        <button
+                          onClick={() => handleDelete(msg.id)}
+                          title="Delete message"
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#d1d5db', padding: 2, flexShrink: 0, lineHeight: 1, transition: 'color 0.15s' }}
+                          onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
+                          onMouseLeave={e => (e.currentTarget.style.color = '#d1d5db')}
+                        >
+                          <Trash2 size={13} />
+                        </button>
                       </div>
-                    )
-                  })
-                )}
-              </div>
-
-              <div className="chat-readonly-note">
-                Read-only supervision view. Use "Delete" to remove inappropriate messages.
-              </div>
-
-              <div style={{ padding: '10px 20px', borderTop: '1px solid #EEF2FF', display: 'flex', gap: 8 }}>
-                <button
-                  onClick={() => showToast('Conversation flagged for review ✓')}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '7px 14px', border: '1px solid #fca5a5', background: '#fff', color: '#dc2626', borderRadius: 8, fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer' }}
-                >
-                  <Flag size={13} /> Flag Conversation
-                </button>
-              </div>
-            </>
+                      <div className="chat-message__meta">{formatTime(msg.sentAt)}</div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })
           )}
+          <div ref={bottomRef} />
+        </div>
+
+        <div className="chat-readonly-note">
+          Read-only supervision view. Click the trash icon next to any message to remove it.
         </div>
       </div>
 

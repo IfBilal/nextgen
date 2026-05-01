@@ -156,11 +156,11 @@ export interface ClassWithProduct extends LmsClass {
 export interface ChatMessage {
   id: string
   classId: string
-  studentId: string
+  senderId: string
+  senderName: string
   senderRole: 'student' | 'teacher'
   text: string
   sentAt: string
-  read: boolean
 }
 
 export interface AttendanceRecord {

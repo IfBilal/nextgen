@@ -550,57 +550,47 @@ export async function getAllClassesWithProducts(): Promise<ClassWithProduct[]> {
 
 // ─── Chat ─────────────────────────────────────────────────────────────────────
 
-export async function getChatMessagesForClass(classId: string, studentId: string): Promise<ChatMessage[]> {
-  // BACKEND SWAP: GET /api/v1/chat/messages?classId=&studentId=
-  const messages = getChatMessages()
-  return messages
-    .filter(m => m.classId === classId && m.studentId === studentId)
-    .sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime())
-}
-
-export async function getAllChatThreads(classId: string): Promise<ChatMessage[]> {
-  // BACKEND SWAP: GET /api/v1/chat/threads?classId= (teacher/editor/admin view)
+export async function getGroupChatMessages(classId: string): Promise<ChatMessage[]> {
+  // BACKEND SWAP: GET /api/v1/chat/group?classId=
   const messages = getChatMessages()
   return messages
     .filter(m => m.classId === classId)
     .sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime())
 }
 
-export async function sendChatMessage(
+export async function sendGroupChatMessage(
   classId: string,
-  studentId: string,
+  senderId: string,
+  senderName: string,
   senderRole: 'student' | 'teacher',
   text: string,
 ): Promise<ChatMessage> {
-  // BACKEND SWAP: POST /api/v1/chat/messages
+  // BACKEND SWAP: POST /api/v1/chat/group
   const messages = getChatMessages()
   const newMsg: ChatMessage = {
     id: `msg-${Date.now()}`,
     classId,
-    studentId,
+    senderId,
+    senderName,
     senderRole,
     text: text.trim(),
     sentAt: new Date().toISOString(),
-    read: false,
   }
   saveChatMessages([...messages, newMsg])
   return newMsg
-}
-
-export async function markChatMessageRead(messageId: string): Promise<void> {
-  // BACKEND SWAP: PATCH /api/v1/chat/messages/:id/read
-  const messages = getChatMessages()
-  const idx = messages.findIndex(m => m.id === messageId)
-  if (idx !== -1) {
-    messages[idx] = { ...messages[idx], read: true }
-    saveChatMessages(messages)
-  }
 }
 
 export async function deleteChatMessage(messageId: string): Promise<void> {
   // BACKEND SWAP: DELETE /api/v1/chat/messages/:id (admin only)
   const messages = getChatMessages()
   saveChatMessages(messages.filter(m => m.id !== messageId))
+}
+
+// Legacy aliases — kept so existing imports don't break during transition
+export const getChatMessagesForClass = getGroupChatMessages.bind(null)
+export const getAllChatThreads = getGroupChatMessages.bind(null)
+export async function sendChatMessage(classId: string, _studentId: string, senderRole: 'student' | 'teacher', text: string): Promise<ChatMessage> {
+  return sendGroupChatMessage(classId, _studentId, senderRole === 'teacher' ? 'Teacher' : 'Student', senderRole, text)
 }
 
 // ─── Attendance ───────────────────────────────────────────────────────────────
