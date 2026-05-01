@@ -39,8 +39,6 @@ export default function TeacherAnalyticsPage() {
           return true
         })
 
-  const maxAttendance = Math.max(...filteredSessions.map(s => s.attendancePercent ?? 0), 1)
-
   return (
     <div className="teacher-page">
       {/* Privacy notice */}

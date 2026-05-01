@@ -91,7 +91,6 @@ export default function AttendancePage() {
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 80, marginBottom: 10 }}>
             {records.map((r, i) => {
               const color = r.status === 'attended' ? '#16a34a' : r.status === 'missed' ? '#ef4444' : '#D1D5DB'
-              const label = r.status === 'attended' ? 'A' : r.status === 'missed' ? 'M' : 'C'
               return (
                 <div
                   key={r.sessionId}
