@@ -7,7 +7,7 @@ import {
 import WelcomeBar from '../../components/student/dashboard/WelcomeBar'
 import DonutRing from '../../components/student/dashboard/DonutRing'
 import TodaysPlan from '../../components/student/dashboard/TodaysPlan'
-import { studentDashboardData } from '../../data/dashboard'
+import { studentDashboardData, computeScorePrediction } from '../../data/dashboard'
 import { useSubscription } from '../../context/SubscriptionContext'
 import { useStudentAuth } from '../../context/StudentAuthContext'
 import { studentGetEnrolledClasses } from '../../services/lmsApi'
@@ -26,6 +26,7 @@ export default function DashboardPage() {
   const daysLeft = snapshot?.remainingDays ?? 0
 
   const lastTest = data.recentTests[0]
+  const prediction = computeScorePrediction(data)
 
   useEffect(() => {
     if (user?.id) {
@@ -134,6 +135,45 @@ export default function DashboardPage() {
                 </div>
               )
             })}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Projected Score ── */}
+      <div className="db-prediction">
+        <div className="db-prediction__score-panel">
+          <span className="db-prediction__exam-label">Projected Score</span>
+          <span className="db-prediction__score">{prediction.predictedScore}%</span>
+          <span className="db-prediction__range">{prediction.rangeLow}–{prediction.rangeHigh}%</span>
+          <span className="db-prediction__out">accuracy estimate</span>
+        </div>
+        <div className="db-prediction__info">
+          <div className="db-prediction__top-row">
+            <span className="db-prediction__title">{prediction.label}</span>
+            <span className={`db-prediction__badge db-prediction__badge--${prediction.confidence}`}>
+              {prediction.confidence} confidence
+            </span>
+          </div>
+          <p className="db-prediction__message">{prediction.message}</p>
+          <div className="db-prediction__bar-wrap">
+            <span className="db-prediction__bar-min">194</span>
+            <div className="db-prediction__bar-track">
+              <div
+                className="db-prediction__bar-marker"
+                style={{ left: `${prediction.predictedScore}%` }}
+              >
+                <span>{prediction.predictedScore}</span>
+              </div>
+            </div>
+            <span className="db-prediction__bar-max">270</span>
+          </div>
+          <div className="db-prediction__signals">
+            {prediction.signals.map(s => (
+              <div key={s.label} className={`db-prediction__signal db-prediction__signal--${s.impact}`}>
+                <span>{s.label}</span>
+                <strong>{s.value}</strong>
+              </div>
+            ))}
           </div>
         </div>
       </div>

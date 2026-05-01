@@ -111,6 +111,93 @@ export const studentDashboardData: StudentDashboardData = {
   totalStudyHours: 42,
 }
 
+export interface ScorePrediction {
+  predictedScore: number
+  rangeLow: number
+  rangeHigh: number
+  confidence: 'low' | 'moderate' | 'high'
+  label: string
+  message: string
+  signals: { label: string; value: string; impact: 'positive' | 'neutral' | 'negative' }[]
+}
+
+export function computeScorePrediction(data: StudentDashboardData): ScorePrediction {
+  // Base: overall accuracy
+  const base = data.overallScore
+
+  // Recent test average bonus/penalty (±5%)
+  const recentAvg = data.recentTests.length
+    ? data.recentTests.reduce((s, t) => s + t.score, 0) / data.recentTests.length
+    : data.overallScore
+  const testDelta = ((recentAvg - data.overallScore) / 100) * 5
+
+  // Roadmap progress bonus (0 → +3% at 100%)
+  const roadmapBonus = (data.roadmapCompletionPercent / 100) * 3
+
+  // Weak subject penalty (avg weakness below 70% → up to −5%)
+  const avgWeak = data.weakSubjects.length
+    ? data.weakSubjects.reduce((s, w) => s + w.accuracyPct, 0) / data.weakSubjects.length
+    : 70
+  const weakPenalty = Math.max(0, (70 - avgWeak) / 70) * 5
+
+  // Streak consistency bonus (0 → +2% at 30+ days)
+  const streakBonus = (Math.min(data.studyStreakDays, 30) / 30) * 2
+
+  const raw = base + testDelta + roadmapBonus - weakPenalty + streakBonus
+  const predicted = Math.round(Math.max(0, Math.min(100, raw)))
+  const rangeLow = Math.max(0, predicted - 5)
+  const rangeHigh = Math.min(100, predicted + 5)
+
+  const confidence: ScorePrediction['confidence'] =
+    data.recentTests.length >= 3 && data.roadmapCompletionPercent > 20 ? 'high'
+    : data.recentTests.length >= 1 ? 'moderate'
+    : 'low'
+
+  let label: string
+  let message: string
+  if (predicted < 50) {
+    label = 'Needs focused work'
+    message = `Your weak areas are pulling your accuracy down. Prioritise ${data.weakSubjects[0]?.name ?? 'your weakest subjects'} and aim for consistent daily practice.`
+  } else if (predicted < 60) {
+    label = 'Approaching passing'
+    message = `You're close to a solid passing threshold. Improving accuracy in ${data.weakSubjects[0]?.name ?? 'weak subjects'} could push you meaningfully higher.`
+  } else if (predicted < 70) {
+    label = 'On track'
+    message = `Your trajectory is solid. Keep your study streak consistent and continue working through weak areas to push above ${predicted + 5}%.`
+  } else if (predicted < 80) {
+    label = 'Strong trajectory'
+    message = `You're performing well. Targeted review of ${data.weakSubjects[0]?.name ?? 'weak subjects'} could take you into the 80s.`
+  } else {
+    label = 'High-yield performance'
+    message = `Excellent trajectory. Maintain your current pace and focus on minimising weak-area gaps to stay at the top.`
+  }
+
+  const signals: ScorePrediction['signals'] = [
+    {
+      label: 'Overall accuracy',
+      value: `${data.overallScore}%`,
+      impact: data.overallScore >= 70 ? 'positive' : data.overallScore >= 55 ? 'neutral' : 'negative',
+    },
+    {
+      label: 'Recent tests avg',
+      value: `${Math.round(recentAvg)}%`,
+      impact: recentAvg >= 70 ? 'positive' : recentAvg >= 55 ? 'neutral' : 'negative',
+    },
+    {
+      label: 'Roadmap progress',
+      value: `${data.roadmapCompletionPercent}%`,
+      impact: data.roadmapCompletionPercent >= 40 ? 'positive' : data.roadmapCompletionPercent >= 15 ? 'neutral' : 'negative',
+    },
+    {
+      label: 'Weak area avg',
+      value: `${Math.round(avgWeak)}%`,
+      impact: avgWeak >= 65 ? 'positive' : avgWeak >= 50 ? 'neutral' : 'negative',
+    },
+  ]
+
+  return { predictedScore: predicted, rangeLow, rangeHigh, confidence, label, message, signals }
+}
+
 export function getDaysUntilExam(examDate: string): number {
   const exam = new Date(examDate)
   const today = new Date()

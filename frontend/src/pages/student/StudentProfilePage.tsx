@@ -7,12 +7,12 @@ import type { ClassWithProduct } from '../../types/lms'
 import { Link } from 'react-router-dom'
 
 export default function StudentProfilePage() {
-  const { user } = useStudentAuth()
+  const { user, updateName } = useStudentAuth()
   const { planLabel } = useSubscription()
   const [classes, setClasses] = useState<ClassWithProduct[]>([])
   const [editing, setEditing] = useState(false)
   const [editName, setEditName] = useState(user?.name ?? '')
-  const [editPhone, setEditPhone] = useState('')
+
   const [toast, setToast] = useState<string | null>(null)
 
   useEffect(() => {
@@ -24,6 +24,7 @@ export default function StudentProfilePage() {
     : 'ST'
 
   function handleSave() {
+    if (editName.trim()) updateName(editName.trim())
     setEditing(false)
     setToast('Profile updated ✓')
     setTimeout(() => setToast(null), 3000)
@@ -46,12 +47,7 @@ export default function StudentProfilePage() {
                   style={{ padding: '8px 12px', border: '1px solid #C7D2FE', borderRadius: 8, fontSize: '1rem', fontWeight: 700, color: '#1E1B4B' }}
                   placeholder="Full name"
                 />
-                <input
-                  value={editPhone}
-                  onChange={e => setEditPhone(e.target.value)}
-                  style={{ padding: '8px 12px', border: '1px solid #C7D2FE', borderRadius: 8, fontSize: '0.87rem', color: '#1E1B4B' }}
-                  placeholder="Phone number"
-                />
+
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button onClick={handleSave} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '7px 14px', background: '#3730A3', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer' }}>
                     <Check size={13} /> Save
@@ -117,16 +113,6 @@ export default function StudentProfilePage() {
         )}
       </div>
 
-      {/* Notification Settings Link */}
-      <div style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 14, padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <div style={{ fontWeight: 700, color: '#1E1B4B', fontSize: '0.9rem' }}>Notification Settings</div>
-          <div style={{ fontSize: '0.78rem', color: '#6B7280', marginTop: 2 }}>Manage email and push preferences</div>
-        </div>
-        <Link to="/student/notifications" style={{ fontSize: '0.8rem', fontWeight: 700, color: '#3730A3', textDecoration: 'none' }}>
-          Manage →
-        </Link>
-      </div>
 
       {toast && (
         <div style={{ position: 'fixed', bottom: 24, right: 24, background: '#1E1B4B', color: '#fff', padding: '10px 18px', borderRadius: 10, fontSize: '0.87rem', fontWeight: 600, zIndex: 2000 }}>

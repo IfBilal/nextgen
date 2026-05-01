@@ -30,6 +30,7 @@ interface StudentAuthContextType {
   register: (name: string, email: string, password: string, medicalSchool?: string) => Promise<StudentUser>
   logout: () => void
   completeOnboarding: () => Promise<void>
+  updateName: (name: string) => void
 }
 
 const StudentAuthContext = createContext<StudentAuthContextType | null>(null)
@@ -254,8 +255,20 @@ export const StudentAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   }
 
+  function updateName(name: string) {
+    if (!user) return
+    const updated = { ...user, name }
+    const persisted = safeParseJson<PersistedStudentAuth>(localStorage.getItem(STUDENT_AUTH_KEY) ?? '')
+    if (isPersistedStudentAuth(persisted)) {
+      persistStudentAuth({ ...persisted, user: updated })
+    } else {
+      localStorage.setItem(LEGACY_STUDENT_KEY, JSON.stringify(updated))
+    }
+    setUser(updated)
+  }
+
   return (
-    <StudentAuthContext.Provider value={{ user, login, register, logout, completeOnboarding }}>
+    <StudentAuthContext.Provider value={{ user, login, register, logout, completeOnboarding, updateName }}>
       {children}
     </StudentAuthContext.Provider>
   )
