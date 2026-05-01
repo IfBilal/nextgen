@@ -18,7 +18,6 @@ import {
   X,
 } from 'lucide-react'
 import EmbeddedZoomMeeting from '../../components/lms/EmbeddedZoomMeeting'
-import { useStudentAuth } from '../../context/StudentAuthContext'
 
 function formatFullDateTime(dateStr: string): string {
   return new Date(dateStr).toLocaleString([], {
@@ -47,8 +46,6 @@ function pad(n: number): string { return String(n).padStart(2, '0') }
 
 export default function LiveSessionPage() {
   const { classId } = useParams<{ classId: string }>()
-  const { user } = useStudentAuth()
-
   const [cls, setCls] = useState<LmsClass | null>(null)
   const [sessions, setSessions] = useState<LmsSession[]>([])
   const [notices, setNotices] = useState<Notice[]>([])
