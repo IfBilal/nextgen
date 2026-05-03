@@ -209,13 +209,18 @@ export type LmsNotificationType =
   | 'session_starting'
   | 'session_live'
   | 'session_rescheduled'
+  | 'session_reminder'
   | 'notice_posted'
   | 'demo_expiring'
+  | 'enrollment_confirmed'
+  | 'access_revoked'
+  | 'chat_reply'
 
 export interface LmsNotification {
   id: string
   type: LmsNotificationType
   message: string
+  body: string
   classId?: string
   read: boolean
   createdAt: string
@@ -278,6 +283,21 @@ export interface LmsOrder {
   stripePaymentIntentId: string | null
   paidAt: string | null
   createdAt: string
+}
+
+export interface StudentOrder {
+  id: string
+  productName: string
+  plan: 'upfront' | 'installment'
+  amountPaid: number
+  installmentAmount: number | null
+  status: 'pending' | 'paid' | 'refunded' | 'cancelled'
+  couponCode: string | null
+  createdAt: string
+  paidAt: string | null
+  cancelledAt: string | null
+  accessUntil: string | null
+  stripeSubscriptionId: string | null
 }
 
 export interface TeacherStudentSummary {

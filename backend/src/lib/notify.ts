@@ -8,6 +8,7 @@ type NotificationType =
   | 'enrollment_confirmed'
   | 'session_rescheduled'
   | 'access_revoked'
+  | 'session_reminder'
 
 interface NotifyPayload {
   studentId: string

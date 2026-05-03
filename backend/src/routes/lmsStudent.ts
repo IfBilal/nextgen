@@ -5,6 +5,8 @@ import { HttpError } from '../lib/httpError.js'
 import { authenticateRequest, requireRole } from '../middleware/authenticate.js'
 import { checkDemoAccess } from '../middleware/checkDemoAccess.js'
 import { supabaseServiceClient } from '../lib/supabase.js'
+import { stripe } from '../lib/stripe.js'
+import { notifyStudent } from '../lib/notify.js'
 
 export const lmsStudentRouter = Router()
 
@@ -13,6 +15,25 @@ lmsStudentRouter.get('/student/classes', authenticateRequest, requireRole('stude
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const studentId = req.auth!.userId
+
+      // Expire access for cancelled orders whose access_until has passed
+      const { data: expiredOrders } = await supabaseServiceClient
+        .from('lms_orders')
+        .select('class_id')
+        .eq('student_id', studentId)
+        .eq('status', 'cancelled')
+        .lt('access_until', new Date().toISOString())
+        .not('class_id', 'is', null)
+
+      if (expiredOrders?.length) {
+        const expiredClassIds = expiredOrders.map(o => o.class_id).filter(Boolean)
+        await supabaseServiceClient
+          .from('lms_enrollments')
+          .update({ demo_expires_at: new Date().toISOString() })
+          .eq('student_id', studentId)
+          .in('class_id', expiredClassIds)
+          .is('demo_expires_at', null)
+      }
 
       const { data: enrollments, error } = await supabaseServiceClient
         .from('lms_enrollments')
@@ -270,7 +291,7 @@ lmsStudentRouter.get('/student/notifications', authenticateRequest, requireRole(
 
       const { data, error } = await supabaseServiceClient
         .from('lms_notifications')
-        .select('id, type, title, class_id, is_read, created_at')
+        .select('id, type, title, body, class_id, is_read, created_at')
         .eq('student_id', studentId)
         .order('created_at', { ascending: false })
         .limit(50)
@@ -281,6 +302,7 @@ lmsStudentRouter.get('/student/notifications', authenticateRequest, requireRole(
         id: n.id,
         type: n.type,
         message: n.title,
+        body: n.body ?? '',
         classId: n.class_id,
         read: n.is_read,
         createdAt: n.created_at,
@@ -407,7 +429,7 @@ lmsStudentRouter.get('/student/orders', authenticateRequest, requireRole('studen
 
       const { data, error } = await supabaseServiceClient
         .from('lms_orders')
-        .select('id, plan, amount_paid, status, created_at, paid_at, lms_products!inner(name), lms_coupons(code)')
+        .select('id, plan, amount_paid, total_collected, status, created_at, paid_at, cancelled_at, access_until, stripe_subscription_id, lms_products!inner(name), lms_coupons(code)')
         .eq('student_id', studentId)
         .order('created_at', { ascending: false })
 
@@ -417,11 +439,15 @@ lmsStudentRouter.get('/student/orders', authenticateRequest, requireRole('studen
         id: o.id,
         productName: (o.lms_products as any).name,
         plan: o.plan,
-        amountPaid: Number(o.amount_paid),
+        amountPaid: o.plan === 'installment' ? Number(o.total_collected ?? 0) : Number(o.amount_paid),
+        installmentAmount: o.plan === 'installment' ? Number(o.amount_paid) : null,
         status: o.status,
         couponCode: (o.lms_coupons as any)?.code ?? null,
         createdAt: o.created_at,
         paidAt: o.paid_at,
+        cancelledAt: o.cancelled_at,
+        accessUntil: o.access_until,
+        stripeSubscriptionId: o.stripe_subscription_id,
       }))
 
       return res.status(200).json({ orders })
@@ -506,6 +532,85 @@ lmsStudentRouter.post('/student/programs/:productId/demo', authenticateRequest, 
         classId: cls.id,
         demoExpiresAt,
         message: `Demo access granted for ${product.name}. Expires in 2 days.`,
+      })
+    } catch (err) { return next(err) }
+  }
+)
+
+// ─── POST /api/v1/student/orders/:orderId/cancel ──────────────────────────────
+lmsStudentRouter.post('/student/orders/:orderId/cancel', authenticateRequest, requireRole('student'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const studentId = req.auth!.userId
+
+      const { data: order, error: orderError } = await supabaseServiceClient
+        .from('lms_orders')
+        .select('id, student_id, plan, status, stripe_subscription_id, paid_at, class_id')
+        .eq('id', req.params.orderId)
+        .single()
+
+      if (orderError || !order) throw new HttpError(404, 'NOT_FOUND', 'Order not found.')
+      if (order.student_id !== studentId) throw new HttpError(403, 'FORBIDDEN', 'This order does not belong to you.')
+      if (order.plan !== 'installment') throw new HttpError(400, 'NOT_INSTALLMENT', 'Only installment plans can be cancelled this way.')
+      if (order.status === 'cancelled') throw new HttpError(409, 'ALREADY_CANCELLED', 'This plan is already cancelled.')
+      if (order.status !== 'paid') throw new HttpError(400, 'NOT_ACTIVE', 'Only active paid plans can be cancelled.')
+
+      // Compute access_until = last day of the month of the most recent payment, in UTC.
+      // Must use UTC methods — local getMonth()/getFullYear() depend on server timezone
+      // and would compute the wrong month end if the server is not UTC.
+      const lastPaidDate = new Date(order.paid_at)
+      const accessUntil = new Date(Date.UTC(
+        lastPaidDate.getUTCFullYear(),
+        lastPaidDate.getUTCMonth() + 1, // first day of next month in UTC
+        0,                               // day 0 = last day of current month
+        23, 59, 59, 999
+      ))
+
+      // Cancel Stripe subscription immediately (no proration — access managed by access_until)
+      if (order.stripe_subscription_id) {
+        try {
+          await stripe.subscriptions.cancel(order.stripe_subscription_id)
+        } catch (err: any) {
+          if (err?.code !== 'resource_missing') throw err
+        }
+      }
+
+      // Mark order as cancelled
+      await supabaseServiceClient
+        .from('lms_orders')
+        .update({
+          status: 'cancelled',
+          cancelled_at: new Date().toISOString(),
+          access_until: accessUntil.toISOString(),
+        })
+        .eq('id', order.id)
+
+      // Set demo_expires_at = access_until on the enrollment so every access check
+      // (sessions, recordings, notices, chat) correctly blocks after access_until
+      // without relying on the student hitting GET /student/classes first.
+      if (order.class_id) {
+        await supabaseServiceClient
+          .from('lms_enrollments')
+          .update({ demo_expires_at: accessUntil.toISOString() })
+          .eq('student_id', studentId)
+          .eq('class_id', order.class_id)
+          .is('demo_expires_at', null)
+      }
+
+      // Notify student
+      const accessUntilReadable = accessUntil.toLocaleDateString('en-US', {
+        month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC',
+      })
+      await notifyStudent({
+        studentId,
+        type: 'access_revoked',
+        title: 'Cancellation confirmed',
+        body: `Your installment plan has been cancelled. You keep full access until ${accessUntilReadable}.`,
+      })
+
+      return res.status(200).json({
+        message: 'Plan cancelled.',
+        accessUntil: accessUntil.toISOString(),
       })
     } catch (err) { return next(err) }
   }

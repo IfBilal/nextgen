@@ -14,7 +14,7 @@ import type {
   ChatMessage, AttendanceRecord, RecordedSession, Coupon,
   NotificationPrefs, LmsNotification, TeacherAnalytics,
   CreateCouponPayload, CreateClassPayload, EnrollStudentPayload, StudentEnrollment,
-  LmsOrder, TeacherStudentSummary,
+  LmsOrder, TeacherStudentSummary, StudentOrder,
 } from '../types/lms'
 
 // ─── Token helpers ────────────────────────────────────────────────────────────
@@ -740,6 +740,21 @@ export async function updateStudentNotificationPrefs(prefs: NotificationPrefs): 
     },
     ...bearer(getStudentToken()),
   })
+}
+
+export async function getStudentOrders(): Promise<StudentOrder[]> {
+  // GET /api/v1/student/orders
+  const res = await apiRequest<{ orders: StudentOrder[] }>('/student/orders', bearer(getStudentToken()))
+  return res.orders
+}
+
+export async function cancelStudentOrder(orderId: string): Promise<{ accessUntil: string }> {
+  // POST /api/v1/student/orders/:orderId/cancel
+  const res = await apiRequest<{ accessUntil: string }>(`/student/orders/${orderId}/cancel`, {
+    method: 'POST',
+    ...bearer(getStudentToken()),
+  })
+  return res
 }
 
 export async function getStudentLmsNotifications(_studentId: string): Promise<LmsNotification[]> {

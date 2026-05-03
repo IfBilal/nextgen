@@ -210,7 +210,12 @@ lmsTeacherRouter.patch('/teacher/sessions/:id', authenticateRequest, requireRole
       if (!cls) throw new HttpError(403, 'FORBIDDEN', 'This session does not belong to your class.')
 
       const updates: Record<string, unknown> = { change_note: parsed.changeNote, updated_at: new Date().toISOString() }
-      if (parsed.scheduledAt)     updates.scheduled_at = parsed.scheduledAt
+      if (parsed.scheduledAt) {
+        updates.scheduled_at = parsed.scheduledAt
+        // Reset reminder flags so students get notified again for the new time
+        updates.notified_24h = false
+        updates.notified_1h  = false
+      }
       if (parsed.durationMinutes) updates.duration_minutes = parsed.durationMinutes
 
       const { data: updated, error } = await supabaseServiceClient

@@ -22,7 +22,7 @@ function formatRelative(isoTimestamp: string): string {
 }
 
 function NotifIcon({ type }: { type: LmsNotification['type'] }) {
-  if (type === 'session_starting' || type === 'session_live') return <Video size={14} style={{ color: '#3730A3' }} />
+  if (type === 'session_starting' || type === 'session_live' || type === 'session_reminder') return <Video size={14} style={{ color: '#3730A3' }} />
   if (type === 'notice_posted') return <Megaphone size={14} style={{ color: '#3730A3' }} />
   if (type === 'demo_expiring') return <Clock size={14} style={{ color: '#d97706' }} />
   return <Bell size={14} style={{ color: '#3730A3' }} />
@@ -140,6 +140,7 @@ export default function InboxPage() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: notif.read ? 500 : 700, color: '#1E1B4B', fontSize: '0.87rem' }}>{notif.message}</div>
+                  {notif.body && <div style={{ fontSize: '0.8rem', color: '#4B5563', marginTop: 3 }}>{notif.body}</div>}
                   <div style={{ fontSize: '0.73rem', color: '#9ca3af', marginTop: 3 }}>{formatRelative(notif.createdAt)}</div>
                 </div>
                 {!notif.read && (

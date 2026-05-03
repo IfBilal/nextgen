@@ -637,7 +637,12 @@ lmsAdminRouter.patch('/admin/sessions/:id', authenticateRequest, requireRole('ad
     try {
       const parsed = updateSessionSchema.parse(req.body)
       const updates: Record<string, unknown> = { change_note: parsed.changeNote, updated_at: new Date().toISOString() }
-      if (parsed.scheduledAt)     updates.scheduled_at = parsed.scheduledAt
+      if (parsed.scheduledAt) {
+        updates.scheduled_at = parsed.scheduledAt
+        // Reset reminder flags so students get notified again for the new time
+        updates.notified_24h = false
+        updates.notified_1h  = false
+      }
       if (parsed.durationMinutes) updates.duration_minutes = parsed.durationMinutes
       if (parsed.meetingLink)     updates.zoom_meeting_id = parsed.meetingLink
 
