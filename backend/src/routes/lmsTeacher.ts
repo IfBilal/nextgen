@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { Router } from 'express'
 import { z } from 'zod'
 import multer from 'multer'
+import rateLimit from 'express-rate-limit'
 import { HttpError } from '../lib/httpError.js'
 import { authenticateRequest, requireRole } from '../middleware/authenticate.js'
 import { supabaseServiceClient } from '../lib/supabase.js'
@@ -9,6 +10,15 @@ import { createZoomMeeting, generateSdkSignature } from '../lib/zoom.js'
 import { notifyAllEnrolledStudents } from '../lib/notify.js'
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } })
+
+const chatLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  keyGenerator: (req) => req.auth?.userId ?? req.ip ?? 'unknown',
+  handler: (_req, res) => res.status(429).json({ code: 'RATE_LIMITED', message: 'Too many messages. Please wait before sending again.' }),
+  standardHeaders: true,
+  legacyHeaders: false,
+})
 
 export const lmsTeacherRouter = Router()
 
@@ -615,7 +625,7 @@ lmsTeacherRouter.get('/chat/group', authenticateRequest,
 )
 
 // ─── POST /api/v1/chat/group ─────────────────────────────────────────────────
-lmsTeacherRouter.post('/chat/group', authenticateRequest,
+lmsTeacherRouter.post('/chat/group', authenticateRequest, chatLimiter,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const role = req.auth!.role

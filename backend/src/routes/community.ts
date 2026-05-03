@@ -1,11 +1,21 @@
 import type { NextFunction, Request, Response } from 'express'
 import { Router } from 'express'
 import { z } from 'zod'
+import rateLimit from 'express-rate-limit'
 import { HttpError } from '../lib/httpError.js'
 import { authenticateRequest, requireRole } from '../middleware/authenticate.js'
 import { supabaseServiceClient } from '../lib/supabase.js'
 
 export const communityRouter = Router()
+
+const chatLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  keyGenerator: (req) => req.auth?.userId ?? req.ip ?? 'unknown',
+  handler: (_req, res) => res.status(429).json({ code: 'RATE_LIMITED', message: 'Too many messages. Please wait before sending again.' }),
+  standardHeaders: true,
+  legacyHeaders: false,
+})
 
 // ─── GET /api/v1/community/settings ──────────────────────────────────────────
 communityRouter.get('/community/settings', authenticateRequest,
@@ -60,7 +70,7 @@ communityRouter.get('/community/messages', authenticateRequest,
 // ─── POST /api/v1/community/messages ─────────────────────────────────────────
 const postSchema = z.object({ text: z.string().min(1).max(2000) })
 
-communityRouter.post('/community/messages', authenticateRequest,
+communityRouter.post('/community/messages', authenticateRequest, chatLimiter,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const role = req.auth!.role

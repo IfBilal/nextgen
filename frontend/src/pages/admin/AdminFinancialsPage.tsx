@@ -48,14 +48,19 @@ export default function AdminFinancialsPage() {
   }
 
   async function handleRefund(orderId: string) {
-    if (!confirm('Issue a refund for this order? This will revoke the student\'s class access.')) return
+    const order = orders.find(o => o.id === orderId)
+    const isInstallment = order?.plan === 'installment'
+    const msg = isInstallment
+      ? 'Revoke access for this installment order? The subscription will be cancelled. No refund will be issued.'
+      : 'Issue a refund for this order? The full amount will be returned and class access will be revoked.'
+    if (!confirm(msg)) return
     setRefunding(orderId)
     try {
       await adminRefundOrder(orderId)
       setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: 'refunded' } : o))
-      showToast('Refund issued ✓')
+      showToast(isInstallment ? 'Access revoked ✓' : 'Refund issued ✓')
     } catch {
-      showToast('Refund failed — check Stripe dashboard')
+      showToast(isInstallment ? 'Failed to revoke access' : 'Refund failed — check Stripe dashboard')
     } finally {
       setRefunding(null)
     }
@@ -125,8 +130,10 @@ export default function AdminFinancialsPage() {
                       <td style={{ fontSize: '0.82rem', color: '#6B7280', textTransform: 'capitalize' }}>{order.plan}</td>
                       <td style={{ fontWeight: 700, color: '#1E1B4B', fontSize: '0.87rem' }}>
                         {fmt(order.amountPaid)}
-                        {order.plan === 'installment' && (
-                          <span style={{ fontSize: '0.72rem', fontWeight: 400, color: '#6B7280', marginLeft: 3 }}>/mo</span>
+                        {order.plan === 'installment' && (order as any).monthlyAmount && (
+                          <span style={{ fontSize: '0.72rem', fontWeight: 400, color: '#6B7280', marginLeft: 3 }}>
+                            ({fmt((order as any).monthlyAmount)}/mo)
+                          </span>
                         )}
                       </td>
                       <td>
@@ -151,7 +158,10 @@ export default function AdminFinancialsPage() {
                             }}
                           >
                             <RotateCcw size={11} />
-                            {refunding === order.id ? 'Refunding…' : 'Refund'}
+                            {refunding === order.id
+                              ? (order.plan === 'installment' ? 'Revoking…' : 'Refunding…')
+                              : (order.plan === 'installment' ? 'Revoke Access' : 'Refund')
+                            }
                           </button>
                         )}
                       </td>

@@ -123,7 +123,7 @@ lmsPaymentsRouter.post('/payments/checkout', authenticateRequest, requireRole('s
       if (env.STRIPE_WEBHOOK_SECRET === 'whsec_placeholder') {
         await supabaseServiceClient
           .from('lms_orders')
-          .update({ status: 'paid', paid_at: new Date().toISOString() })
+          .update({ status: 'paid', paid_at: new Date().toISOString(), total_collected: amountPaid })
           .eq('id', order.id)
 
         let targetClassId: string | null = null
@@ -192,9 +192,17 @@ export async function webhookHandler(req: Request, res: Response) {
     const productId = intent.metadata['productId']
     if (!orderId || !studentId || !productId) return res.json({ received: true })
 
+    const { data: upfrontOrder } = await supabaseServiceClient
+      .from('lms_orders').select('amount_paid').eq('id', orderId).single()
+
     await supabaseServiceClient
       .from('lms_orders')
-      .update({ status: 'paid', paid_at: new Date().toISOString(), stripe_payment_intent_id: intent.id })
+      .update({
+        status: 'paid',
+        paid_at: new Date().toISOString(),
+        stripe_payment_intent_id: intent.id,
+        total_collected: Number(upfrontOrder?.amount_paid ?? 0),
+      })
       .eq('id', orderId)
 
     const { data: cls } = await supabaseServiceClient
@@ -237,16 +245,21 @@ export async function webhookHandler(req: Request, res: Response) {
 
     const { data: order } = await supabaseServiceClient
       .from('lms_orders')
-      .select('id, student_id, product_id, coupon_id, status')
+      .select('id, student_id, product_id, coupon_id, status, amount_paid, total_collected')
       .eq('stripe_subscription_id', subscriptionId)
       .single()
     if (!order) return res.json({ received: true })
 
     const isFirstPayment = order.status !== 'paid'
+    const newTotal = Number(order.total_collected ?? 0) + Number(order.amount_paid)
 
     await supabaseServiceClient
       .from('lms_orders')
-      .update({ status: 'paid', paid_at: isFirstPayment ? new Date().toISOString() : undefined })
+      .update({
+        status: 'paid',
+        total_collected: newTotal,
+        paid_at: new Date().toISOString(),
+      })
       .eq('id', order.id)
 
     const { data: cls } = await supabaseServiceClient

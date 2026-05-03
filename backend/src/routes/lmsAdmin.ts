@@ -980,7 +980,8 @@ lmsAdminRouter.get('/admin/orders', authenticateRequest, requireRole('admin'),
         productId: o.product_id,
         productName: (o.lms_products as any)?.name ?? '',
         plan: o.plan,
-        amountPaid: Number(o.amount_paid),
+        amountPaid: o.plan === 'installment' ? Number(o.total_collected ?? o.amount_paid) : Number(o.amount_paid),
+        monthlyAmount: o.plan === 'installment' ? Number(o.amount_paid) : null,
         couponId: o.coupon_id ?? null,
         status: o.status,
         stripePaymentIntentId: o.stripe_payment_intent_id ?? null,
@@ -1006,33 +1007,26 @@ lmsAdminRouter.post('/admin/orders/:orderId/refund', authenticateRequest, requir
       if (!order) throw new HttpError(404, 'NOT_FOUND', 'Order not found.')
       if (order.status !== 'paid') throw new HttpError(400, 'NOT_PAID', 'Only paid orders can be refunded.')
 
-      // Upfront order — refund the payment intent, ignore if already refunded via Stripe dashboard
-      if (order.stripe_payment_intent_id) {
+      const isInstallment = !!order.stripe_subscription_id
+
+      if (!isInstallment && order.stripe_payment_intent_id) {
+        // Upfront — refund the payment intent
         try {
           await stripe.refunds.create({ payment_intent: order.stripe_payment_intent_id })
         } catch (err: any) {
           const alreadyRefunded = err?.raw?.code === 'charge_already_refunded' || err?.code === 'charge_already_refunded'
           if (!alreadyRefunded) throw err
         }
-      }
-
-      // Installment order — cancel subscription + refund ALL paid invoices
-      if (order.stripe_subscription_id) {
+      } else if (isInstallment) {
+        // Installment — cancel subscription only, no refund
         try {
-          const subscription = await stripe.subscriptions.retrieve(order.stripe_subscription_id)
+          const subscription = await stripe.subscriptions.retrieve(order.stripe_subscription_id!)
           if (subscription.status !== 'canceled') {
-            await stripe.subscriptions.cancel(order.stripe_subscription_id)
+            await stripe.subscriptions.cancel(order.stripe_subscription_id!)
           }
-        } catch { /* already cancelled — continue */ }
-
-        const invoices = await stripe.invoices.list({ subscription: order.stripe_subscription_id, limit: 100 })
-        for (const inv of invoices.data) {
-          const typedInv = inv as typeof inv & { payment_intent?: string | null; status?: string }
-          if (typedInv.status === 'paid' && typedInv.payment_intent && typeof typedInv.payment_intent === 'string') {
-            try {
-              await stripe.refunds.create({ payment_intent: typedInv.payment_intent })
-            } catch { /* already refunded — skip */ }
-          }
+        } catch (err: any) {
+          const code = err?.code ?? err?.raw?.code
+          if (code !== 'resource_missing') throw err
         }
       }
 
@@ -1062,9 +1056,11 @@ lmsAdminRouter.post('/admin/orders/:orderId/refund', authenticateRequest, requir
 
       await notifyStudent({
         studentId: order.student_id,
-        type: 'enrollment_confirmed',
-        title: 'Refund Processed',
-        body: 'Your refund has been issued. Your class access has been removed.',
+        type: isInstallment ? 'access_revoked' : 'enrollment_confirmed',
+        title: isInstallment ? 'Access Revoked' : 'Refund Processed',
+        body: isInstallment
+          ? 'Your installment subscription has been cancelled and your class access has been removed.'
+          : 'Your refund has been issued and your class access has been removed.',
         classId: order.class_id ?? undefined,
       })
 

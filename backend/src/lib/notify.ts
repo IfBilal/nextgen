@@ -7,6 +7,7 @@ type NotificationType =
   | 'chat_reply'
   | 'enrollment_confirmed'
   | 'session_rescheduled'
+  | 'access_revoked'
 
 interface NotifyPayload {
   studentId: string
