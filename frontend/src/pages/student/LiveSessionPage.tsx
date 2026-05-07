@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import {
   studentGetClassById,
   studentGetSessionsForClass,
+  studentJoinSession,
   getNoticesForClass,
 } from '../../services/lmsApi'
 import type { LmsClass, LmsSession, Notice } from '../../types/lms'
@@ -15,9 +16,7 @@ import {
   ChevronLeft,
   MessageCircle,
   ClipboardList,
-  X,
 } from 'lucide-react'
-import EmbeddedZoomMeeting from '../../components/lms/EmbeddedZoomMeeting'
 
 function formatFullDateTime(dateStr: string): string {
   return new Date(dateStr).toLocaleString([], {
@@ -51,7 +50,6 @@ export default function LiveSessionPage() {
   const [notices, setNotices] = useState<Notice[]>([])
   const [loading, setLoading] = useState(true)
   const [countdown, setCountdown] = useState<CountdownState | null>(null)
-  const [inSession, setInSession] = useState(false)
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -104,42 +102,6 @@ export default function LiveSessionPage() {
     )
   }
 
-  // ── Zoom embed view (student clicked Join) ───────────────────────────────
-  if (inSession && liveSession) {
-    return (
-      <div className="lms-session-page">
-        <div className="lms-session-header">
-          <div>
-            <button
-              onClick={() => setInSession(false)}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.82rem', color: '#6B7280', background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginBottom: 6 }}
-            >
-              <ChevronLeft size={14} /> Back to Class
-            </button>
-            <h1 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1E1B4B', margin: 0 }}>{cls.name}</h1>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 12px', background: '#dcfce7', color: '#15803d', border: '1px solid #bbf7d0', borderRadius: 999, fontWeight: 700, fontSize: '0.82rem' }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a', display: 'inline-block' }} />
-              Live
-            </span>
-            <button
-              onClick={() => setInSession(false)}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: 8, fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer' }}
-            >
-              <X size={13} /> Leave
-            </button>
-          </div>
-        </div>
-        <EmbeddedZoomMeeting
-          className={cls.name}
-          teacherName="Instructor"
-          meetingNumber={liveSession.meetingLink}
-        />
-      </div>
-    )
-  }
-
   // ── Class hub view ───────────────────────────────────────────────────────
   return (
     <div className="lms-session-page">
@@ -163,9 +125,12 @@ export default function LiveSessionPage() {
           <div className="lms-live-banner__pulse" />
           <span className="lms-live-banner__text">A session is live right now</span>
           <button
-            onClick={() => setInSession(true)}
             className="lms-join-btn"
             style={{ flexShrink: 0, border: 'none', cursor: 'pointer' }}
+            onClick={async () => {
+              const url = await studentJoinSession(liveSession.id)
+              if (url) window.open(url, '_blank', 'noopener,noreferrer')
+            }}
           >
             <Video size={14} /> Join Session
           </button>

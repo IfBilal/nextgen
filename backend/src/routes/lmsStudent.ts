@@ -54,7 +54,7 @@ lmsStudentRouter.get('/student/classes', authenticateRequest, requireRole('stude
 
       const { data: sessions } = await supabaseServiceClient
         .from('lms_sessions')
-        .select('id, class_id, scheduled_at, duration_minutes, status, zoom_meeting_id, recording_url, missed_reason, created_at')
+        .select('id, class_id, scheduled_at, duration_minutes, status, zoom_meeting_id, zoom_join_url, recording_url, missed_reason, created_at')
         .in('class_id', classIds)
         .in('status', ['scheduled', 'live'])
         .order('scheduled_at', { ascending: true })
@@ -79,7 +79,7 @@ lmsStudentRouter.get('/student/classes', authenticateRequest, requireRole('stude
       const mapSession = (s: SessionRow | null) => s ? {
         id: s.id, classId: s.class_id, scheduledAt: s.scheduled_at,
         durationMinutes: s.duration_minutes, status: s.status,
-        meetingLink: s.zoom_meeting_id, recordingUrl: s.recording_url,
+        meetingLink: s.zoom_join_url ?? s.zoom_meeting_id, recordingUrl: s.recording_url,
         missedReason: s.missed_reason, createdAt: s.created_at,
       } : null
 
@@ -139,6 +139,57 @@ lmsStudentRouter.get('/student/classes/:classId', authenticateRequest, requireRo
   }
 )
 
+// ─── POST /api/v1/student/sessions/:sessionId/join ───────────────────────────
+lmsStudentRouter.post('/student/sessions/:sessionId/join', authenticateRequest, requireRole('student'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const studentId = req.auth!.userId
+      const { sessionId } = req.params
+
+      const { data: session, error: sErr } = await supabaseServiceClient
+        .from('lms_sessions')
+        .select('id, class_id, status, zoom_join_url, zoom_meeting_id, attendance_count')
+        .eq('id', sessionId)
+        .single()
+      if (sErr || !session) throw new HttpError(404, 'NOT_FOUND', 'Session not found.')
+      if (!['scheduled', 'live'].includes(session.status)) throw new HttpError(400, 'NOT_AVAILABLE', 'Session is not available to join.')
+
+      const { data: enrollment } = await supabaseServiceClient
+        .from('lms_enrollments').select('class_id').eq('student_id', studentId).eq('class_id', session.class_id).single()
+      if (!enrollment) throw new HttpError(403, 'NOT_ENROLLED', 'You are not enrolled in this class.')
+
+      // Check if already marked present to avoid double-counting
+      const { data: existing } = await supabaseServiceClient
+        .from('lms_attendance_records')
+        .select('id, status')
+        .eq('session_id', sessionId)
+        .eq('student_id', studentId)
+        .single()
+
+      if (!existing) {
+        const { error: insertErr } = await supabaseServiceClient.from('lms_attendance_records').insert({
+          session_id: sessionId, student_id: studentId, status: 'attended',
+          joined_at: new Date().toISOString(),
+        })
+        if (!insertErr) {
+          await supabaseServiceClient.from('lms_sessions')
+            .update({ attendance_count: (session.attendance_count ?? 0) + 1, updated_at: new Date().toISOString() })
+            .eq('id', sessionId)
+        }
+      } else if (existing.status !== 'attended') {
+        await supabaseServiceClient.from('lms_attendance_records')
+          .update({ status: 'attended' })
+          .eq('id', existing.id)
+        await supabaseServiceClient.from('lms_sessions')
+          .update({ attendance_count: (session.attendance_count ?? 0) + 1, updated_at: new Date().toISOString() })
+          .eq('id', sessionId)
+      }
+
+      return res.status(200).json({ joinUrl: session.zoom_join_url ?? session.zoom_meeting_id })
+    } catch (err) { return next(err) }
+  }
+)
+
 // ─── GET /api/v1/student/classes/:classId/sessions ───────────────────────────
 lmsStudentRouter.get('/student/classes/:classId/sessions', authenticateRequest, requireRole('student'), checkDemoAccess,
   async (req: Request, res: Response, next: NextFunction) => {
@@ -151,7 +202,7 @@ lmsStudentRouter.get('/student/classes/:classId/sessions', authenticateRequest, 
 
       const { data, error } = await supabaseServiceClient
         .from('lms_sessions')
-        .select('id, class_id, scheduled_at, duration_minutes, status, zoom_meeting_id, recording_url, attendance_count, actual_duration_minutes, change_note, missed_reason, created_at')
+        .select('id, class_id, scheduled_at, duration_minutes, status, zoom_meeting_id, zoom_join_url, recording_url, attendance_count, actual_duration_minutes, change_note, missed_reason, created_at')
         .eq('class_id', req.params.classId)
         .neq('status', 'cancelled')
         .order('scheduled_at', { ascending: false })
@@ -161,7 +212,7 @@ lmsStudentRouter.get('/student/classes/:classId/sessions', authenticateRequest, 
       const sessions = (data ?? []).map(s => ({
         id: s.id, classId: s.class_id, scheduledAt: s.scheduled_at,
         durationMinutes: s.duration_minutes, status: s.status,
-        meetingLink: s.zoom_meeting_id, recordingUrl: s.recording_url,
+        meetingLink: s.zoom_join_url ?? s.zoom_meeting_id, recordingUrl: s.recording_url,
         attendanceCount: s.attendance_count, actualDurationMinutes: s.actual_duration_minutes,
         changeNote: s.change_note, missedReason: s.missed_reason, createdAt: s.created_at,
       }))
@@ -210,15 +261,17 @@ lmsStudentRouter.get('/student/classes/:classId/attendance', authenticateRequest
         .from('lms_enrollments').select('class_id').eq('student_id', studentId).eq('class_id', req.params.classId).single()
       if (!enrollment) throw new HttpError(403, 'NOT_ENROLLED', 'You are not enrolled in this class.')
 
-      // Get all session IDs for this class so we can scope the attendance query
+      // Get all past/completed sessions for this class
+      const now = new Date().toISOString()
       const { data: classSessions } = await supabaseServiceClient
         .from('lms_sessions')
-        .select('id, scheduled_at, duration_minutes')
+        .select('id, scheduled_at, duration_minutes, status')
         .eq('class_id', req.params.classId)
+        .neq('status', 'cancelled')
+        .lte('scheduled_at', now)
+        .order('scheduled_at', { ascending: true })
 
       const sessionIds = (classSessions ?? []).map(s => s.id)
-      const sessionMeta: Record<string, { scheduledAt: string; durationMinutes: number }> = {}
-      ;(classSessions ?? []).forEach(s => { sessionMeta[s.id] = { scheduledAt: s.scheduled_at, durationMinutes: s.duration_minutes } })
 
       const { data: records, error } = sessionIds.length
         ? await supabaseServiceClient
@@ -226,17 +279,20 @@ lmsStudentRouter.get('/student/classes/:classId/attendance', authenticateRequest
             .select('session_id, status')
             .eq('student_id', studentId)
             .in('session_id', sessionIds)
-            .order('session_id')
         : { data: [], error: null }
 
       if (error) throw new HttpError(500, 'FETCH_FAILED', error.message)
 
-      const result = (records ?? []).map(r => ({
-        sessionId: r.session_id,
+      const recordBySession: Record<string, string> = {}
+      ;(records ?? []).forEach(r => { recordBySession[r.session_id] = r.status })
+
+      // All past sessions — absent if no record exists
+      const result = (classSessions ?? []).map(s => ({
+        sessionId: s.id,
         classId: req.params.classId,
-        scheduledAt: sessionMeta[r.session_id]?.scheduledAt ?? '',
-        durationMinutes: sessionMeta[r.session_id]?.durationMinutes ?? 0,
-        status: r.status,
+        scheduledAt: s.scheduled_at,
+        durationMinutes: s.duration_minutes,
+        status: recordBySession[s.id] ?? 'absent',
       }))
 
       return res.status(200).json({ records: result })

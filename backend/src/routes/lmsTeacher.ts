@@ -2,11 +2,11 @@ import type { NextFunction, Request, Response } from 'express'
 import { Router } from 'express'
 import { z } from 'zod'
 import multer from 'multer'
-import rateLimit from 'express-rate-limit'
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit'
 import { HttpError } from '../lib/httpError.js'
 import { authenticateRequest, requireRole } from '../middleware/authenticate.js'
 import { supabaseServiceClient } from '../lib/supabase.js'
-import { createZoomMeeting, generateSdkSignature } from '../lib/zoom.js'
+import { createZoomMeeting } from '../lib/zoom.js'
 import { notifyAllEnrolledStudents } from '../lib/notify.js'
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } })
@@ -14,7 +14,7 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 
 const chatLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 20,
-  keyGenerator: (req) => req.auth?.userId ?? req.ip ?? 'unknown',
+  keyGenerator: (req) => req.auth?.userId ?? ipKeyGenerator(req.ip ?? ''),
   handler: (_req, res) => res.status(429).json({ code: 'RATE_LIMITED', message: 'Too many messages. Please wait before sending again.' }),
   standardHeaders: true,
   legacyHeaders: false,
@@ -47,7 +47,7 @@ lmsTeacherRouter.get('/teacher/classes', authenticateRequest, requireRole('teach
 
       const { data: sessions } = await supabaseServiceClient
         .from('lms_sessions')
-        .select('id, class_id, scheduled_at, duration_minutes, status, zoom_meeting_id, recording_url, missed_reason, created_at')
+        .select('id, class_id, scheduled_at, duration_minutes, status, zoom_meeting_id, zoom_join_url, zoom_start_url, recording_url, missed_reason, started_at, created_at')
         .in('class_id', classIds)
         .in('status', ['scheduled', 'live'])
         .order('scheduled_at', { ascending: true })
@@ -61,8 +61,8 @@ lmsTeacherRouter.get('/teacher/classes', authenticateRequest, requireRole('teach
       const mapNextSession = (s: SessionRow | null) => s ? {
         id: s.id, classId: s.class_id, scheduledAt: s.scheduled_at,
         durationMinutes: s.duration_minutes, status: s.status,
-        meetingLink: s.zoom_meeting_id, recordingUrl: s.recording_url,
-        missedReason: s.missed_reason, createdAt: s.created_at,
+        meetingLink: s.zoom_join_url ?? s.zoom_meeting_id, startUrl: s.zoom_start_url ?? null, recordingUrl: s.recording_url,
+        missedReason: s.missed_reason, startedAt: s.started_at ?? null, createdAt: s.created_at,
       } : null
 
       const result = (classes ?? []).map(c => ({
@@ -109,6 +109,31 @@ lmsTeacherRouter.get('/teacher/classes/:classId', authenticateRequest, requireRo
   }
 )
 
+// ─── GET /api/v1/teacher/sessions/:sessionId/start-url ───────────────────────
+lmsTeacherRouter.get('/teacher/sessions/:sessionId/start-url', authenticateRequest, requireRole('teacher'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const teacherId = req.auth!.userId
+      const { sessionId } = req.params
+
+      const { data: session } = await supabaseServiceClient
+        .from('lms_sessions')
+        .select('id, class_id, zoom_meeting_id')
+        .eq('id', sessionId)
+        .single()
+      if (!session?.zoom_meeting_id) throw new HttpError(404, 'NOT_FOUND', 'No Zoom meeting for this session.')
+
+      const { data: cls } = await supabaseServiceClient
+        .from('lms_classes').select('id').eq('id', session.class_id).eq('teacher_id', teacherId).single()
+      if (!cls) throw new HttpError(403, 'FORBIDDEN', 'This session does not belong to your class.')
+
+      const { getZoomStartUrl } = await import('../lib/zoom.js')
+      const startUrl = await getZoomStartUrl(session.zoom_meeting_id)
+      return res.status(200).json({ startUrl })
+    } catch (err) { return next(err) }
+  }
+)
+
 // ─── GET /api/v1/teacher/classes/:classId/sessions ───────────────────────────
 lmsTeacherRouter.get('/teacher/classes/:classId/sessions', authenticateRequest, requireRole('teacher'),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -121,7 +146,7 @@ lmsTeacherRouter.get('/teacher/classes/:classId/sessions', authenticateRequest, 
 
       const { data, error } = await supabaseServiceClient
         .from('lms_sessions')
-        .select('id, class_id, scheduled_at, duration_minutes, status, zoom_meeting_id, recording_url, attendance_count, actual_duration_minutes, change_note, missed_reason, created_at')
+        .select('id, class_id, scheduled_at, duration_minutes, status, zoom_meeting_id, zoom_join_url, zoom_start_url, recording_url, attendance_count, actual_duration_minutes, change_note, missed_reason, started_at, created_at')
         .eq('class_id', req.params.classId)
         .order('scheduled_at', { ascending: false })
 
@@ -130,9 +155,9 @@ lmsTeacherRouter.get('/teacher/classes/:classId/sessions', authenticateRequest, 
       const sessions = (data ?? []).map(s => ({
         id: s.id, classId: s.class_id, scheduledAt: s.scheduled_at,
         durationMinutes: s.duration_minutes, status: s.status,
-        meetingLink: s.zoom_meeting_id, recordingUrl: s.recording_url,
+        meetingLink: s.zoom_join_url ?? s.zoom_meeting_id, startUrl: s.zoom_start_url ?? null, recordingUrl: s.recording_url,
         attendanceCount: s.attendance_count, actualDurationMinutes: s.actual_duration_minutes,
-        changeNote: s.change_note, missedReason: s.missed_reason, createdAt: s.created_at,
+        changeNote: s.change_note, missedReason: s.missed_reason, startedAt: s.started_at ?? null, createdAt: s.created_at,
       }))
 
       return res.status(200).json({ sessions })
@@ -158,14 +183,11 @@ lmsTeacherRouter.post('/teacher/sessions', authenticateRequest, requireRole('tea
         .from('lms_classes').select('id, name').eq('id', parsed.classId).eq('teacher_id', teacherId).single()
       if (!cls) throw new HttpError(403, 'FORBIDDEN', 'This class does not belong to you.')
 
-      const { meetingId, startUrl } = await createZoomMeeting(cls.name, parsed.scheduledAt, parsed.durationMinutes)
-
       const { data, error } = await supabaseServiceClient
         .from('lms_sessions')
         .insert({
           class_id: parsed.classId, scheduled_at: parsed.scheduledAt,
-          duration_minutes: parsed.durationMinutes, zoom_meeting_id: meetingId,
-          zoom_start_url: startUrl, status: 'scheduled',
+          duration_minutes: parsed.durationMinutes, status: 'scheduled',
         })
         .select().single()
 
@@ -175,9 +197,9 @@ lmsTeacherRouter.post('/teacher/sessions', authenticateRequest, requireRole('tea
         session: {
           id: data.id, classId: data.class_id, scheduledAt: data.scheduled_at,
           durationMinutes: data.duration_minutes, status: data.status,
-          meetingLink: data.zoom_meeting_id, attendanceCount: null,
+          meetingLink: data.zoom_join_url ?? data.zoom_meeting_id, startUrl: data.zoom_start_url ?? null, attendanceCount: null,
           actualDurationMinutes: null, changeNote: null, missedReason: null,
-          recordingUrl: null, createdAt: data.created_at,
+          startedAt: null, recordingUrl: null, createdAt: data.created_at,
         },
       })
     } catch (err) { return next(err) }
@@ -226,9 +248,9 @@ lmsTeacherRouter.patch('/teacher/sessions/:id', authenticateRequest, requireRole
         session: {
           id: updated.id, classId: updated.class_id, scheduledAt: updated.scheduled_at,
           durationMinutes: updated.duration_minutes, status: updated.status,
-          meetingLink: updated.zoom_meeting_id, attendanceCount: updated.attendance_count,
+          meetingLink: updated.zoom_join_url ?? updated.zoom_meeting_id, startUrl: updated.zoom_start_url ?? null, attendanceCount: updated.attendance_count,
           actualDurationMinutes: updated.actual_duration_minutes, changeNote: updated.change_note,
-          missedReason: updated.missed_reason, recordingUrl: updated.recording_url, createdAt: updated.created_at,
+          missedReason: updated.missed_reason, startedAt: updated.started_at ?? null, recordingUrl: updated.recording_url, createdAt: updated.created_at,
         },
       })
     } catch (err) { return next(err) }
@@ -242,17 +264,39 @@ lmsTeacherRouter.post('/teacher/sessions/:id/start', authenticateRequest, requir
       const teacherId = req.auth!.userId
 
       const { data: session } = await supabaseServiceClient
-        .from('lms_sessions').select('class_id, status').eq('id', req.params.id).single()
+        .from('lms_sessions').select('class_id, status, scheduled_at, duration_minutes').eq('id', req.params.id).single()
       if (!session) throw new HttpError(404, 'NOT_FOUND', 'Session not found.')
       if (session.status !== 'scheduled') throw new HttpError(400, 'INVALID_STATUS', 'Session is not in scheduled state.')
 
       const { data: cls } = await supabaseServiceClient
-        .from('lms_classes').select('id').eq('id', session.class_id).eq('teacher_id', teacherId).single()
+        .from('lms_classes').select('id, name').eq('id', session.class_id).eq('teacher_id', teacherId).single()
       if (!cls) throw new HttpError(403, 'FORBIDDEN', 'This session does not belong to your class.')
+
+      // Atomic lock: only proceed if session is still 'scheduled' — blocks double-start race condition
+      const { data: locked, error: lockError } = await supabaseServiceClient
+        .from('lms_sessions')
+        .update({ status: 'live', started_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+        .eq('id', req.params.id)
+        .eq('status', 'scheduled')
+        .select('id')
+      if (lockError) throw new HttpError(500, 'UPDATE_FAILED', lockError.message)
+      if (!locked || locked.length === 0) throw new HttpError(409, 'ALREADY_STARTED', 'Session was already started by another request.')
+
+      // Create Zoom meeting — if this fails, roll back status to 'scheduled'
+      let zoom: { meetingId: string; joinUrl: string; startUrl: string }
+      try {
+        zoom = await createZoomMeeting(cls.name, new Date().toISOString(), session.duration_minutes)
+      } catch (zoomErr: any) {
+        await supabaseServiceClient
+          .from('lms_sessions')
+          .update({ status: 'scheduled', started_at: null, updated_at: new Date().toISOString() })
+          .eq('id', req.params.id)
+        throw new HttpError(503, 'ZOOM_UNAVAILABLE', 'Could not create Zoom meeting. Please try again.')
+      }
 
       const { data: updated, error } = await supabaseServiceClient
         .from('lms_sessions')
-        .update({ status: 'live', started_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+        .update({ zoom_meeting_id: zoom.meetingId, zoom_join_url: zoom.joinUrl, zoom_start_url: zoom.startUrl, updated_at: new Date().toISOString() })
         .eq('id', req.params.id).select().single()
 
       if (error || !updated) throw new HttpError(500, 'UPDATE_FAILED', error?.message ?? 'No data returned')
@@ -268,9 +312,9 @@ lmsTeacherRouter.post('/teacher/sessions/:id/start', authenticateRequest, requir
         session: {
           id: updated.id, classId: updated.class_id, scheduledAt: updated.scheduled_at,
           durationMinutes: updated.duration_minutes, status: updated.status,
-          meetingLink: updated.zoom_meeting_id, attendanceCount: updated.attendance_count,
+          meetingLink: updated.zoom_join_url ?? updated.zoom_meeting_id, startUrl: updated.zoom_start_url ?? null, attendanceCount: updated.attendance_count,
           actualDurationMinutes: updated.actual_duration_minutes, changeNote: updated.change_note,
-          missedReason: updated.missed_reason, recordingUrl: updated.recording_url, createdAt: updated.created_at,
+          missedReason: updated.missed_reason, startedAt: updated.started_at ?? null, recordingUrl: updated.recording_url, createdAt: updated.created_at,
         },
       })
     } catch (err) { return next(err) }
@@ -307,9 +351,9 @@ lmsTeacherRouter.post('/teacher/sessions/:id/end', authenticateRequest, requireR
         session: {
           id: updated.id, classId: updated.class_id, scheduledAt: updated.scheduled_at,
           durationMinutes: updated.duration_minutes, status: updated.status,
-          meetingLink: updated.zoom_meeting_id, attendanceCount: updated.attendance_count,
+          meetingLink: updated.zoom_join_url ?? updated.zoom_meeting_id, startUrl: updated.zoom_start_url ?? null, attendanceCount: updated.attendance_count,
           actualDurationMinutes: updated.actual_duration_minutes, changeNote: updated.change_note,
-          missedReason: updated.missed_reason, recordingUrl: updated.recording_url, createdAt: updated.created_at,
+          missedReason: updated.missed_reason, startedAt: updated.started_at ?? null, recordingUrl: updated.recording_url, createdAt: updated.created_at,
         },
       })
     } catch (err) { return next(err) }
@@ -328,7 +372,7 @@ lmsTeacherRouter.patch('/teacher/sessions/:id/cancel', authenticateRequest, requ
       const { data: session } = await supabaseServiceClient
         .from('lms_sessions').select('class_id, status').eq('id', req.params.id).single()
       if (!session) throw new HttpError(404, 'NOT_FOUND', 'Session not found.')
-      if (session.status !== 'scheduled') throw new HttpError(400, 'INVALID_STATUS', 'Only scheduled sessions can be cancelled.')
+      if (!['scheduled', 'live'].includes(session.status)) throw new HttpError(400, 'INVALID_STATUS', 'Only scheduled or live sessions can be cancelled.')
 
       const { data: cls } = await supabaseServiceClient
         .from('lms_classes').select('id').eq('id', session.class_id).eq('teacher_id', teacherId).single()
@@ -357,8 +401,8 @@ lmsTeacherRouter.patch('/teacher/sessions/:id/missed', authenticateRequest, requ
       const { data: session } = await supabaseServiceClient
         .from('lms_sessions').select('class_id, status, scheduled_at').eq('id', req.params.id).single()
       if (!session) throw new HttpError(404, 'NOT_FOUND', 'Session not found.')
-      if (session.status !== 'scheduled' || new Date(session.scheduled_at) >= new Date()) {
-        throw new HttpError(400, 'INVALID_STATUS', 'Session must be scheduled and in the past.')
+      if (session.status !== 'scheduled') {
+        throw new HttpError(400, 'INVALID_STATUS', 'Only scheduled sessions can be marked as missed.')
       }
 
       const { data: cls } = await supabaseServiceClient
@@ -383,9 +427,9 @@ lmsTeacherRouter.patch('/teacher/sessions/:id/missed', authenticateRequest, requ
         session: {
           id: updated.id, classId: updated.class_id, scheduledAt: updated.scheduled_at,
           durationMinutes: updated.duration_minutes, status: updated.status,
-          meetingLink: updated.zoom_meeting_id, attendanceCount: updated.attendance_count,
+          meetingLink: updated.zoom_join_url ?? updated.zoom_meeting_id, startUrl: updated.zoom_start_url ?? null, attendanceCount: updated.attendance_count,
           actualDurationMinutes: updated.actual_duration_minutes, changeNote: updated.change_note,
-          missedReason: updated.missed_reason, recordingUrl: updated.recording_url, createdAt: updated.created_at,
+          missedReason: updated.missed_reason, startedAt: updated.started_at ?? null, recordingUrl: updated.recording_url, createdAt: updated.created_at,
         },
       })
     } catch (err) { return next(err) }
@@ -682,60 +726,6 @@ lmsTeacherRouter.post('/chat/group', authenticateRequest, chatLimiter,
   }
 )
 
-// ─── GET /api/v1/sessions/:sessionId/sdk-token ───────────────────────────────
-lmsTeacherRouter.get('/sessions/:sessionId/sdk-token', authenticateRequest,
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const role = req.auth!.role
-      const userId = req.auth!.userId
-
-      const { data: session } = await supabaseServiceClient
-        .from('lms_sessions').select('id, class_id, zoom_meeting_id, status').eq('id', req.params.sessionId).single()
-      if (!session) throw new HttpError(404, 'NOT_FOUND', 'Session not found.')
-
-      let sdkRole: 0 | 1 = 0
-      let userName = ''
-      let userEmail = ''
-
-      if (role === 'teacher') {
-        const { data: cls } = await supabaseServiceClient
-          .from('lms_classes').select('id').eq('id', session.class_id).eq('teacher_id', userId).single()
-        if (!cls) throw new HttpError(403, 'FORBIDDEN', 'This session does not belong to your class.')
-        if (!['scheduled', 'live'].includes(session.status)) {
-          throw new HttpError(400, 'INVALID_STATUS', 'Cannot join a completed or cancelled session.')
-        }
-        sdkRole = 1
-        const { data: profile } = await supabaseServiceClient
-          .from('profiles').select('full_name, email').eq('id', userId).single()
-        userName = profile?.full_name ?? ''
-        userEmail = profile?.email ?? ''
-      } else if (role === 'student') {
-        const { data: enr } = await supabaseServiceClient
-          .from('lms_enrollments').select('demo_expires_at').eq('student_id', userId).eq('class_id', session.class_id).single()
-        if (!enr) throw new HttpError(403, 'NOT_ENROLLED', 'You are not enrolled in this class.')
-        if (session.status !== 'live') throw new HttpError(400, 'SESSION_NOT_LIVE', 'Session is not live yet.')
-        sdkRole = 0
-        const { data: profile } = await supabaseServiceClient
-          .from('profiles').select('full_name, email').eq('id', userId).single()
-        userName = profile?.full_name ?? ''
-        userEmail = profile?.email ?? ''
-      } else {
-        throw new HttpError(403, 'FORBIDDEN', 'Access denied.')
-      }
-
-      const signature = generateSdkSignature(session.zoom_meeting_id, sdkRole)
-
-      return res.status(200).json({
-        signature,
-        meetingNumber: session.zoom_meeting_id,
-        sdkKey: process.env.ZOOM_SDK_KEY ?? '',
-        userName,
-        userEmail,
-      })
-    } catch (err) { return next(err) }
-  }
-)
-
 // ─── PATCH /api/v1/teacher/sessions/:id/recording ────────────────────────────
 const recordingUrlSchema = z.object({ url: z.string().url() })
 
@@ -764,9 +754,9 @@ lmsTeacherRouter.patch('/teacher/sessions/:id/recording', authenticateRequest, r
         session: {
           id: updated.id, classId: updated.class_id, scheduledAt: updated.scheduled_at,
           durationMinutes: updated.duration_minutes, status: updated.status,
-          meetingLink: updated.zoom_meeting_id, attendanceCount: updated.attendance_count,
+          meetingLink: updated.zoom_join_url ?? updated.zoom_meeting_id, startUrl: updated.zoom_start_url ?? null, attendanceCount: updated.attendance_count,
           actualDurationMinutes: updated.actual_duration_minutes, changeNote: updated.change_note,
-          missedReason: updated.missed_reason, recordingUrl: updated.recording_url, createdAt: updated.created_at,
+          missedReason: updated.missed_reason, startedAt: updated.started_at ?? null, recordingUrl: updated.recording_url, createdAt: updated.created_at,
         },
       })
     } catch (err) { return next(err) }
@@ -797,9 +787,9 @@ lmsTeacherRouter.delete('/teacher/sessions/:id/recording', authenticateRequest, 
         session: {
           id: updated.id, classId: updated.class_id, scheduledAt: updated.scheduled_at,
           durationMinutes: updated.duration_minutes, status: updated.status,
-          meetingLink: updated.zoom_meeting_id, attendanceCount: updated.attendance_count,
+          meetingLink: updated.zoom_join_url ?? updated.zoom_meeting_id, startUrl: updated.zoom_start_url ?? null, attendanceCount: updated.attendance_count,
           actualDurationMinutes: updated.actual_duration_minutes, changeNote: updated.change_note,
-          missedReason: updated.missed_reason, recordingUrl: updated.recording_url, createdAt: updated.created_at,
+          missedReason: updated.missed_reason, startedAt: updated.started_at ?? null, recordingUrl: updated.recording_url, createdAt: updated.created_at,
         },
       })
     } catch (err) { return next(err) }

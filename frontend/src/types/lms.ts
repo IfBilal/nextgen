@@ -56,7 +56,9 @@ export interface LmsSession {
   scheduledAt: string         // ISO datetime
   durationMinutes: number
   status: SessionStatus
-  meetingLink: string
+  meetingLink: string | null
+  startUrl?: string
+  startedAt?: string
   recordingUrl?: string
   attendanceCount?: number
   actualDurationMinutes?: number

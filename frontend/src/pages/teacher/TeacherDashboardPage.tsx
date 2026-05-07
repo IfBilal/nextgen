@@ -121,15 +121,27 @@ export default function TeacherDashboardPage() {
   }
 
   async function handleCheckIn(session: LmsSession) {
-    const updated = await startSession(session.id)
-    setAllSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
-    showToast('Session started — students notified ✓')
+    try {
+      const updated = await startSession(session.id)
+      setAllSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
+      if (updated.startUrl) {
+        window.open(updated.startUrl, '_blank', 'noopener,noreferrer')
+      } else {
+        showToast('Session started but Zoom link unavailable — check credentials.')
+      }
+    } catch {
+      showToast('Failed to start session — Zoom may be unavailable. Try again.')
+    }
   }
 
   async function handleEndSession(session: LmsSession) {
-    const updated = await endSession(session.id)
-    setAllSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
-    showToast('Session ended successfully ✓')
+    try {
+      const updated = await endSession(session.id)
+      setAllSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
+      showToast('Session ended successfully ✓')
+    } catch {
+      showToast('Failed to end session. Please try again.')
+    }
   }
 
   const totalStudents = classes.reduce((sum, c) => sum + c.enrolledStudentIds.length, 0)

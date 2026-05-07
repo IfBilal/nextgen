@@ -3,9 +3,9 @@ import {
   adminGetAllSessions,
   adminUpdateSession,
   adminCancelSession,
+  adminRegenerateZoom,
   getAllClassesWithProducts,
   adminGetProducts,
-  generateMeetingLink,
 } from '../../services/lmsApi'
 import type { SessionWithClass, ClassWithProduct, Product } from '../../types/lms'
 import '../../styles/admin/admin-lms-sessions.css'
@@ -71,8 +71,8 @@ export default function AdminLmsSessionsPage() {
   const [editDate, setEditDate] = useState('')
   const [editTime, setEditTime] = useState('')
   const [editDuration, setEditDuration] = useState(90)
-  const [editLink, setEditLink] = useState('')
   const [editChangeNote, setEditChangeNote] = useState('')
+  const [regeneratingId, setRegeneratingId] = useState<string | null>(null)
   const [editError, setEditError] = useState('')
   const [editSubmitting, setEditSubmitting] = useState(false)
 
@@ -105,7 +105,6 @@ export default function AdminLmsSessionsPage() {
     setEditDate(d.toISOString().slice(0, 10))
     setEditTime(d.toTimeString().slice(0, 5))
     setEditDuration(session.durationMinutes)
-    setEditLink(session.meetingLink)
     setEditChangeNote('')
     setEditError('')
   }
@@ -122,7 +121,6 @@ export default function AdminLmsSessionsPage() {
         classId: editSession.classId,
         scheduledAt,
         durationMinutes: editDuration,
-        meetingLink: editLink.trim(),
         changeNote: editChangeNote.trim(),
       })
       setSessions(prev =>
@@ -146,6 +144,19 @@ export default function AdminLmsSessionsPage() {
     setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, status: 'cancelled' } : s))
     setCancelConfirmId(null)
     showToast('Session cancelled')
+  }
+
+  async function handleRegenerateZoom(sessionId: string) {
+    setRegeneratingId(sessionId)
+    try {
+      const { joinUrl, startUrl } = await adminRegenerateZoom(sessionId)
+      setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, meetingLink: joinUrl, startUrl } : s))
+      showToast('Zoom meeting link regenerated ✓')
+    } catch {
+      showToast('Failed to regenerate Zoom link.')
+    } finally {
+      setRegeneratingId(null)
+    }
   }
 
   // Computed stats
@@ -396,12 +407,32 @@ export default function AdminLmsSessionsPage() {
                           </>
                         )}
                         {session.status === 'live' && (
+                          <>
+                            {session.startUrl && (
+                              <button
+                                style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: '#EEF2FF', color: '#3730A3', border: '1px solid #C7D2FE', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer' }}
+                                onClick={() => window.open(session.startUrl!, '_blank', 'noopener,noreferrer')}
+                              >
+                                <Video size={11} />
+                                Join as Host
+                              </button>
+                            )}
+                            <button
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: '#fee2e2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: 7, fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer' }}
+                              onClick={() => handleCancel(session.id)}
+                            >
+                              <CheckCircle2 size={11} />
+                              End
+                            </button>
+                          </>
+                        )}
+                        {(session.status === 'scheduled' || session.status === 'live') && !session.startUrl && (
                           <button
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: '#fee2e2', color: '#dc2626', border: '1px solid #fecaca', borderRadius: 7, fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer' }}
-                            onClick={() => handleCancel(session.id)}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: '#f0fdf4', color: '#15803d', border: '1px solid #bbf7d0', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', opacity: regeneratingId === session.id ? 0.6 : 1 }}
+                            disabled={regeneratingId === session.id}
+                            onClick={() => handleRegenerateZoom(session.id)}
                           >
-                            <CheckCircle2 size={11} />
-                            End
+                            {regeneratingId === session.id ? 'Generating…' : '⟳ Generate Zoom Link'}
                           </button>
                         )}
                         {session.status === 'completed' && (
@@ -479,21 +510,6 @@ export default function AdminLmsSessionsPage() {
                 value={editDuration}
                 onChange={e => setEditDuration(Number(e.target.value))}
               />
-            </div>
-
-            <div style={{ display: 'grid', gap: 6 }}>
-              <label style={{ fontSize: '0.83rem', fontWeight: 600, color: '#3730A3' }}>Meeting Link</label>
-              <input
-                style={{ border: '1.5px solid #C7D2FE', borderRadius: 10, padding: '8px 12px', fontSize: '0.9rem', color: '#1E1B4B', background: '#F9FAFB', outline: 'none', fontFamily: 'inherit' }}
-                value={editLink}
-                onChange={e => setEditLink(e.target.value)}
-              />
-              <button
-                style={{ padding: '4px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6B7280', width: 'fit-content' }}
-                onClick={() => setEditLink(generateMeetingLink(editSession.classId))}
-              >
-                Regenerate Link
-              </button>
             </div>
 
             <div style={{ display: 'grid', gap: 6 }}>

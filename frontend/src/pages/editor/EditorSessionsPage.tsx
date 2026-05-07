@@ -99,7 +99,7 @@ export default function EditorSessionsPage() {
     setEditDate(d.toISOString().slice(0, 10))
     setEditTime(d.toTimeString().slice(0, 5))
     setEditDuration(session.durationMinutes)
-    setEditLink(session.meetingLink)
+    setEditLink(session.meetingLink ?? '')
     setEditChangeNote('')
     setEditError('')
   }

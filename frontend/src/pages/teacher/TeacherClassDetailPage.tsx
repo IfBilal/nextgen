@@ -104,6 +104,7 @@ export default function TeacherClassDetailPage() {
   const [recordingInputId, setRecordingInputId] = useState<string | null>(null)
   const [recordingUrl, setRecordingUrl] = useState('')
   const [recordingSubmitting, setRecordingSubmitting] = useState(false)
+  const [startingSessionId, setStartingSessionId] = useState<string | null>(null)
 
   useEffect(() => {
     if (!classId || !teacher) return
@@ -129,33 +130,59 @@ export default function TeacherClassDetailPage() {
     setTimeout(() => setToast(null), 3000)
   }
 
+  function openZoomAsHost(startUrl: string) {
+    window.open(startUrl, '_blank', 'noopener,noreferrer')
+  }
+
   async function handleStart(session: LmsSession) {
-    const updated = await startSession(session.id)
-    setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
-    showToast('Session started ✓')
+    if (startingSessionId) return
+    setStartingSessionId(session.id)
+    try {
+      const updated = await startSession(session.id)
+      setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
+      if (updated.startUrl) {
+        showToast('Opening Zoom — click "Open Zoom" if your browser asks, or install the Zoom desktop app.')
+        openZoomAsHost(updated.startUrl)
+      } else {
+        showToast('Session started but Zoom link unavailable — check credentials.')
+      }
+    } catch {
+      showToast('Failed to start session — Zoom may be unavailable. Try again.')
+    } finally {
+      setStartingSessionId(null)
+    }
   }
 
   async function handleEnd(session: LmsSession) {
-    const updated = await endSession(session.id)
-    setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
-    showToast('Session ended ✓')
+    try {
+      const updated = await endSession(session.id)
+      setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
+      showToast('Session ended ✓')
+    } catch {
+      showToast('Failed to end session. Please try again.')
+    }
   }
 
   async function handleReasonSubmit() {
     if (!reasonModalId || !missedReason.trim()) return
     setMissedSubmitting(true)
-    if (reasonModalMode === 'cancel') {
-      await cancelSession(reasonModalId)
-      setSessions(prev => prev.map(s => s.id === reasonModalId ? { ...s, status: 'cancelled', missedReason: missedReason.trim() } : s))
-      showToast('Session cancelled — reason visible to students')
-    } else {
-      const updated = await markSessionMissed(reasonModalId, missedReason)
-      setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
-      showToast('Reason submitted — students and admin will be notified')
+    try {
+      if (reasonModalMode === 'cancel') {
+        await cancelSession(reasonModalId)
+        setSessions(prev => prev.map(s => s.id === reasonModalId ? { ...s, status: 'cancelled', missedReason: missedReason.trim() } : s))
+        showToast('Session cancelled — reason visible to students')
+      } else {
+        const updated = await markSessionMissed(reasonModalId, missedReason)
+        setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
+        showToast('Reason submitted — students and admin will be notified')
+      }
+      setReasonModalId(null)
+      setMissedReason('')
+    } catch {
+      showToast('Action failed. Please try again.')
+    } finally {
+      setMissedSubmitting(false)
     }
-    setReasonModalId(null)
-    setMissedReason('')
-    setMissedSubmitting(false)
   }
 
   async function handleDeleteNotice(noticeId: string) {
@@ -342,7 +369,8 @@ export default function TeacherClassDetailPage() {
                         <td>
                           <div style={{ display: 'flex', gap: 6 }}>
                             {session.status === 'scheduled' && (() => {
-                              const isPast = new Date(session.scheduledAt) < new Date()
+                              const graceMs = ((session.durationMinutes ?? 60) / 2) * 60 * 1000
+                              const isPast = new Date(session.scheduledAt).getTime() + graceMs < Date.now()
                               return isPast ? (
                                 <button
                                   className="teacher-btn teacher-btn--danger"
@@ -369,24 +397,52 @@ export default function TeacherClassDetailPage() {
                                   </button>
                                   <button
                                     className="teacher-btn teacher-btn--primary"
-                                    style={{ padding: '5px 10px', fontSize: '0.78rem' }}
+                                    style={{ padding: '5px 10px', fontSize: '0.78rem', opacity: startingSessionId === session.id ? 0.6 : 1 }}
+                                    disabled={!!startingSessionId}
                                     onClick={() => handleStart(session)}
                                   >
                                     <Play size={11} />
-                                    Start
+                                    {startingSessionId === session.id ? 'Starting…' : 'Start'}
                                   </button>
                                 </>
                               )
                             })()}
                             {session.status === 'live' && (
-                              <button
-                                className="teacher-btn teacher-btn--danger"
-                                style={{ padding: '5px 10px', fontSize: '0.78rem' }}
-                                onClick={() => handleEnd(session)}
-                              >
-                                <CheckCircle2 size={11} />
-                                End Session
-                              </button>
+                              <>
+                                <button
+                                  className="teacher-btn teacher-btn--primary"
+                                  style={{ padding: '5px 10px', fontSize: '0.78rem' }}
+                                  onClick={() => {
+                                    if (!session.startUrl) {
+                                      showToast('No Zoom link — end and restart the session to generate one.')
+                                      return
+                                    }
+                                    if (session.startedAt) {
+                                      const mins = (Date.now() - new Date(session.startedAt).getTime()) / 60000
+                                      if (mins > 120) {
+                                        showToast('Zoom host link expired (session running >2h). End and restart to get a fresh link.')
+                                        return
+                                      }
+                                      if (mins > 100) {
+                                        showToast('Zoom host link expires soon — if it fails, end and restart the session.')
+                                      }
+                                    }
+                                    showToast('Opening Zoom — click "Open Zoom" if your browser asks.')
+                                    openZoomAsHost(session.startUrl)
+                                  }}
+                                >
+                                  <Video size={11} />
+                                  Join Meeting
+                                </button>
+                                <button
+                                  className="teacher-btn teacher-btn--danger"
+                                  style={{ padding: '5px 10px', fontSize: '0.78rem' }}
+                                  onClick={() => handleEnd(session)}
+                                >
+                                  <CheckCircle2 size={11} />
+                                  End Session
+                                </button>
+                              </>
                             )}
                             {session.status === 'completed' && session.recordingUrl && (
                               <a
@@ -573,9 +629,13 @@ export default function TeacherClassDetailPage() {
                                 className="teacher-btn teacher-btn--ghost"
                                 style={{ padding: '4px 10px', fontSize: '0.75rem' }}
                                 onClick={async () => {
-                                  const updated = await removeSessionRecording(session.id)
-                                  setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
-                                  showToast('Recording removed')
+                                  try {
+                                    const updated = await removeSessionRecording(session.id)
+                                    setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
+                                    showToast('Recording removed')
+                                  } catch {
+                                    showToast('Failed to remove recording. Please try again.')
+                                  }
                                 }}
                               >
                                 <Trash2 size={11} /> Remove
@@ -610,12 +670,17 @@ export default function TeacherClassDetailPage() {
                             disabled={!recordingUrl.trim() || recordingSubmitting}
                             onClick={async () => {
                               setRecordingSubmitting(true)
-                              const updated = await updateSessionRecording(session.id, recordingUrl.trim())
-                              setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
-                              setRecordingInputId(null)
-                              setRecordingUrl('')
-                              setRecordingSubmitting(false)
-                              showToast('Recording URL saved ✓')
+                              try {
+                                const updated = await updateSessionRecording(session.id, recordingUrl.trim())
+                                setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
+                                setRecordingInputId(null)
+                                setRecordingUrl('')
+                                showToast('Recording URL saved ✓')
+                              } catch {
+                                showToast('Failed to save recording URL. Please try again.')
+                              } finally {
+                                setRecordingSubmitting(false)
+                              }
                             }}
                           >
                             {recordingSubmitting ? 'Saving…' : 'Save'}

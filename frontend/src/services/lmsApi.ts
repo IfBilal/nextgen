@@ -392,12 +392,20 @@ export async function adminUpdateSession(id: string, payload: UpdateSessionPaylo
     body: {
       scheduledAt: payload.scheduledAt,
       durationMinutes: payload.durationMinutes,
-      meetingLink: payload.meetingLink,
       changeNote: payload.changeNote,
     },
     ...bearer(getAdminToken()),
   })
   return res.session
+}
+
+export async function adminRegenerateZoom(id: string): Promise<{ joinUrl: string; startUrl: string }> {
+  // POST /api/v1/admin/sessions/:id/regenerate-zoom
+  const res = await apiRequest<{ joinUrl: string; startUrl: string }>(`/admin/sessions/${id}/regenerate-zoom`, {
+    method: 'POST',
+    ...bearer(getAdminToken()),
+  })
+  return res
 }
 
 export async function adminCancelSession(id: string): Promise<void> {
@@ -615,6 +623,17 @@ export async function studentGetSessionsForClass(classId: string): Promise<LmsSe
     bearer(getStudentToken()),
   )
   return res.sessions
+}
+
+export async function studentJoinSession(sessionId: string): Promise<string | null> {
+  // POST /api/v1/student/sessions/:sessionId/join — marks attendance and returns join URL
+  try {
+    const res = await apiRequest<{ joinUrl: string }>(
+      `/student/sessions/${sessionId}/join`,
+      { method: 'POST', ...bearer(getStudentToken()) },
+    )
+    return res.joinUrl
+  } catch { return null }
 }
 
 // ─── Shared utils ─────────────────────────────────────────────────────────────

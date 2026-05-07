@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import { Router } from 'express'
 import { z } from 'zod'
-import rateLimit from 'express-rate-limit'
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit'
 import { HttpError } from '../lib/httpError.js'
 import { authenticateRequest, requireRole } from '../middleware/authenticate.js'
 import { supabaseServiceClient } from '../lib/supabase.js'
@@ -11,7 +11,7 @@ export const communityRouter = Router()
 const chatLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 20,
-  keyGenerator: (req) => req.auth?.userId ?? req.ip ?? 'unknown',
+  keyGenerator: (req) => req.auth?.userId ?? ipKeyGenerator(req.ip ?? ''),
   handler: (_req, res) => res.status(429).json({ code: 'RATE_LIMITED', message: 'Too many messages. Please wait before sending again.' }),
   standardHeaders: true,
   legacyHeaders: false,

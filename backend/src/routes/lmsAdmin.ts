@@ -4,7 +4,6 @@ import { z } from 'zod'
 import { HttpError } from '../lib/httpError.js'
 import { authenticateRequest, requireRole } from '../middleware/authenticate.js'
 import { supabaseServiceClient } from '../lib/supabase.js'
-import { createZoomMeeting } from '../lib/zoom.js'
 import { notifyStudent } from '../lib/notify.js'
 import { stripe } from '../lib/stripe.js'
 
@@ -614,9 +613,9 @@ lmsAdminRouter.get('/admin/sessions', authenticateRequest, requireRole('admin'),
         teacherName: nameMap[(s.lms_classes as any).lms_teacher_profiles?.id] ?? '',
         productName: (s.lms_classes as any).lms_products?.name ?? '',
         scheduledAt: s.scheduled_at, durationMinutes: s.duration_minutes, status: s.status,
-        meetingLink: s.zoom_meeting_id, attendanceCount: s.attendance_count,
-        actualDurationMinutes: s.actual_duration_minutes, changeNote: s.change_note,
-        missedReason: s.missed_reason, recordingUrl: s.recording_url, createdAt: s.created_at,
+        meetingLink: s.zoom_join_url ?? s.zoom_meeting_id, startUrl: s.zoom_start_url ?? null,
+        attendanceCount: s.attendance_count, actualDurationMinutes: s.actual_duration_minutes,
+        changeNote: s.change_note, missedReason: s.missed_reason, startedAt: s.started_at ?? null, recordingUrl: s.recording_url, createdAt: s.created_at,
       }))
 
       return res.status(200).json({ sessions: result })
@@ -628,7 +627,6 @@ lmsAdminRouter.get('/admin/sessions', authenticateRequest, requireRole('admin'),
 const updateSessionSchema = z.object({
   scheduledAt:     z.string().datetime().optional(),
   durationMinutes: z.number().int().min(15).optional(),
-  meetingLink:     z.string().optional(),
   changeNote:      z.string().min(1),
 })
 
@@ -644,7 +642,6 @@ lmsAdminRouter.patch('/admin/sessions/:id', authenticateRequest, requireRole('ad
         updates.notified_1h  = false
       }
       if (parsed.durationMinutes) updates.duration_minutes = parsed.durationMinutes
-      if (parsed.meetingLink)     updates.zoom_meeting_id = parsed.meetingLink
 
       const { data: updated, error } = await supabaseServiceClient
         .from('lms_sessions').update(updates).eq('id', req.params.id).select().single()
@@ -654,11 +651,61 @@ lmsAdminRouter.patch('/admin/sessions/:id', authenticateRequest, requireRole('ad
         session: {
           id: updated.id, classId: updated.class_id, scheduledAt: updated.scheduled_at,
           durationMinutes: updated.duration_minutes, status: updated.status,
-          meetingLink: updated.zoom_meeting_id, attendanceCount: updated.attendance_count,
-          actualDurationMinutes: updated.actual_duration_minutes, changeNote: updated.change_note,
-          missedReason: updated.missed_reason, recordingUrl: updated.recording_url, createdAt: updated.created_at,
+          meetingLink: updated.zoom_join_url ?? updated.zoom_meeting_id, startUrl: updated.zoom_start_url ?? null,
+          attendanceCount: updated.attendance_count, actualDurationMinutes: updated.actual_duration_minutes,
+          changeNote: updated.change_note, missedReason: updated.missed_reason,
+          startedAt: updated.started_at ?? null, recordingUrl: updated.recording_url, createdAt: updated.created_at,
         },
       })
+    } catch (err) { return next(err) }
+  }
+)
+
+// ─── GET /api/v1/admin/sessions/:id/start-url ─────────────────────────────────
+lmsAdminRouter.get('/admin/sessions/:id/start-url', authenticateRequest, requireRole('admin'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { data: session } = await supabaseServiceClient
+        .from('lms_sessions').select('zoom_meeting_id').eq('id', req.params.id).single()
+      if (!session?.zoom_meeting_id) throw new HttpError(404, 'NOT_FOUND', 'No Zoom meeting for this session.')
+      const { getZoomStartUrl } = await import('../lib/zoom.js')
+      const startUrl = await getZoomStartUrl(session.zoom_meeting_id)
+      return res.status(200).json({ startUrl })
+    } catch (err) { return next(err) }
+  }
+)
+
+// ─── POST /api/v1/admin/sessions/:id/regenerate-zoom ─────────────────────────
+lmsAdminRouter.post('/admin/sessions/:id/regenerate-zoom', authenticateRequest, requireRole('admin'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { data: session } = await supabaseServiceClient
+        .from('lms_sessions')
+        .select('id, class_id, scheduled_at, duration_minutes, status')
+        .eq('id', req.params.id).single()
+
+      if (!session) throw new HttpError(404, 'NOT_FOUND', 'Session not found.')
+      if (session.status === 'completed' || session.status === 'cancelled') {
+        throw new HttpError(400, 'INVALID_STATUS', 'Cannot regenerate meeting for completed or cancelled sessions.')
+      }
+
+      const { data: cls } = await supabaseServiceClient
+        .from('lms_classes').select('name').eq('id', session.class_id).single()
+
+      const { createZoomMeeting } = await import('../lib/zoom.js')
+      const { meetingId, joinUrl, startUrl } = await createZoomMeeting(
+        cls?.name ?? 'Session',
+        session.scheduled_at,
+        session.duration_minutes
+      )
+
+      const { error } = await supabaseServiceClient
+        .from('lms_sessions')
+        .update({ zoom_meeting_id: meetingId, zoom_join_url: joinUrl, zoom_start_url: startUrl, updated_at: new Date().toISOString() })
+        .eq('id', session.id)
+
+      if (error) throw new HttpError(500, 'UPDATE_FAILED', error.message)
+      return res.status(200).json({ meetingId, joinUrl, startUrl })
     } catch (err) { return next(err) }
   }
 )
@@ -667,13 +714,15 @@ lmsAdminRouter.patch('/admin/sessions/:id', authenticateRequest, requireRole('ad
 lmsAdminRouter.patch('/admin/sessions/:id/cancel', authenticateRequest, requireRole('admin'),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { error } = await supabaseServiceClient
+      const { data: cancelled, error } = await supabaseServiceClient
         .from('lms_sessions')
         .update({ status: 'cancelled', updated_at: new Date().toISOString() })
         .eq('id', req.params.id)
         .in('status', ['scheduled', 'live'])
+        .select('id')
 
       if (error) throw new HttpError(500, 'CANCEL_FAILED', error.message)
+      if (!cancelled || cancelled.length === 0) throw new HttpError(400, 'INVALID_STATUS', 'Session cannot be cancelled — it may already be completed or cancelled.')
       return res.status(200).json({ message: 'Session cancelled.' })
     } catch (err) { return next(err) }
   }

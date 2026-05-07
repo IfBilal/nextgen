@@ -17,8 +17,6 @@ const envSchema = z.object({
   ZOOM_ACCOUNT_ID:       z.string().default(''),
   ZOOM_CLIENT_ID:        z.string().default(''),
   ZOOM_CLIENT_SECRET:    z.string().default(''),
-  ZOOM_SDK_KEY:          z.string().default(''),
-  ZOOM_SDK_SECRET:       z.string().default(''),
   ZOOM_WEBHOOK_SECRET:   z.string().default(''),
 })
 

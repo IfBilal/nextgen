@@ -1,5 +1,3 @@
-import crypto from 'crypto'
-
 let _tokenCache: { token: string; expiresAt: number } | null = null
 
 async function getZoomAccessToken(): Promise<string> {
@@ -16,20 +14,41 @@ async function getZoomAccessToken(): Promise<string> {
       },
     }
   )
-  const { access_token, expires_in } = await res.json() as { access_token: string; expires_in: number }
-  _tokenCache = { token: access_token, expiresAt: Date.now() + (expires_in - 60) * 1000 }
-  return access_token
+  const data = await res.json() as { access_token?: string; expires_in?: number; error?: string; reason?: string }
+  if (!data.access_token) {
+    console.error('[zoom] Token fetch failed:', JSON.stringify(data))
+    throw new Error(`Zoom token error: ${data.error ?? data.reason ?? 'unknown'}`)
+  }
+  _tokenCache = { token: data.access_token, expiresAt: Date.now() + ((data.expires_in ?? 3600) - 60) * 1000 }
+  return _tokenCache.token
+}
+
+export async function getZoomStartUrl(meetingId: string): Promise<string> {
+  if (!process.env.ZOOM_ACCOUNT_ID || !process.env.ZOOM_CLIENT_ID || !process.env.ZOOM_CLIENT_SECRET) {
+    return `https://zoom.us/s/${meetingId}`
+  }
+  const token = await getZoomAccessToken()
+  const res = await fetch(`https://api.zoom.us/v2/meetings/${meetingId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  const data = await res.json() as { start_url?: string; code?: number; message?: string }
+  if (!data.start_url) {
+    console.error('[zoom] get meeting failed:', JSON.stringify(data))
+    throw new Error(`Zoom get meeting failed: ${data.message ?? data.code ?? 'unknown'}`)
+  }
+  return data.start_url
 }
 
 export async function createZoomMeeting(
   topic: string,
   scheduledAt: string,
-  durationMinutes: number
-): Promise<{ meetingId: string; startUrl: string }> {
-  // ZOOM SWAP: Replace this placeholder with real Zoom API call when credentials are set.
-  if (process.env.NODE_ENV !== 'production' || !process.env.ZOOM_ACCOUNT_ID) {
+  durationMinutes: number,
+  alternativeHostEmail?: string
+): Promise<{ meetingId: string; joinUrl: string; startUrl: string }> {
+  // Use placeholder when credentials are not configured
+  if (!process.env.ZOOM_ACCOUNT_ID || !process.env.ZOOM_CLIENT_ID || !process.env.ZOOM_CLIENT_SECRET) {
     const id = String(Math.floor(Math.random() * 9_000_000_000) + 1_000_000_000)
-    return { meetingId: id, startUrl: `https://zoom.us/s/${id}` }
+    return { meetingId: id, joinUrl: `https://zoom.us/j/${id}`, startUrl: `https://zoom.us/s/${id}` }
   }
 
   const token = await getZoomAccessToken()
@@ -46,33 +65,18 @@ export async function createZoomMeeting(
         waiting_room: true,
         mute_upon_entry: true,
         auto_recording: 'cloud',
+        ...(alternativeHostEmail ? { alternative_hosts: alternativeHostEmail } : {}),
       },
     }),
   })
-  const meeting = await res.json() as { id: number; start_url: string }
-  return { meetingId: String(meeting.id), startUrl: meeting.start_url }
-}
-
-export function generateSdkSignature(meetingNumber: string, role: 0 | 1): string {
-  const iat = Math.round(Date.now() / 1000) - 30
-  const exp = iat + 60 * 60 * 2
-
-  const payload = {
-    sdkKey: process.env.ZOOM_SDK_KEY!,
-    mn: meetingNumber,
-    role,
-    iat,
-    exp,
-    appKey: process.env.ZOOM_SDK_KEY!,
-    tokenExp: exp,
+  const meeting = await res.json() as { id?: number; join_url?: string; start_url?: string; code?: number; message?: string }
+  if (!meeting.id || !meeting.join_url || !meeting.start_url) {
+    console.error('[zoom] createMeeting failed:', JSON.stringify(meeting))
+    throw new Error(`Zoom meeting creation failed: ${meeting.message ?? meeting.code ?? 'unknown error'}`)
   }
-
-  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url')
-  const body   = Buffer.from(JSON.stringify(payload)).toString('base64url')
-  const sig    = crypto
-    .createHmac('sha256', process.env.ZOOM_SDK_SECRET!)
-    .update(`${header}.${body}`)
-    .digest('base64url')
-
-  return `${header}.${body}.${sig}`
+  return {
+    meetingId: String(meeting.id),
+    joinUrl:   meeting.join_url,
+    startUrl:  meeting.start_url,
+  }
 }
