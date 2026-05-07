@@ -35,7 +35,7 @@ export default function AttendancePage() {
   }, [classId, user?.id])
 
   const attended = records.filter(r => r.status === 'attended').length
-  const missed = records.filter(r => r.status === 'absent' || r.status === 'missed').length
+  const missed = records.filter(r => r.status === 'missed').length
   const cancelled = records.filter(r => r.status === 'cancelled').length
   const countable = records.filter(r => r.status !== 'cancelled').length
   const pct = countable > 0 ? Math.round((attended / countable) * 100) : 0
@@ -90,7 +90,7 @@ export default function AttendancePage() {
           {/* Bar chart */}
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 80, marginBottom: 10 }}>
             {records.map((r, i) => {
-              const color = r.status === 'attended' ? '#16a34a' : (r.status === 'missed' || r.status === 'absent') ? '#ef4444' : '#D1D5DB'
+              const color = r.status === 'attended' ? '#16a34a' : r.status === 'missed' ? '#ef4444' : '#D1D5DB'
               return (
                 <div
                   key={r.sessionId}
@@ -154,7 +154,7 @@ export default function AttendancePage() {
                 {/* Status icon */}
                 <div style={{ flexShrink: 0 }}>
                   {record.status === 'attended' && <CheckCircle2 size={18} color="#16a34a" />}
-                  {(record.status === 'missed' || record.status === 'absent') && <XCircle size={18} color="#dc2626" />}
+                  {record.status === 'missed' && <XCircle size={18} color="#dc2626" />}
                   {record.status === 'cancelled' && <MinusCircle size={18} color="#9CA3AF" />}
                 </div>
 
@@ -171,7 +171,7 @@ export default function AttendancePage() {
                       Attended
                     </span>
                   )}
-                  {(record.status === 'missed' || record.status === 'absent') && (
+                  {record.status === 'missed' && (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', background: '#fee2e2', color: '#dc2626', borderRadius: 99, fontSize: '0.72rem', fontWeight: 700 }}>
                       Missed
                     </span>
