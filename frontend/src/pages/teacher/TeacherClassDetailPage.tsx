@@ -13,7 +13,6 @@ import {
   createNotice,
   deleteNotice,
   updateSessionRecording,
-  removeSessionRecording,
 } from '../../services/lmsApi'
 import type { LmsSession, Notice, LmsClass, TeacherStudentSummary } from '../../types/lms'
 import { API_BASE_URL } from '../../config/env'
@@ -168,7 +167,7 @@ export default function TeacherClassDetailPage() {
     setMissedSubmitting(true)
     try {
       if (reasonModalMode === 'cancel') {
-        await cancelSession(reasonModalId)
+        await cancelSession(reasonModalId, missedReason.trim())
         setSessions(prev => prev.map(s => s.id === reasonModalId ? { ...s, status: 'cancelled', missedReason: missedReason.trim() } : s))
         showToast('Session cancelled — reason visible to students')
       } else {
@@ -456,20 +455,10 @@ export default function TeacherClassDetailPage() {
                                 Recording
                               </a>
                             )}
-                            {session.status === 'cancelled' && (
-                              session.missedReason ? (
-                                <span style={{ fontSize: '0.75rem', color: '#92400e', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 6, padding: '4px 8px' }}>
-                                  Reason: {session.missedReason}
-                                </span>
-                              ) : (
-                                <button
-                                  className="teacher-btn teacher-btn--ghost"
-                                  style={{ padding: '5px 10px', fontSize: '0.78rem', color: '#92400e', borderColor: '#fde68a' }}
-                                  onClick={() => { setReasonModalId(session.id); setReasonModalMode('missed'); setMissedReason('') }}
-                                >
-                                  Add Reason
-                                </button>
-                              )
+                            {session.status === 'cancelled' && session.missedReason && (
+                              <span style={{ fontSize: '0.75rem', color: '#92400e', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 6, padding: '4px 8px' }}>
+                                Reason: {session.missedReason}
+                              </span>
                             )}
                           </div>
                         </td>
@@ -625,21 +614,6 @@ export default function TeacherClassDetailPage() {
                               <a href={session.recordingUrl} target="_blank" rel="noopener noreferrer" className="teacher-btn teacher-btn--secondary" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>
                                 <Video size={11} /> View
                               </a>
-                              <button
-                                className="teacher-btn teacher-btn--ghost"
-                                style={{ padding: '4px 10px', fontSize: '0.75rem' }}
-                                onClick={async () => {
-                                  try {
-                                    const updated = await removeSessionRecording(session.id)
-                                    setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
-                                    showToast('Recording removed')
-                                  } catch {
-                                    showToast('Failed to remove recording. Please try again.')
-                                  }
-                                }}
-                              >
-                                <Trash2 size={11} /> Remove
-                              </button>
                             </>
                           ) : (
                             <>
@@ -827,7 +801,7 @@ export default function TeacherClassDetailPage() {
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 14 }}>
               <button
                 className="teacher-btn teacher-btn--primary"
-                disabled={!missedReason.trim() || missedSubmitting}
+                disabled={missedReason.trim().length < 3 || missedSubmitting}
                 onClick={handleReasonSubmit}
               >
                 {missedSubmitting ? 'Submitting…' : 'Submit Reason'}

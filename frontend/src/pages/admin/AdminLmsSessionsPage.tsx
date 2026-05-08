@@ -3,7 +3,7 @@ import {
   adminGetAllSessions,
   adminUpdateSession,
   adminCancelSession,
-  adminRegenerateZoom,
+  adminRemoveSessionRecording,
   getAllClassesWithProducts,
   adminGetProducts,
 } from '../../services/lmsApi'
@@ -72,12 +72,12 @@ export default function AdminLmsSessionsPage() {
   const [editTime, setEditTime] = useState('')
   const [editDuration, setEditDuration] = useState(90)
   const [editChangeNote, setEditChangeNote] = useState('')
-  const [regeneratingId, setRegeneratingId] = useState<string | null>(null)
   const [editError, setEditError] = useState('')
   const [editSubmitting, setEditSubmitting] = useState(false)
 
   // Cancel confirm
   const [cancelConfirmId, setCancelConfirmId] = useState<string | null>(null)
+  const [removingRecordingId, setRemovingRecordingId] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -146,16 +146,16 @@ export default function AdminLmsSessionsPage() {
     showToast('Session cancelled')
   }
 
-  async function handleRegenerateZoom(sessionId: string) {
-    setRegeneratingId(sessionId)
+  async function handleRemoveRecording(sessionId: string) {
+    setRemovingRecordingId(sessionId)
     try {
-      const { joinUrl, startUrl } = await adminRegenerateZoom(sessionId)
-      setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, meetingLink: joinUrl, startUrl } : s))
-      showToast('Zoom meeting link regenerated ✓')
+      const updated = await adminRemoveSessionRecording(sessionId)
+      setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, recordingUrl: updated.recordingUrl } : s))
+      showToast('Recording removed ✓')
     } catch {
-      showToast('Failed to regenerate Zoom link.')
+      showToast('Failed to remove recording.')
     } finally {
-      setRegeneratingId(null)
+      setRemovingRecordingId(null)
     }
   }
 
@@ -426,23 +426,25 @@ export default function AdminLmsSessionsPage() {
                             </button>
                           </>
                         )}
-                        {(session.status === 'scheduled' || session.status === 'live') && !session.startUrl && (
-                          <button
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: '#f0fdf4', color: '#15803d', border: '1px solid #bbf7d0', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', opacity: regeneratingId === session.id ? 0.6 : 1 }}
-                            disabled={regeneratingId === session.id}
-                            onClick={() => handleRegenerateZoom(session.id)}
-                          >
-                            {regeneratingId === session.id ? 'Generating…' : '⟳ Generate Zoom Link'}
-                          </button>
-                        )}
-                        {session.status === 'completed' && (
-                          <a
-                            href="#"
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6B7280', textDecoration: 'none' }}
-                          >
-                            <Video size={11} />
-                            Recording
-                          </a>
+                        {session.status === 'completed' && session.recordingUrl && (
+                          <>
+                            <a
+                              href={session.recordingUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: 'transparent', border: '1px solid #e8f0fb', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#6B7280', textDecoration: 'none' }}
+                            >
+                              <Video size={11} />
+                              Recording
+                            </a>
+                            <button
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: 'transparent', border: '1px solid #fecaca', borderRadius: 7, fontWeight: 600, fontSize: '0.78rem', cursor: 'pointer', color: '#dc2626', opacity: removingRecordingId === session.id ? 0.6 : 1 }}
+                              disabled={removingRecordingId === session.id}
+                              onClick={() => handleRemoveRecording(session.id)}
+                            >
+                              {removingRecordingId === session.id ? 'Removing…' : '✕ Remove'}
+                            </button>
+                          </>
                         )}
                       </div>
                     </td>

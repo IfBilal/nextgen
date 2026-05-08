@@ -728,6 +728,29 @@ lmsAdminRouter.patch('/admin/sessions/:id/cancel', authenticateRequest, requireR
   }
 )
 
+// ─── DELETE /api/v1/admin/sessions/:id/recording ─────────────────────────────
+lmsAdminRouter.delete('/admin/sessions/:id/recording', authenticateRequest, requireRole('admin'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { data: updated, error } = await supabaseServiceClient
+        .from('lms_sessions')
+        .update({ recording_url: null, recording_status: 'none', updated_at: new Date().toISOString() })
+        .eq('id', req.params.id).select().single()
+
+      if (error || !updated) throw new HttpError(404, 'NOT_FOUND', 'Session not found.')
+      return res.status(200).json({
+        session: {
+          id: updated.id, classId: updated.class_id, scheduledAt: updated.scheduled_at,
+          durationMinutes: updated.duration_minutes, status: updated.status,
+          meetingLink: updated.zoom_join_url ?? updated.zoom_meeting_id, startUrl: updated.zoom_start_url ?? null, attendanceCount: updated.attendance_count,
+          actualDurationMinutes: updated.actual_duration_minutes, changeNote: updated.change_note,
+          missedReason: updated.missed_reason, startedAt: updated.started_at ?? null, recordingUrl: updated.recording_url, createdAt: updated.created_at,
+        },
+      })
+    } catch (err) { return next(err) }
+  }
+)
+
 // ─── GET /api/v1/admin/demo-overrides ────────────────────────────────────────
 lmsAdminRouter.get('/admin/demo-overrides', authenticateRequest, requireRole('admin'),
   async (req: Request, res: Response, next: NextFunction) => {

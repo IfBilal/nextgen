@@ -361,7 +361,7 @@ lmsTeacherRouter.post('/teacher/sessions/:id/end', authenticateRequest, requireR
 )
 
 // ─── PATCH /api/v1/teacher/sessions/:id/cancel ───────────────────────────────
-const cancelSessionSchema = z.object({ reason: z.string().trim().min(10) })
+const cancelSessionSchema = z.object({ reason: z.string().trim().min(3) })
 
 lmsTeacherRouter.patch('/teacher/sessions/:id/cancel', authenticateRequest, requireRole('teacher'),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -747,39 +747,6 @@ lmsTeacherRouter.patch('/teacher/sessions/:id/recording', authenticateRequest, r
       const { data: updated, error } = await supabaseServiceClient
         .from('lms_sessions')
         .update({ recording_url: url, recording_status: 'ready', updated_at: new Date().toISOString() })
-        .eq('id', req.params.id).select().single()
-
-      if (error) throw new HttpError(500, 'UPDATE_FAILED', error.message)
-      return res.status(200).json({
-        session: {
-          id: updated.id, classId: updated.class_id, scheduledAt: updated.scheduled_at,
-          durationMinutes: updated.duration_minutes, status: updated.status,
-          meetingLink: updated.zoom_join_url ?? updated.zoom_meeting_id, startUrl: updated.zoom_start_url ?? null, attendanceCount: updated.attendance_count,
-          actualDurationMinutes: updated.actual_duration_minutes, changeNote: updated.change_note,
-          missedReason: updated.missed_reason, startedAt: updated.started_at ?? null, recordingUrl: updated.recording_url, createdAt: updated.created_at,
-        },
-      })
-    } catch (err) { return next(err) }
-  }
-)
-
-// ─── DELETE /api/v1/teacher/sessions/:id/recording ───────────────────────────
-lmsTeacherRouter.delete('/teacher/sessions/:id/recording', authenticateRequest, requireRole('teacher'),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const teacherId = req.auth!.userId
-
-      const { data: session } = await supabaseServiceClient
-        .from('lms_sessions').select('class_id').eq('id', req.params.id).single()
-      if (!session) throw new HttpError(404, 'NOT_FOUND', 'Session not found.')
-
-      const { data: cls } = await supabaseServiceClient
-        .from('lms_classes').select('id').eq('id', session.class_id).eq('teacher_id', teacherId).single()
-      if (!cls) throw new HttpError(403, 'FORBIDDEN', 'This session does not belong to your class.')
-
-      const { data: updated, error } = await supabaseServiceClient
-        .from('lms_sessions')
-        .update({ recording_url: null, recording_status: 'none', updated_at: new Date().toISOString() })
         .eq('id', req.params.id).select().single()
 
       if (error) throw new HttpError(500, 'UPDATE_FAILED', error.message)

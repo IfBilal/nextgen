@@ -736,11 +736,10 @@ export async function updateSessionRecording(sessionId: string, url: string): Pr
   return res.session
 }
 
-export async function removeSessionRecording(sessionId: string): Promise<LmsSession> {
-  // DELETE /api/v1/teacher/sessions/:id/recording
-  const res = await apiRequest<{ session: LmsSession }>(`/teacher/sessions/${sessionId}/recording`, {
+export async function adminRemoveSessionRecording(sessionId: string): Promise<LmsSession> {
+  const res = await apiRequest<{ session: LmsSession }>(`/admin/sessions/${sessionId}/recording`, {
     method: 'DELETE',
-    ...bearer(getTeacherToken()),
+    ...bearer(getAdminToken()),
   })
   return res.session
 }
