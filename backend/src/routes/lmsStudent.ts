@@ -320,7 +320,7 @@ lmsStudentRouter.get('/student/classes/:classId/recordings', authenticateRequest
         .eq('class_id', req.params.classId)
         .eq('status', 'completed')
         .not('recording_url', 'is', null)
-        .order('scheduled_at', { ascending: true })
+        .order('scheduled_at', { ascending: false })
 
       if (error) throw new HttpError(500, 'FETCH_FAILED', error.message)
 
